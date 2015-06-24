@@ -1,0 +1,11 @@
+# Ignore these file types #
+###########################
+*.png
+*.eps
+*.pdf
+*.txt
+*~
+*.d
+*.so
+*.zip
+*.root
