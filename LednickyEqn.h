@@ -30,8 +30,11 @@ class LednickyEqn{
   Double_t fLambda; // Lambda (pair purity) parameter 
   Bool_t   fIsIdentical; // Are these pairs identical particles?
   Double_t fNBins;  // Number of bins in correlation function
+  TH2D *fTransformMatrix; // Transform matrix for residual correlations
 
   Double_t GetLednickyF1(Double_t z); // Calculate the F1 function
 
 
 };
+
+
