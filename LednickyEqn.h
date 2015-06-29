@@ -14,12 +14,12 @@
 
 class LednickyEqn{
  public:
-  LednickyEqn( /*Input Parameters*/ );
+  LednickyEqn(Bool_t isIdentical, TH2D *transformMatrix);
   virtual ~LednickyEqn();
   TGraph *GetLednickyGraph();
-  void SetParameters(/*Parameters*/);
-  
-  //Setters?
+  void SetParameters(vector<Double_t> pars);
+  Double_t GetLambdaParam() {return fLambda;};
+  //Other setters/getters?
 
  private:
   Double_t fF0Real; // Real part of the scattering length
@@ -30,10 +30,12 @@ class LednickyEqn{
   Double_t fLambda; // Lambda (pair purity) parameter 
   Bool_t   fIsIdentical; // Are these pairs identical particles?
   Double_t fNBins;  // Number of bins in correlation function
-  TH2D *fTransformMatrix; // Transform matrix for residual correlations
+  TH2D *fTransformMatrix; // Transform matrix for residual correlations.  Will be null for primary correlation
 
   Double_t GetLednickyF1(Double_t z); // Calculate the F1 function
-
+  TGraph *GetBaseLednickyGraph(); //Calculate Lednicky in parent k* frame
+  TGraph *TransformLednickyGraph(TGraph *base);
+  
 
 };
 
