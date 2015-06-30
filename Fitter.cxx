@@ -3,12 +3,13 @@
 //**********************************************************
 
 #include "Fitter.h"
+#include "PairSystem.h"
 
 int main(int argc, char **argv)
 {
   
   Fitter myFitter();
-  myFitter.CreateLednickyEqns();
+  myFitter.CreatePairSystems();
   myFitter.SetFitOptions();
 
   myFitter.CreateMinuit(/* */);
@@ -29,10 +30,15 @@ Fitter::~Fitter()
 }
 
 
-void Fitter::CreateLednickyEqns()
+void Fitter::CreatePairSystems()
 {
-  // Create all the lednicky eqn objects that will be used
+  // Create all the pair systems objects that will be used
   // in the fitting
+
+
+  //Example
+  
+
 
 }
 
@@ -80,13 +86,6 @@ void Fitter::DoFitting()
   // If outputting to file, turn return output to terminal now
 }
 
-// void AddResidual(TString residualFileName, TString residualHistName)
-// {
-//   // Maybe makes a ResidualCorrelation object?  Object would have
-//   // its own Lednicky Eqn object?
-//   // Also, a pointer to a residual correlation histogram
-
-// }
 
 void Fitter::SaveOutputPlots()
 {

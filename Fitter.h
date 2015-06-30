@@ -12,7 +12,7 @@ class Fitter{
   Fitter();
   virtual ~Fitter();
   
-  void CreateLednickyEqns();
+  void CreatePairSystems();
   void CreateMinuit();
   void DoFitting();
   void SaveOutputPlots();
@@ -22,7 +22,7 @@ class Fitter{
   void SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag);
 
   TMinuit *fMinuit;
-  vector<*LednickyEqn> fLedEquations;
+  vector<*PairSystem> fPairSystems;
   vector<TString>  parNames;
   vector<Double_t> parInitial;
   vector<Double_t> parMinimum;
