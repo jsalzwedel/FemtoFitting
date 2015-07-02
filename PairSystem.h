@@ -16,7 +16,7 @@ class PairSystem{
   ~PairSystem();
   Double_t CalculateFitChiSquare(vector<Double_t> pars);
   void SetCFData(TH2D* correlationFunction);
-  void CreateNewLednickyEqn(Bool_t isIdentical, TH2D *transformMatrix)
+  void CreateNewLednickyEqn(Bool_t isIdentical, TH2D *transformMatrix);
 
  private:
   TString fPairTypeName; // e.g. "LambdaLambda" or "LambdaAntilambda"
