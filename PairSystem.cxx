@@ -40,6 +40,9 @@ void PairSystem::SetLednickyParameters(vector<Double_t> pars)
 PairSystem::PairSystem(TH1D *cfData)
 {
   fCF = cfData;
+  
+  // Create a Lednicky eqn for primary-primary correlation function
+  // and for each of the residual correlations.
 
 
 }

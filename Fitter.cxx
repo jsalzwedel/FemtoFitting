@@ -8,8 +8,13 @@
 int main(int argc, char **argv)
 {
   
+  // Check that the first argument (configuration number)
+  // is an integer.
+  Int_t config;
+  if (sscanf (argv[1], "%i", &config)!=1) { printf ("error - not an integer"); }
+
   Fitter myFitter();
-  myFitter.CreatePairSystems();
+  myFitter.CreateAllPairSystems(config);
   myFitter.SetFitOptions();
 
   myFitter.CreateMinuit(/* */);
@@ -30,16 +35,29 @@ Fitter::~Fitter()
 }
 
 
-void Fitter::CreatePairSystems()
+void Fitter::CreateAllPairSystems(Int_t configuration)
 {
   // Create all the pair systems objects that will be used
-  // in the fitting
+  // in the fitting.  Call CreateSinglePairSystem for each
+  // combination of pair type and centrality that will be 
+  // fit.
 
+  vector<TString> fileNames;
+  vector<TString> histNames;
 
-  //Example
-  
+  GetHistConfiguration(configuration, fileNames, histNames);
+  assert(fileNames.size() == histNames.size());
+  assert(fileNames.size() > 0);
 
-
+  for(int iSystem = 0; iSystem < fileNames.size(); iSystem++)
+  {
+    TFile inFile((fileNames[iSystem]), "read");
+    TH1D *cf = inFile.Get(histNames[iSystem]);
+    assert(cf);
+    cf->SetDirectory(0);
+    PairSystem *system = new PairSystem(cf);
+    fPairSystems.push_back(system);
+  }
 }
 
 void Fitter::CreateMinuit(/* */)
@@ -84,6 +102,21 @@ void Fitter::DoFitting()
   myMinuit->mnexcm("MIGRAD", arglist, 1, errFlag);
 
   // If outputting to file, turn return output to terminal now
+}
+
+void Fitter::GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames)
+{
+  // Returns a vector of TFile names and corresponding hist names.
+  // Can put many different purmutations in here, and easily load 
+  // one purmutation by calling its config number.
+
+  if(0 == config) {
+    fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
+    histNames.push_back("CombinedLLAA0-10KstarMomCorrected");
+    // Add more as needed
+  }
+  // Add more as needed
+  else cerr<<"Not a valid config file!\n";
 }
 
 

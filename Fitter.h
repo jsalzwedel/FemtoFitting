@@ -12,7 +12,7 @@ class Fitter{
   Fitter();
   virtual ~Fitter();
   
-  void CreatePairSystems();
+  void CreateAllPairSystems(Int_t configuration);
   void CreateMinuit();
   void DoFitting();
   void SaveOutputPlots();
@@ -20,7 +20,7 @@ class Fitter{
   
  private:
   void SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag);
-
+  void GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames);
   TMinuit *fMinuit;
   vector<*PairSystem> fPairSystems;
   vector<TString>  parNames;
