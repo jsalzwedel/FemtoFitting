@@ -49,4 +49,14 @@ PairSystem::PairSystem(TH1D *cfData)
 
 PairSystem::~PairSystem()
 {
+  if(fCf){
+    delete fCF;
+    fCF = NULL;
+  }
+  for(Int_t i = 0; i < fLednickyEqns.size(); i++)
+  {
+    if(!fLednickyEqns[i]) continue;
+    delete fLednickyEqns[i];
+    fLednickyEqns[i] = NULL;
+  }
 }

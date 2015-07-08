@@ -31,7 +31,12 @@ Fitter::Fitter()
 
 Fitter::~Fitter()
 {
-
+  for(Int_t i = 0; i < fPairSystem.size(); i++)
+  {
+    if(!fPairSystems[i]) continue;
+    delete fPairSystems[i];
+    fPairSystems[i] = NULL;
+  }
 }
 
 

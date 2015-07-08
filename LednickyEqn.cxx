@@ -19,7 +19,10 @@ LednickyEqn::LednickyEqn(Bool_t isIdentical, TH2D *transformMatrix)
 
 LednickyEqn::~LednickyEqn()
 {
-  delete fTransformMatrix;
+  if(fTransformMatrix){
+    delete fTransformMatrix;
+    fTransformMatrix = NULL;
+  }
 }
 
 TGraph* LednickyEqn::GetBaseLednickyGraph()
