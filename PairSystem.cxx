@@ -1,6 +1,6 @@
 
 
-Double_t PairSystem::CalculateFitChiSquare(vector<Double_t> pars)
+Double_t PairSystem::CalculateFitChisquare(vector<Double_t> pars)
 {
   // Calculate the chisquare difference between the
   // correlation function data and the combined LednickyEqns

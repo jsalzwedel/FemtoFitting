@@ -14,7 +14,7 @@ class PairSystem{
  public:
   PairSystem(TH1D *cfData/*, */);
   ~PairSystem();
-  Double_t CalculateFitChiSquare(vector<Double_t> pars);
+  Double_t CalculateFitChisquare(vector<Double_t> pars);
   void SetCFData(TH2D* correlationFunction);
   void CreateNewLednickyEqn(Bool_t isIdentical, TH2D *transformMatrix);
 
