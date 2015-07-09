@@ -49,10 +49,15 @@ TGraph *LednickyEqn::GetLednickyGraph()
   return lednickyGraph;
 }
 
-void LednickyEqn::SetParameters(vector<Double_t> pars)
+void LednickyEqn::SetParameters(const vector<Double_t> &pars)
 {
-  // Set all the fit parameters, like f0 and d0
-  //...
+  // Set all the fit parameters
+  fLambda = pars[0];
+  fRadius = pars[1]; 
+  fF0Real = pars[2];
+  fF0Imag = pars[3];
+  fD0     = pars[4];     
+  fNorm   = pars[5];
 }
 
 TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)

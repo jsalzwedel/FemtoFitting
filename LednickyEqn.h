@@ -17,7 +17,7 @@ class LednickyEqn{
   LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix);
   virtual ~LednickyEqn();
   TGraph *GetLednickyGraph();
-  void SetParameters(vector<Double_t> pars);
+  void SetParameters(const vector<Double_t> &pars);
   Double_t GetLambdaParam() {return fLambda;};
   //Other setters/getters?
 
