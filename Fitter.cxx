@@ -13,10 +13,12 @@ int main(int argc, char **argv)
   Int_t config;
   if (sscanf (argv[1], "%i", &config)!=1) { printf ("error - not an integer"); }
 
+  // Setup
   Fitter myFitter();
   myFitter.CreateAllPairSystems(config);
   myFitter.SetFitOptions();
 
+  // Fitting
   myFitter.CreateMinuit(/* */);
   myFitter.DoFitting();
   myFitter.SaveOutputPlots();
@@ -49,8 +51,9 @@ void Fitter::CreateAllPairSystems(Int_t configuration)
 
   vector<TString> fileNames;
   vector<TString> histNames;
+  vector<Bool_t>  isIdenticalPrimary;
 
-  GetHistConfiguration(configuration, fileNames, histNames);
+  GetHistConfiguration(configuration, fileNames, histNames, isIdenticalPrimary);
   assert(fileNames.size() == histNames.size());
   assert(fileNames.size() > 0);
 
@@ -109,19 +112,51 @@ void Fitter::DoFitting()
   // If outputting to file, turn return output to terminal now
 }
 
-void Fitter::GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames)
+void Fitter::GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames, vector<Bool_t> &isIdenticalPrimary)
 {
   // Returns a vector of TFile names and corresponding hist names.
-  // Can put many different purmutations in here, and easily load 
-  // one purmutation by calling its config number.
+  // Can put many different correlation function histograms in 
+  // here.  Call any combination of them by adding their numbers
+  // to the config variable.
 
-  if(0 == config) {
+  // ...Maybe change these to use enumerated types...
+  if(1 & config) {
     fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
     histNames.push_back("CombinedLLAA0-10KstarMomCorrected");
+    isIdenticalPrimary.push_back(kTRUE);
     // Add more as needed
   }
-  // Add more as needed
-  else cerr<<"Not a valid config file!\n";
+  if(2 & config) {
+    fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
+    histNames.push_back("CombinedLLAA10-30KstarMomCorrected");
+    isIdenticalPrimary.push_back(kTRUE);
+    // Add more as needed
+  }
+  if(4 & config) {
+    fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsLamALamKstarMomCorrected.root");
+    histNames.push_back("CombinedLLAA30-50KstarMomCorrected");
+    isIdenticalPrimary.push_back(kTRUE);
+    // Add more as needed
+  }
+  if(8 & config) {
+    fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
+    histNames.push_back("LamALam0-10centrality_varBin5BothFieldsKstarMomCorrected");
+    isIdenticalPrimary.push_back(kFALSE);
+    // Add more as needed
+  }
+  if(16 & config) {
+    fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
+    histNames.push_back("LamALam10-30centrality_varBin5BothFieldsKstarMomCorrected");
+    isIdenticalPrimary.push_back(kFALSE);
+    // Add more as needed
+  }
+  if(32 & config) {
+    fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
+    histNames.push_back("LamALam30-50centrality_varBin5BothFieldsKstarMomCorrected");
+    isIdenticalPrimary.push_back(kFALSE);
+    // Add more as needed
+  }
+
 }
 
 
