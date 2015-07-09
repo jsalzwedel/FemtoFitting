@@ -12,11 +12,11 @@
 
 class PairSystem{
  public:
-  PairSystem(TH1D *cfData/*, */);
+  PairSystem(TH1D *cfData, Bool_t isIdenticalPrimary/*, */);
   ~PairSystem();
   Double_t CalculateFitChisquare(vector<Double_t> pars);
   void SetCFData(TH2D* correlationFunction);
-  void CreateNewLednickyEqn(Bool_t isIdentical, TH2D *transformMatrix);
+  void CreateNewLednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix);
 
  private:
   TString fPairTypeName; // e.g. "LambdaLambda" or "LambdaAntilambda"

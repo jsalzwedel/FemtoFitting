@@ -63,7 +63,7 @@ void Fitter::CreateAllPairSystems(Int_t configuration)
     TH1D *cf = inFile.Get(histNames[iSystem]);
     assert(cf);
     cf->SetDirectory(0);
-    PairSystem *system = new PairSystem(cf);
+    PairSystem *system = new PairSystem(cf, isIdenticalPrimary[iSystem]);
     fPairSystems.push_back(system);
   }
 }

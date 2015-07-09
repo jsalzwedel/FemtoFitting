@@ -9,8 +9,9 @@
 #include "LednickyEqn.h"
 #include "Faddeeva.cc"
 
-LednickyEqn::LednickyEqn(Bool_t isIdentical, TH2D *transformMatrix)
+LednickyEqn::LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix)
 {
+  fName = name;
   fIsIdentical = isIdentical;
   //If transform matrix is null, this is a primary correlation
   fTransformMatrix = transformMatrix;
@@ -58,6 +59,7 @@ TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
 {
   // If the LednickyEqn object is a residual correlation,
   // return a transformed version of the graph.
+
   if(!fTransformMatrix) return base;
 
   // Calculate new TGraph using the transformation math

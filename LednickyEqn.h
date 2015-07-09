@@ -14,7 +14,7 @@
 
 class LednickyEqn{
  public:
-  LednickyEqn(Bool_t isIdentical, TH2D *transformMatrix);
+  LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix);
   virtual ~LednickyEqn();
   TGraph *GetLednickyGraph();
   void SetParameters(vector<Double_t> pars);
@@ -22,6 +22,7 @@ class LednickyEqn{
   //Other setters/getters?
 
  private:
+  TString  fName;    // Type of pair this interaction describes
   Double_t fF0Real; // Real part of the scattering length
   Double_t fF0Imag; // Imaginary part of the scattering length
   Double_t fD0;     // Effective range of interaction
