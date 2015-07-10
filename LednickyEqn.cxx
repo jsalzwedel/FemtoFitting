@@ -31,11 +31,55 @@ TGraph* LednickyEqn::GetBaseLednickyGraph()
   // Do all the math to calculate a base lednicky equation
   // in the k* frame of the parent particles. Return a
   // TGraph of the function.
+  
+  // Arrays to store X and Y values of correlation function
+  Double_t *kstar = new Double_t[fNBins];
+  Double_t *cf    = new Double_t[fNBins];
 
-  TGraph * baseGraph; // = new TGraph(bins, xArray, yArray);
+  for(Int_t iBin = 0; iBin < fNBins; iBin++)
+  {
+    // Calculate the value of the correlation function at each bin
 
-  //..
+    // Use the center of the bin
+    kstar[iBin] = fBinWidth * (1.*iBin + 0.5); 
 
+    // Calculate the denominator of the scattering amplitude
+    Double_t scatterAmpDen = 0;
+    scatterAmpDen += pow((1. + fF0Im*kstar[iBin]/hbarc),2)
+                   + pow((fF0Re * kstar[iBin] / hbarc),2);
+    scatterAmpDen += pow(kstar,4) * pow(fD0,2) *
+                   * (pow(fF0Re,2) + pow(fF0Im,2)) 
+                   / (4. * pow(hbarc,4));
+    scatterAmpDen += fF0Re * fD0 * pow(kstar[iBin] / hbarc, 2);
+    
+    // Calculate the real and imaginary parts of the scattering
+    // amplitude numerator
+    Double_t scatterAmpRe = fF0Real
+      + 0.5 * fD0 * pow(kstar[iBin]/hbarc,2) * (pow(fF0Re,2) + pow(fF0Im,2));
+    Double_t scatterAmpIm = fF0Im 
+      + (pow(fF0Re,2) + pow(fF0Im,2)) * kstar[iBin] / hbarc;
+    Double_t scatterAmpMagSqr = (pow(scatterAmpRe,2) + pow(scatterAmpIm,2)) / pow(scatterAmpDen,2);
+    
+    // Finally, calculate the cf value
+    cf[iBin] = 0.5 * (scatterAmpMagSqr/pow(fRadius,2)) 
+      * (1. - fD0/(2. * sqrt(TMath::Pi()) * fRadius));
+    cf[iBin] += 2. * scatterAmpRe 
+      * GetLednickyF1(2. * kstar[iBin] * fRadius)
+      / (sqrt(TMath::Pi())*fRadius);
+    cf[iBin] -= scatterAmpIm 
+      * GetLednickyF2(2. * kstar[iBin] * fRadius)
+      / fRadius;
+    if(fIsIdentical) {
+      cf[iBin] *= 0.5;
+      cf[iBin] -= 0.5 * exp(-4. * pow(kstar[iBin] * fRadius,2));
+    }
+    cf[iBin] += 1.;
+  }
+  
+  // Now make a TGraph of the correlation function
+  TGraph * baseGraph = new TGraph(fNBins, kstar, cf);
+  delete[] kstar;
+  delete[] cf;
   return baseGraph;
 }
 
@@ -83,3 +127,10 @@ Double_t LednickyEqn::GetLednickyF1(Double_t z)
   return result;
 }
 
+Double_t LednickyEqn::GetLednickyF2(Double_t z)
+{
+  TF1 lednickyF2("lednickyf2","(1-exp(-[0]*[0]*x*x))/([0]*x)");
+  const Double_t hbarc = 0.197327;
+  lednickyF2.SetParameter(0, 2.*fRadius/hbarc);
+  return lednickyF2.Eval(z);
+}
