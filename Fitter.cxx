@@ -28,7 +28,8 @@ int main(int argc, char **argv)
 
 Fitter::Fitter()
 {
-
+  fNParams(6); 
+  fNSystems(0);
 }
 
 Fitter::~Fitter()
@@ -54,10 +55,11 @@ void Fitter::CreateAllPairSystems(Int_t configuration)
   vector<Bool_t>  isIdenticalPrimary;
 
   GetHistConfiguration(configuration, fileNames, histNames, isIdenticalPrimary);
-  assert(fileNames.size() == histNames.size());
-  assert(fileNames.size() > 0);
+  fNSystems = fileNames.size();  
+  assert(fNSystems == histNames.size());
+  assert(fNSystems > 0);
 
-  for(int iSystem = 0; iSystem < fileNames.size(); iSystem++)
+  for(int iSystem = 0; iSystem < fNSystems; iSystem++)
   {
     TFile inFile((fileNames[iSystem]), "read");
     TH1D *cf = inFile.Get(histNames[iSystem]);
@@ -73,20 +75,14 @@ void Fitter::CreateMinuit(/* */)
   // Create a TMinuit object.
   // Define, set and fix parameters.
 
-  Int_t nParameters = 0;
 
   // Using the Fit Options and the number of LednickyEqns,
   // determine how many fit parameters there will be.
 
-  fMinuit = new TMinuit(nParameters);
+  fMinuit = new TMinuit(fNParams);
   fMinuit->SetFCN(SetParametersAndFit);
+  InitializeParameters(fMinuit);
 
-  // Define the fit parameters
-  // for(int iPar = 0; iPar < nParameters; iPar++){
-  //   fMinuit->DefineParameter(iPar, parNames[iPar], parInit[iPar],  0.001, parMin[iPar],  parMax[iPar]);
-  //   if(parIsFixed[iPar]) myMinut->FixParameter(iPar);
-  // }
-  
 
 }
 
@@ -99,7 +95,7 @@ void Fitter::DoFitting()
   // fMinuit->mnexcm("CALL FCN", arglist, 1, errFlag);
 
   // Set how verbose the output is (from no output at -1, to max at 3)
-  arglist[0] =0;
+  arglist[0] = 0;
   fMinuit->mnexcm("SET PRINT", arglist, 1, errFlag);
 
   // Maybe have all output results go to a file?
@@ -159,6 +155,19 @@ void Fitter::GetHistConfiguration(Int_t config, vector<TString> &fileNames, vect
 
 }
 
+void Fitter::InitializeParameters(TMinuit *minuit)
+{
+  // Define the fit parameters
+
+  Double_t startingStepSize = 0.001;
+
+  for(int iPar = 0; iPar < fNParams; iPar++){
+    minuit->DefineParameter(iPar, fParNames[iPar], fParInitial[iPar],  startingStepSize, fParMinimum[iPar], fParMaximum[iPar]);
+    if(fParIsFixed[iPar]) myMinut->FixParameter(iPar);
+  }
+  
+}
+
 
 void Fitter::SaveOutputPlots()
 {
@@ -173,12 +182,35 @@ void Fitter::SetFitOptions()
   // -What parameters to share
   // -location of data
   // -location of transform matrices
+
+  
+  // Set the size of the parameter vectors.
+  fParNames.resize(fNParams*fNSystems);
+  fParInitial.resize(fNParams*fNSystems);
+  fParMinimum.resize(fNParams*fNSystems);
+  fParMaximum.resize(fNParams*fNSystems);
+  fParCurrent.resize(fNParams*fNSystems);
+  fParIsFixed.resize(fNParams*fNSystems);
+
+
   
 }
 
 void Fitter::SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag)
 {
-  // Take the TMinuit parameters par, set them in the Lednicky eqns,
-  // and get the resulting Chisquare of the fit.
+  // Take the TMinuit parameters par, set them for each pair 
+  // system, and get the resulting Chisquare of the fit.
 
+
+  totalChisquare = 0;
+
+  for(Int_t iSys = 0; iSys < fPairSystems.size(); iSys++)
+  {
+    vector<Double_t> newPars;
+    for(Int_t iPar = 0; iPar < fNParams; iPar++) {
+      newPars[iPar] = par[fNParams * iSys + iPar];
+    }
+    fPairSystems[iSys]->SetLednickyParams(newPars);
+    totalChisquare += fPairSystems[iSys]->CalculateFitChisquare();
+  }
 }
