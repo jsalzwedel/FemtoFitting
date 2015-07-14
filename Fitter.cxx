@@ -4,6 +4,7 @@
 
 #include "Fitter.h"
 #include "PairSystem.h"
+#include "ParameterConstraint.h"
 
 int main(int argc, char **argv)
 {
@@ -39,6 +40,12 @@ Fitter::~Fitter()
     if(!fPairSystems[i]) continue;
     delete fPairSystems[i];
     fPairSystems[i] = NULL;
+  }
+  for(Int_t i = 0; i < fParamConstraints.size(); i++)
+  {
+    if(!fParamConstraints[i]) continue;
+    delete fParamConstraints[i];
+    fParamConstraints[i] = NULL;
   }
 }
 
@@ -115,38 +122,37 @@ void Fitter::GetHistConfiguration(Int_t config, vector<TString> &fileNames, vect
   // here.  Call any combination of them by adding their numbers
   // to the config variable.
 
-  // ...Maybe change these to use enumerated types...
-  if(1 & config) {
+  if(kLL010 & config) {
     fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
     histNames.push_back("CombinedLLAA0-10KstarMomCorrected");
     isIdenticalPrimary.push_back(kTRUE);
     // Add more as needed
   }
-  if(2 & config) {
+  if(kLL1030 & config) {
     fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
     histNames.push_back("CombinedLLAA10-30KstarMomCorrected");
     isIdenticalPrimary.push_back(kTRUE);
     // Add more as needed
   }
-  if(4 & config) {
+  if(kLL3050 & config) {
     fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsLamALamKstarMomCorrected.root");
     histNames.push_back("CombinedLLAA30-50KstarMomCorrected");
     isIdenticalPrimary.push_back(kTRUE);
     // Add more as needed
   }
-  if(8 & config) {
+  if(kLA010 & config) {
     fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
     histNames.push_back("LamALam0-10centrality_varBin5BothFieldsKstarMomCorrected");
     isIdenticalPrimary.push_back(kFALSE);
     // Add more as needed
   }
-  if(16 & config) {
+  if(kLA1030 & config) {
     fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
     histNames.push_back("LamALam10-30centrality_varBin5BothFieldsKstarMomCorrected");
     isIdenticalPrimary.push_back(kFALSE);
     // Add more as needed
   }
-  if(32 & config) {
+  if(kLA3050 & config) {
     fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
     histNames.push_back("LamALam30-50centrality_varBin5BothFieldsKstarMomCorrected");
     isIdenticalPrimary.push_back(kFALSE);
@@ -183,16 +189,10 @@ void Fitter::SetFitOptions()
   // -location of data
   // -location of transform matrices
 
-  
-  // Set the size of the parameter vectors.
-  fParNames.resize(fNParams*fNSystems);
-  fParInitial.resize(fNParams*fNSystems);
-  fParMinimum.resize(fNParams*fNSystems);
-  fParMaximum.resize(fNParams*fNSystems);
-  fParCurrent.resize(fNParams*fNSystems);
-  fParIsFixed.resize(fNParams*fNSystems);
+  SetupParameters();
+  SetupParameterConstraints();
 
-
+ 
   
 }
 
@@ -213,4 +213,87 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare
     fPairSystems[iSys]->SetLednickyParams(newPars);
     totalChisquare += fPairSystems[iSys]->CalculateFitChisquare();
   }
+}
+
+void Fitter::SetupParameters()
+{
+  // Initialize parameter values for Minuit
+  // Set min and max values
+
+ 
+  
+  // Set the size of the parameter vectors.
+  fParNames.resize(fNParams*fNSystems);
+  fParInitial.resize(fNParams*fNSystems);
+  fParMinimum.resize(fNParams*fNSystems);
+  fParMaximum.resize(fNParams*fNSystems);
+  fParCurrent.resize(fNParams*fNSystems);
+  fParIsFixed.resize(fNParams*fNSystems);
+
+}
+
+void Fitter::SetupParameterConstraints(const Int_t config)
+{
+  
+  if(config /*  & ... */){
+    ConstrainF0D0();
+  }
+  if(config /*  & ... */){
+    ConstrainRadii();
+  }
+
+}
+
+void Fitter::ConstrainRadii()
+{
+  // Constrain radii between particle-particle and particle-antiparticle systems
+  ParamType param = kRadii;  
+  
+  Int_t systemsArr010[2] = {kLL010, kLa010};
+  vector<Int_t> systems010(systemsArr010);
+  ParameterConstraint *constraint = new ParameterConstraint(param, systems010);
+  fParamConstraints.push_back(constraint);
+
+  Int_t systemsArr1030[2] = {kLL1030, kLa1030};
+  vector<Int_t> systems1030(systemsArr1030);
+  constraint = new ParameterConstraint(param, systems1030);
+  fParamConstraints.push_back(constraint);
+
+  Int_t systemsArr3050[2] = {kLL3050, kLa3050};
+  vector<Int_t> systems3050(systemsArr3050);
+  constraint = new ParameterConstraint(param, systems1030);
+  fParamConstraints.push_back(constraint);
+}
+
+void Fitter::ConstrainF0D0()
+{
+  // Constrain all LL systems to use the same scattering
+  // length and d0.  Constrain the LA systems the same way.
+
+  Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
+  vector<Int_t> systemsLL(systemsArrLL);
+
+  Int_t systemsArrLA[3] = {kLA010, kLA1030, kLA3050};
+  vector<Int_t> systemsLA(systemsArrLA);
+
+  ParamType param = kF0Real;  
+  ParameterConstraint *constraint = new ParameterConstraint(param, systemsLL);
+  fParamConstraints.push_back(constraint);
+
+  constraint = new ParameterConstraint(param, systemsLA);
+  fParamConstraints.push_back(constraint);
+
+  param = kF0Imag;
+  constraint = new ParameterConstraint(param, systemsLL);
+  fParamConstraints.push_back(constraint);
+
+  constraint = new ParameterConstraint(param, systemsLA);
+  fParamConstraints.push_back(constraint);
+
+  param = kD0;
+  constraint = new ParameterConstraint(param, systemsLL);
+  fParamConstraints.push_back(constraint);
+
+  constraint = new ParameterConstraint(param, systemsLA);
+  fParamConstraints.push_back(constraint);
 }
