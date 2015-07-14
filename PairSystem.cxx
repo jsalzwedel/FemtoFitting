@@ -81,3 +81,8 @@ PairSystem::~PairSystem()
     fLednickyEqns[i] = NULL;
   }
 }
+
+void PairSystem::ReadInLambdaParams()
+{
+
+}

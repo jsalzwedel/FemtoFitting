@@ -20,6 +20,7 @@ class PairSystem{
   void SetLednickyParams(vector<Double_t> pars);
 
  private:
+  void ReadInLambdaParams();
   TString fPairTypeName; // e.g. "LambdaLambda" or "LambdaAntilambda"
   TString fCentralityName; // e.g. "0-10%"
   vector<*LednickyEqn> fLednickyEqns; // List of primary and secondary L&L eqn objects
