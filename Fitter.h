@@ -34,3 +34,5 @@ class Fitter{
   Double_t fNSystems;
   Int_t fMaxMinuitCalls;
 }
+
+#endif

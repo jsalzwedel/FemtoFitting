@@ -17,3 +17,5 @@ class ParameterConstraint{
   Int_t fParameter; // The index of the parameter that is constrained
   vector<Int_t> fConstrainedSystems; // Indices of the systems that share the constraint
 };
+
+#endif

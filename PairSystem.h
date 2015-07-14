@@ -26,8 +26,7 @@ class PairSystem{
   TH1D *fCF; // Correlation function data for the pair type
   //... fit range (Double? Bin integer?)
   
-
-  
-  
-
 };
+
+
+#endif
