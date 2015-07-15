@@ -96,12 +96,10 @@ TGraph *LednickyEqn::GetLednickyGraph()
 void LednickyEqn::SetParameters(const vector<Double_t> &pars)
 {
   // Set all the fit parameters
-  fLambda = pars[0];
-  fRadius = pars[1]; 
-  fF0Real = pars[2];
-  fF0Imag = pars[3];
-  fD0     = pars[4];     
-  fNorm   = pars[5];
+  fRadius = pars[0]; 
+  fF0Real = pars[1];
+  fF0Imag = pars[2];
+  fD0     = pars[3];     
 }
 
 TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)

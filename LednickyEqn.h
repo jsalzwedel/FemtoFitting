@@ -27,8 +27,6 @@ class LednickyEqn{
   Double_t fF0Imag; // Imaginary part of the scattering length
   Double_t fD0;     // Effective range of interaction
   Double_t fRadius; // Homogeneity radius
-  Double_t fNorm;   // Normalization parameter
-  Double_t fLambda; // Lambda (pair purity) parameter 
   Bool_t   fIsIdentical; // Are these pairs identical particles?
   Int_t    fNBins;  // Number of kstar bins in correlation function
   Double_t fBinWidth; // Width of each kstar bin
