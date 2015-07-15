@@ -112,7 +112,7 @@ void Fitter::DoFitting()
   arglist[0] = fMaxMinuitCalls;
   myMinuit->mnexcm("MIGRAD", arglist, 1, errFlag);
 
-  // If outputting to file, turn return output to terminal now
+  // If outputting to file, return output to terminal now
 }
 
 void Fitter::GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames, vector<Bool_t> &isIdenticalPrimary)
@@ -186,8 +186,7 @@ void Fitter::SetFitOptions()
   // -How many correlations to fit
   // -What parameters to fix
   // -What parameters to share
-  // -location of data
-  // -location of transform matrices
+
 
   SetupParameters();
   SetupParameterConstraints();
@@ -198,7 +197,7 @@ void Fitter::SetFitOptions()
 
 void Fitter::SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag)
 {
-  // Take the TMinuit parameters par, set them for each pair 
+  // Take the TMinuit parameters, set them for each pair 
   // system, and get the resulting Chisquare of the fit.
 
 
