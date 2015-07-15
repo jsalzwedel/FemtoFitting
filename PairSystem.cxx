@@ -1,12 +1,11 @@
 
 
-Double_t PairSystem::CalculateFitChisquare(vector<Double_t> pars)
+Double_t PairSystem::CalculateFitChisquare()
 {
   // Calculate the chisquare difference between the
   // correlation function data and the combined LednickyEqns
   
   // Update the fit parameters and get the full Lednicky Eqn graph
-  SetLednickyParameters(pars);
   TGraph *combinedGraph = GetCombinedTGraph();
 
   //Calculate the total chisquare difference over the fit range.  
