@@ -1,11 +1,20 @@
 # LednickyEqn makefile
 
-IFLAGS = -I$(ROOTSYS)/include
-LFLAGS = -L$(ROOTSYS)/lib -lHist -lMathCore -lCore -lRIO -lGpad -lMinuit
+LIBS   = $(shell root-config --libs)
+CFLAGS = $(shell root-config --cflags)
+#IFLAGS = -I$(ROOTSYS)/include
 #.PHONY: clean
 
-all: lednicky
+all: main
+
+main: lednicky faddeeva
+	g++ Faddeeva.o LednickyEqn.o -o lednicky $(LIBS)
+
+faddeeva: Faddeeva.cc
+	g++ -c Faddeeva.cc
 
 lednicky: LednickyEqn.cxx 
-	g++ LednickyEqn.cxx -o lednicky $(IFLAGS) $(LFLAGS)
+	g++ -c LednickyEqn.cxx $(CFLAGS) 
 
+clean: 
+	rm -f lednicky Lednicky.o Faddeeva.o
