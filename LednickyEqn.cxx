@@ -6,8 +6,20 @@
 // Maybe can get and use a residual correlation?
 //*******************************************
 
+#include "TString.h"
+#include "TMath.h"
+#include "TF1.h"
 #include "LednickyEqn.h"
-#include "Faddeeva.cc"
+#include "Faddeeva.hh"
+#include "iostream"
+
+int main()
+{
+std::cout<<"test"<<std::endl;
+return 0;
+}
+
+// using std::vector;
 
 LednickyEqn::LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix)
 {
@@ -45,19 +57,19 @@ TGraph* LednickyEqn::GetBaseLednickyGraph()
 
     // Calculate the denominator of the scattering amplitude
     Double_t scatterAmpDen = 0;
-    scatterAmpDen += pow((1. + fF0Im*kstar[iBin]/hbarc),2)
-                   + pow((fF0Re * kstar[iBin] / hbarc),2);
-    scatterAmpDen += pow(kstar,4) * pow(fD0,2) *
-                   * (pow(fF0Re,2) + pow(fF0Im,2)) 
-                   / (4. * pow(hbarc,4));
-    scatterAmpDen += fF0Re * fD0 * pow(kstar[iBin] / hbarc, 2);
+    scatterAmpDen += pow((1. + fF0Imag*kstar[iBin]/HbarC()),2)
+                   + pow((fF0Real * kstar[iBin] / HbarC()),2);
+    scatterAmpDen += pow(kstar[iBin],4) * pow(fD0,2) 
+                   * (pow(fF0Real,2) + pow(fF0Imag,2)) 
+                   / (4. * pow(HbarC(),4));
+    scatterAmpDen += fF0Real * fD0 * pow(kstar[iBin] / HbarC(), 2);
     
     // Calculate the real and imaginary parts of the scattering
     // amplitude numerator
     Double_t scatterAmpRe = fF0Real
-      + 0.5 * fD0 * pow(kstar[iBin]/hbarc,2) * (pow(fF0Re,2) + pow(fF0Im,2));
-    Double_t scatterAmpIm = fF0Im 
-      + (pow(fF0Re,2) + pow(fF0Im,2)) * kstar[iBin] / hbarc;
+      + 0.5 * fD0 * pow(kstar[iBin]/HbarC(),2) * (pow(fF0Real,2) + pow(fF0Imag,2));
+    Double_t scatterAmpIm = fF0Imag 
+      + (pow(fF0Real,2) + pow(fF0Imag,2)) * kstar[iBin] / HbarC();
     Double_t scatterAmpMagSqr = (pow(scatterAmpRe,2) + pow(scatterAmpIm,2)) / pow(scatterAmpDen,2);
     
     // Finally, calculate the cf value
@@ -93,7 +105,7 @@ TGraph *LednickyEqn::GetLednickyGraph()
   return lednickyGraph;
 }
 
-void LednickyEqn::SetParameters(const vector<Double_t> &pars)
+void LednickyEqn::SetParameters(const vector<Double_t> pars)
 {
   // Set all the fit parameters
   fRadius = pars[0]; 
@@ -110,26 +122,26 @@ TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
 
   if(!fTransformMatrix) return base;
 
-  TGraph *transformedGraph = base->Clone("transformedGraph");
+  TGraph *transformedGraph = (TGraph*) base->Clone("transformedGraph");
 
   const Int_t nBins = transformedGraph->GetN();
   
   // DaughterBins are in the relative momentum space of the 
   // primary correlations
-  for(Int_t daughterBin = 0; daughterBin < nBin; daughterBin++)
+  for(Int_t daughterBin = 0; daughterBin < nBins; daughterBin++)
   {
     Double_t weightSum = 0.;
     Double_t valueSum = 0.;
     // ParentBins are in the relative momentum space of the
     // residual correlation
-    for(Int_t parentBin = 0; parentBin < nBin; parentBin++)
+    for(Int_t parentBin = 0; parentBin < nBins; parentBin++)
     {
       Double_t weight = fTransformMatrix->GetBinContent(daughterBin+1, parentBin+1);
       weightSum += weight;
-      valueSum += weight * base->GetBinContent(parentBin);
+      valueSum += weight * base->GetX()[parentBin];
     }
-    if(weightSum < 0.99) transformedGraph->GetY[daughterBin] = 0;
-    else transformedGraph->GetY[daughterBin] = valueSum/weightSum;
+    if(weightSum < 0.99) transformedGraph->GetY()[daughterBin] = 0;
+    else transformedGraph->GetY()[daughterBin] = valueSum/weightSum;
   }
   
   delete base;
@@ -146,7 +158,8 @@ Double_t LednickyEqn::GetLednickyF1(Double_t z)
 Double_t LednickyEqn::GetLednickyF2(Double_t z)
 {
   TF1 lednickyF2("lednickyf2","(1-exp(-[0]*[0]*x*x))/([0]*x)");
-  const Double_t hbarc = 0.197327;
-  lednickyF2.SetParameter(0, 2.*fRadius/hbarc);
+  // const Double_t HbarC() = 0.197327;
+  lednickyF2.SetParameter(0, 2.*fRadius/HbarC());
   return lednickyF2.Eval(z);
 }
+

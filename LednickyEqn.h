@@ -9,16 +9,20 @@
 #ifndef LednickyEqn_H
 #define LednickyEqn_H
 
-// #include ...
+#include "TH2D.h"
+#include "TGraph.h"
+#include <vector>
 
+
+
+using std::vector;
 
 class LednickyEqn{
  public:
   LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix);
   virtual ~LednickyEqn();
   TGraph *GetLednickyGraph();
-  void SetParameters(const vector<Double_t> &pars);
-  Double_t GetLambdaParam() {return fLambda;};
+  void SetParameters(const vector<Double_t> pars);
   //Other setters/getters?
 
  private:
@@ -36,6 +40,7 @@ class LednickyEqn{
   Double_t GetLednickyF2(Double_t z); // Calculate the F2 function
   TGraph *GetBaseLednickyGraph(); //Calculate Lednicky in parent k* frame
   TGraph *TransformLednickyGraph(TGraph *base);
+  Double_t HbarC() {return 0.197327;};
   
 
 };
