@@ -5,21 +5,24 @@ Double_t PairSystem::CalculateFitChisquare(vector<Double_t> pars)
   // Calculate the chisquare difference between the
   // correlation function data and the combined LednickyEqns
   
-  // Update the fit parameters
+  // Update the fit parameters and get the full Lednicky Eqn graph
   SetLednickyParameters(pars);
+  TGraph *combinedGraph = GetCombinedTGraph();
 
+  //Calculate the total chisquare difference over the fit range.  
+  Double_t chi2 = 0.;
 
-  // Make a TGraph object that sums all the LednickyEqns with
-  // lambda parameters.  
-
-  
-
-  //Take the chisquare difference over the fit range.  
-  Double_t chisquare;
-  
-  //...
-
-  return chisquare;
+  // Find the difference between the fit and the data.  Note that
+  // TGraph bins start counting at 0, while histograms bins start
+  // counting at 1 (the 0 bin is underflow)
+  for(Int_t iBin = fLowFitBin; iBin < fHighFitBin; iBin++)
+  {
+    Double_t diff = combinedGraph->GetY()[iBin] - fCF->GetBinContent(iBin+1);
+    Double_t err = fCf->GetBinError(iBin+1);
+    chi2 += pow(diff,2)/pow(err,2);
+  }
+  delete combinedGraph;
+  return chi2;
 }
 
 void PairSystem::CreateNewLednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix/*,  other params? */)
@@ -27,6 +30,31 @@ void PairSystem::CreateNewLednickyEqn(TString name, Bool_t isIdentical, TH2D *tr
   // Called by Fitter
   LednickyEqn *lednicky = new LednickyEqn(name, isIdentical, transformMatrix);
   fLednickyEqns.push_back(lednicky);
+}
+
+TGraph* PairSystem::GetCombinedTGraph()
+{
+  // Make a TGraph object that sums all the LednickyEqns with
+  // lambda parameters.  
+
+  // Set up the graph's dimensions
+  TGraph *combinedLednicky = fLednickyEqns[0]->GetLednickyGraph();
+
+  // Calculate the y-value of the graph for each x-bin
+  for(Int_t iBin = 0; iBin < combinedLednicky->GetBinsX(); iBin++)
+  {
+    Double_t combinedBinContent = 1.;
+    for(Int_t iLed = 0; iLed < fLednickyEqns.size(); iLed++)
+    {
+      TGraph *ledEqn = fLednickyEqns[iLed]->GetLednickyGraph();
+      Double_t graphValue = ledEqn->GetY()[iBin];
+      combinedBinContent += (graphValue - 1.) * fLambdaParameters(iLed);
+      delete ledEqn;
+    }
+    combinedBinContent /= fNorm;
+    combinedLednicky->GetY()[iBin] = combinedBinContent;
+  }
+  return combinedLednicky;
 }
 
 void PairSystem::SetLednickyParameters(vector<Double_t> pars)
