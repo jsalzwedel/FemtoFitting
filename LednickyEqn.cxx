@@ -107,15 +107,33 @@ void LednickyEqn::SetParameters(const vector<Double_t> &pars)
 TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
 {
   // If the LednickyEqn object is a residual correlation,
-  // return a transformed version of the graph.
+  // return a graph that has been transformed into the 
+  // relative momentum space of the primary correlations.
 
   if(!fTransformMatrix) return base;
 
-  // Calculate new TGraph using the transformation math
-  TGraph *transformedGraph;
+  TGraph *transformedGraph = base->Clone("transformedGraph");
 
-  //...
-
+  const Int_t nBins = transformedGraph->GetN();
+  
+  // DaughterBins are in the relative momentum space of the 
+  // primary correlations
+  for(Int_t daughterBin = 0; daughterBin < nBin; daughterBin++)
+  {
+    Double_t weightSum = 0.;
+    Double_t valueSum = 0.;
+    // ParentBins are in the relative momentum space of the
+    // residual correlation
+    for(Int_t parentBin = 0; parentBin < nBin; parentBin++)
+    {
+      Double_t weight = fTransformMatrix->GetBinContent(daughterBin+1, parentBin+1);
+      weightSum += weight;
+      valueSum += weight * base->GetBinContent(parentBin);
+    }
+    if(weightSum < 0.99) transformedGraph->GetY[daughterBin] = 0;
+    else transformedGraph->GetY[daughterBin] = valueSum/weightSum;
+  }
+  
   delete base;
   return transformedGraph;
 }
