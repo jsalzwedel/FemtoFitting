@@ -7,8 +7,8 @@ CFLAGS = $(shell root-config --cflags)
 
 all: main
 
-main: lednicky faddeeva
-	g++ Faddeeva.o LednickyEqn.o -o lednicky $(LIBS)
+main: lednicky faddeeva Main.cxx
+	g++ Main.cxx Faddeeva.o LednickyEqn.o -o lednicky $(LIBS) $(CFLAGS)
 
 faddeeva: Faddeeva.cc
 	g++ -c Faddeeva.cc
