@@ -157,8 +157,6 @@ Double_t LednickyEqn::GetLednickyF1(Double_t z)
 Double_t LednickyEqn::GetLednickyF2(Double_t z)
 {
   TF1 lednickyF2("lednickyf2","(1-exp(-x*x))/(x)");
-  // const Double_t HbarC() = 0.197327;
-  lednickyF2.SetParameter(0, 2.*fRadius/HbarC());
   return lednickyF2.Eval(z);
 }
 
