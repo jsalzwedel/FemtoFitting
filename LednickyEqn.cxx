@@ -13,6 +13,8 @@
 #include "Faddeeva.hh"
 #include <iostream>
 
+using namespace std;
+
 LednickyEqn::LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix, Int_t nBins, Double_t binWidth)
 {
   fName = name;
@@ -137,7 +139,7 @@ TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
     {
       Double_t weight = fTransformMatrix->GetBinContent(daughterBin+1, parentBin+1);
       weightSum += weight;
-      valueSum += weight * base->GetX()[parentBin];
+      valueSum += weight * base->GetY()[parentBin];
     }
     if(weightSum < 0.99) transformedGraph->GetY()[daughterBin] = 0;
     else transformedGraph->GetY()[daughterBin] = valueSum/weightSum;
