@@ -19,7 +19,7 @@ using std::vector;
 
 class LednickyEqn{
  public:
-  LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix);
+  LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix, Int_t nBins, Double_t binWidth);
   virtual ~LednickyEqn();
   TGraph *GetLednickyGraph();
   void SetParameters(const vector<Double_t> pars);

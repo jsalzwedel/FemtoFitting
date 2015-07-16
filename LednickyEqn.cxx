@@ -11,23 +11,20 @@
 #include "TF1.h"
 #include "LednickyEqn.h"
 #include "Faddeeva.hh"
-#include "iostream"
+#include <iostream>
 
-int main()
-{
-std::cout<<"test"<<std::endl;
-return 0;
-}
-
-// using std::vector;
-
-LednickyEqn::LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix)
+LednickyEqn::LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix, Int_t nBins, Double_t binWidth)
 {
   fName = name;
   fIsIdentical = isIdentical;
   //If transform matrix is null, this is a primary correlation
   fTransformMatrix = transformMatrix;
- 
+  fF0Real = 0.;
+  fF0Imag = 0.;
+  fD0 = 0.;
+  fRadius = 0.;
+  fNBins = nBins;
+  fBinWidth = binWidth;
 }
 
 LednickyEqn::~LednickyEqn()
@@ -59,31 +56,33 @@ TGraph* LednickyEqn::GetBaseLednickyGraph()
     Double_t scatterAmpDen = 0;
     scatterAmpDen += pow((1. + fF0Imag*kstar[iBin]/HbarC()),2)
                    + pow((fF0Real * kstar[iBin] / HbarC()),2);
-    scatterAmpDen += pow(kstar[iBin],4) * pow(fD0,2) 
-                   * (pow(fF0Real,2) + pow(fF0Imag,2)) 
-                   / (4. * pow(HbarC(),4));
+    scatterAmpDen += pow(kstar[iBin]/HbarC(),4) * pow(fD0,2) 
+                   * (pow(fF0Real,2) + pow(fF0Imag,2)) / 4.;
+                  
     scatterAmpDen += fF0Real * fD0 * pow(kstar[iBin] / HbarC(), 2);
     
     // Calculate the real and imaginary parts of the scattering
     // amplitude numerator
     Double_t scatterAmpRe = fF0Real
       + 0.5 * fD0 * pow(kstar[iBin]/HbarC(),2) * (pow(fF0Real,2) + pow(fF0Imag,2));
+    scatterAmpRe /= scatterAmpDen;
     Double_t scatterAmpIm = fF0Imag 
       + (pow(fF0Real,2) + pow(fF0Imag,2)) * kstar[iBin] / HbarC();
-    Double_t scatterAmpMagSqr = (pow(scatterAmpRe,2) + pow(scatterAmpIm,2)) / pow(scatterAmpDen,2);
+    scatterAmpIm /= scatterAmpDen;
+    Double_t scatterAmpMagSqr = (pow(scatterAmpRe,2) + pow(scatterAmpIm,2));
     
     // Finally, calculate the cf value
     cf[iBin] = 0.5 * (scatterAmpMagSqr/pow(fRadius,2)) 
       * (1. - fD0/(2. * sqrt(TMath::Pi()) * fRadius));
     cf[iBin] += 2. * scatterAmpRe 
-      * GetLednickyF1(2. * kstar[iBin] * fRadius)
+      * GetLednickyF1(2. * kstar[iBin] * fRadius / HbarC())
       / (sqrt(TMath::Pi())*fRadius);
     cf[iBin] -= scatterAmpIm 
-      * GetLednickyF2(2. * kstar[iBin] * fRadius)
+      * GetLednickyF2(2. * kstar[iBin] * fRadius / HbarC())
       / fRadius;
     if(fIsIdentical) {
       cf[iBin] *= 0.5;
-      cf[iBin] -= 0.5 * exp(-4. * pow(kstar[iBin] * fRadius,2));
+      cf[iBin] -= 0.5 * exp(-4. * pow(kstar[iBin] * fRadius/HbarC(),2));
     }
     cf[iBin] += 1.;
   }
@@ -157,7 +156,7 @@ Double_t LednickyEqn::GetLednickyF1(Double_t z)
 
 Double_t LednickyEqn::GetLednickyF2(Double_t z)
 {
-  TF1 lednickyF2("lednickyf2","(1-exp(-[0]*[0]*x*x))/([0]*x)");
+  TF1 lednickyF2("lednickyf2","(1-exp(-x*x))/(x)");
   // const Double_t HbarC() = 0.197327;
   lednickyF2.SetParameter(0, 2.*fRadius/HbarC());
   return lednickyF2.Eval(z);
