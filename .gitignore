@@ -9,3 +9,5 @@
 *.so
 *.zip
 *.root
+*.o
+AutoDict_*
