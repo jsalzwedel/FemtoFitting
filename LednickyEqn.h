@@ -41,6 +41,7 @@ class LednickyEqn{
   TGraph *GetBaseLednickyGraph(); //Calculate Lednicky in parent k* frame
   TGraph *TransformLednickyGraph(TGraph *base);
   Double_t HbarC() {return 0.197327;};
+  void LednickyEqn::RebinTransformMatrix(TH2D* matrix);
   
 
 };

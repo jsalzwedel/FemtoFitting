@@ -125,6 +125,10 @@ TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
 
   TGraph *transformedGraph = (TGraph*) base->Clone("transformedGraph");
 
+  //If not the same number of bins as transform matrix, rebin it...
+  // if(...) ... divide nbinsTransform by nBins graph, take modulus...
+  RebinTransformMatrix(fTransformMatrix);
+
   const Int_t nBins = transformedGraph->GetN();
   
   // DaughterBins are in the relative momentum space of the 
@@ -162,3 +166,9 @@ Double_t LednickyEqn::GetLednickyF2(Double_t z)
   return lednickyF2.Eval(z);
 }
 
+void LednickyEqn::RebinTransformMatrix(TH2D* matrix)
+{
+  // Very inelegant way of rebinning...
+  matrix->RebinX(4);
+  matrix->RebinY(4);
+}
