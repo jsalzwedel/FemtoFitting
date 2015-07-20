@@ -222,11 +222,8 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare
 
 void Fitter::SetupInitialParameters()
 {
-  // Parameter order: 0) radius, 1) f0real, 2) f0Imag, 3) fD0,
-  // 4) norm, 5) lambdas?
+  // Very inelegant way of setting up initial parameters.
 
-
-  // Example setup of initial params
   for(Int_t iSys = 0; iSys < fNSystems; iSys++)
   {
     SystemType thisSys = 1 << iSys;
@@ -235,32 +232,72 @@ void Fitter::SetupInitialParameters()
     {
       // Check to see if this parameter has been constrained 
       // to be the same as the parameter from an earlier system
-      if(IsParamConstrained(iSys, iPar)) {
+      if(IsParamConstrained(thisSys, iPar)) {
 	// This parameter is constrained. It has already been set 
 	// up for a previous system.  Ignore it here.
 	continue;
       }
       // New parameter.  Now set it up.
-
-    }
-
-
-    // fParNames[iSys * fNParams + 0] = "Radius";
-    // fParNames[iSys * fNParams + 1] = "F0Real";
-    // fParNames[iSys * fNParams + 2] = "F0Imag";
-    // fParNames[iSys * fNParams + 3] = "D0";
-    // fParNames[iSys * fNParams + 4] = "Norm";
-    // if(!fUseEstimatedLambdaParams) fParNames[iSys * fNParams + 5] = "Lambda";
-    
-    // Int_t par = iSys * fNParams + 0;
-    // fParNames[par] = "Radius";
-    // fParInitial[par] = 3.;
-    // fParMinimum[par] = 0.;
-    // fParMaximum[par] = 0.;
-    // fParIsFixed[par] = ;
-
-
-  }
+      if(kRad == iPar)
+      {
+	fParNames.push_back("Radius");
+	fParInitial.push_back(3.);
+	fParMinimum.push_back(0);
+	fParMaximum.push_back(0);
+	fParIsFixed.push_back(fFixRadius);
+      }
+      if(kF0Real == iPar)
+      {
+	fParNames.push_back("F0Real");
+	fParInitial.push_back(-1.);
+	fParMinimum.push_back(0);
+	fParMaximum.push_back(0);
+	fParIsFixed.push_back(fFixF0Real);
+      }
+      if(kF0Imag == iPar)
+      {
+	fParNames.push_back("F0Imag");
+	if(fAllowImagF0(iSys)) 
+	{
+	  fParInitial.push_back(1.);
+	  fParIsFixed.push_back(fFixF0Imag);
+	}
+	else 
+	{
+	  fParInitial.push_back(0.);
+	  fParIsFixed.push_back(kTRUE);
+	}
+	fParMinimum.push_back(0);
+	fParMaximum.push_back(0);
+	fParIsFixed.push_back(fFixF0Real);
+      }
+      if(kD0 == iPar)
+      {
+	fParNames.push_back("D0");
+	fParInitial.push_back(3.);
+	fParMinimum.push_back(0);
+	fParMaximum.push_back(0);
+	fParIsFixed.push_back(fFixD0);
+      }
+      if(kNorm == iPar)
+      {
+	fParNames.push_back("Norm");
+	fParInitial.push_back(1.);
+	fParMinimum.push_back(0);
+	fParMaximum.push_back(0);
+	fParIsFixed.push_back(fFixNorm);
+      }
+      if(kLambda == iPar)
+      {
+	assert(!fUseEstimatedLambdaParams);
+	fParNames.push_back("Lambda");
+	fParInitial.push_back(.2);
+	fParMinimum.push_back(0.);
+	fParMaximum.push_back(1.);
+	fParIsFixed.push_back(fFixLambda);
+      }
+    } // end parameter loop
+  } // end system loop
 }
 
 void Fitter::SetupParameterConstraints(const Int_t config)
