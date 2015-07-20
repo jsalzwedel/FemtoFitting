@@ -6,31 +6,14 @@
 #include "PairSystem.h"
 #include "ParameterConstraint.h"
 
-int main(int argc, char **argv)
+
+
+Fitter::Fitter():
+  fNParams(5),
+  fNSystems(0),
+  fMaxMinuitCalls(10000),
+  fUseEstimatedLambdaParams(kTRUE)
 {
-  
-  // Check that the first argument (configuration number)
-  // is an integer.
-  Int_t config;
-  if (sscanf (argv[1], "%i", &config)!=1) { printf ("error - not an integer"); }
-
-  // Setup
-  Fitter myFitter();
-  myFitter.CreateAllPairSystems(config);
-  myFitter.SetFitOptions();
-
-  // Fitting
-  myFitter.CreateMinuit(/* */);
-  myFitter.DoFitting();
-  myFitter.SaveOutputPlots();
-  
-  
-}
-
-Fitter::Fitter()
-{
-  fNParams(6); 
-  fNSystems(0);
 }
 
 Fitter::~Fitter()
@@ -47,8 +30,31 @@ Fitter::~Fitter()
     delete fParamConstraints[i];
     fParamConstraints[i] = NULL;
   }
+  if(fMinuit) {delete fMinuit; fMinuit = NULL;}
 }
 
+Bool_t Fitter::IsParameterConstrained(const SystemType sys, const ParamType par)
+{
+  // Check to see if this parameter has been constrained 
+  // to be the same as the parameter from an earlier system
+  
+  for(Int_t iCon = 0; iCon < fParamConstraints.size(); iCon++)
+  {
+    // Check for constraints on this type of parameter
+    ParameterConstraint *constraint = fParamConstraints[iCon];
+    if(constraint->GetConstrainedParam() != par) continue;
+    
+    vector<Int_t> consSystems = fParamConstraints[iCon]->GetConstrainedSystems();
+
+    // Ignore this system if it is the first system in the
+    // constraint.  If it is a subsequent system, return true.
+    for(Int_t iSys = 1; iSys < consSystems; iSys++)
+    {
+      if(consSystems[iSys] == sys) return true;
+    } 
+  }
+  return kFALSE;
+}
 
 void Fitter::CreateAllPairSystems(Int_t configuration)
 {
@@ -180,7 +186,7 @@ void Fitter::SaveOutputPlots()
   // Save output plots for each fit
 }
 
-void Fitter::SetFitOptions()
+void Fitter::SetFitOptions(const Int_t constraintConfig)
 {
   // Set things like:
   // -How many correlations to fit
@@ -188,9 +194,9 @@ void Fitter::SetFitOptions()
   // -What parameters to share
 
 
-  SetupParameters();
-  SetupParameterConstraints();
-
+  SetupParameterVectors();
+  SetupParameterConstraints(constraintConfig);
+  SetupInitialParameters();
  
   
 }
@@ -214,7 +220,62 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare
   }
 }
 
-void Fitter::SetupParameters()
+void Fitter::SetupInitialParameters()
+{
+  // Parameter order: 0) radius, 1) f0real, 2) f0Imag, 3) fD0,
+  // 4) norm, 5) lambdas?
+
+
+  // Example setup of initial params
+  for(Int_t iSys = 0; iSys < fNSystems; iSys++)
+  {
+    SystemType thisSys = 1 << iSys;
+
+    for(Int_t iPar = 0; iPar < fNParams; iPar++)
+    {
+      // Check to see if this parameter has been constrained 
+      // to be the same as the parameter from an earlier system
+      if(IsParamConstrained(iSys, iPar)) {
+	// This parameter is constrained. It has already been set 
+	// up for a previous system.  Ignore it here.
+	continue;
+      }
+      // New parameter.  Now set it up.
+
+    }
+
+
+    // fParNames[iSys * fNParams + 0] = "Radius";
+    // fParNames[iSys * fNParams + 1] = "F0Real";
+    // fParNames[iSys * fNParams + 2] = "F0Imag";
+    // fParNames[iSys * fNParams + 3] = "D0";
+    // fParNames[iSys * fNParams + 4] = "Norm";
+    // if(!fUseEstimatedLambdaParams) fParNames[iSys * fNParams + 5] = "Lambda";
+    
+    // Int_t par = iSys * fNParams + 0;
+    // fParNames[par] = "Radius";
+    // fParInitial[par] = 3.;
+    // fParMinimum[par] = 0.;
+    // fParMaximum[par] = 0.;
+    // fParIsFixed[par] = ;
+
+
+  }
+}
+
+void Fitter::SetupParameterConstraints(const Int_t config)
+{
+  
+  if(config /*  & ... */){
+    ConstrainF0D0();
+  }
+  if(config /*  & ... */){
+    ConstrainRadii();
+  }
+
+}
+
+void Fitter::SetupParameterVectors()
 {
   // Initialize parameter values for Minuit
   // Set min and max values
@@ -229,18 +290,14 @@ void Fitter::SetupParameters()
   fParCurrent.resize(fNParams*fNSystems);
   fParIsFixed.resize(fNParams*fNSystems);
 
+  // Basic param setup
+
 }
 
-void Fitter::SetupParameterConstraints(const Int_t config)
+void Fitter::SetUseEstimatedLambdaParams(Bool_t useParam)
 {
-  
-  if(config /*  & ... */){
-    ConstrainF0D0();
-  }
-  if(config /*  & ... */){
-    ConstrainRadii();
-  }
-
+  fUseEstimatedLambdaParams = useParam;
+  if(!useParam) fNParams = 6; // Or 5 + however many lambda params to fit
 }
 
 void Fitter::ConstrainRadii()
