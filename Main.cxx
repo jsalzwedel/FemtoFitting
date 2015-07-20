@@ -1,5 +1,8 @@
 
 #include "LednickyEqn.h"
+// #include "PairSystem.h"
+// #include "ParameterConstraint.h"
+// #include "Fitter.h"
 #include <iostream>
 #include "TH2D.h"
 #include "TFile.h"
@@ -30,3 +33,28 @@ int main()
   
   return 0;
 }
+
+
+/*
+// main for full program
+int main(int argc, char **argv)
+{
+  
+  // Check that the first argument (configuration number)
+  // is an integer.
+  Int_t config;
+  if (sscanf (argv[1], "%i", &config)!=1) { printf ("error - not an integer"); }
+
+  // Setup
+  Fitter myFitter();
+  myFitter.CreateAllPairSystems(config);
+  myFitter.SetFitOptions();
+
+  // Fitting
+  myFitter.CreateMinuit();
+  myFitter.DoFitting();
+  myFitter.SaveOutputPlots();
+  
+  
+}
+ */
