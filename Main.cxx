@@ -8,6 +8,8 @@
 #include "TFile.h"
 #include <vector>
 
+
+
 int main()
 {
 
@@ -32,6 +34,36 @@ int main()
   myGraph->Write(myGraph->GetName(), TObject::kOverwrite);
   
   return 0;
+}
+
+
+void UserSetupSystems(Fitter &fitter)
+{
+  // The user should modify this to suit their fitting needs
+  
+  // Int_t systems = Fitter::kLL010 
+  //   + Fitter::kLL1030
+  //   + Fitter::kLL3050
+  //   + Fitter::kLA010
+  //   + Fitter::kLA1030
+  //   + Fitter::kLA3050;
+
+  // Add systems to the analysis
+
+  TString fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root";
+  TString histName = "CombinedLLAA0-10KstarMomCorrected";
+  Bool_t isPrimaryIdentical = kTRUE;
+  Bool_t allowImaginaryF0 = kFALSE;
+  Double_t initParamsArr[5] = {3., -1., 0., 3., 1.}; 
+  vector<Double_t> initParams(initParamsArr);
+  // Make initial parameters: Radius, ReF0, ImF0, D0, Normalization 
+  Bool_t fixParamsArr[5] = {kFALSE, kFALSE, allowImaginaryF0, kFALSE, kFALSE};
+  vector<Bool_t> fixParams(fixParamsArr);
+
+  fitter.CreatePairSystem(Fitter::kLL010, fileName, histName, isPrimaryIdentical, initParams, fixParams);
+
+  // Add more as needed
+
 }
 
 
