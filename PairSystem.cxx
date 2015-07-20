@@ -92,10 +92,16 @@ void PairSystem::SetLednickyParameters(vector<Double_t> pars)
   // Normalization parameter should be stored in PairSystem, not
   // passed on to Lednicky Eqn
   fNorm = pars[4];
+
+
   
   // Lambda parameters should not be passed on to Lednicky Eqn.
   // If they are coming from Minuit instead of being read from file
   // they should be updated in the PairSystem here.
+  if(pars.size() > 5) 
+  {
+    // Do lambda param stuff
+  }
   
 }
 
