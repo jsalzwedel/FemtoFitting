@@ -52,6 +52,7 @@ void UserSetupSystems(Fitter &fitter)
 
   TString fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root";
   TString histName = "CombinedLLAA0-10KstarMomCorrected";
+  TString simpleName = "LL010";
   Bool_t isPrimaryIdentical = kTRUE;
   Bool_t allowImaginaryF0 = kFALSE;
   Double_t initParamsArr[5] = {3., -1., 0., 3., 1.}; 
@@ -60,7 +61,7 @@ void UserSetupSystems(Fitter &fitter)
   Bool_t fixParamsArr[5] = {kFALSE, kFALSE, allowImaginaryF0, kFALSE, kFALSE};
   vector<Bool_t> fixParams(fixParamsArr);
 
-  fitter.CreatePairSystem(Fitter::kLL010, fileName, histName, isPrimaryIdentical, initParams, fixParams);
+  fitter.CreatePairSystem(simpleName, fileName, histName, isPrimaryIdentical, initParams, fixParams);
 
   // Add more as needed
 

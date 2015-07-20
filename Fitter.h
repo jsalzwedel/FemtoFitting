@@ -43,29 +43,34 @@ class Fitter{
   void SetupInitialParameters()
   void SetupParameterConstraints(const Int_t config);
   void SetupParameterVectors();
-  // Used for Minuit
-  TMinuit *fMinuit;
-  vector<TString>  fParNames;
-  vector<Double_t> fParInitial;
-  vector<Double_t> fParMinimum;
-  vector<Double_t> fParMaximum;
-  vector<Double_t> fParCurrent;
-  vector<Bool_t>   fParIsFixed;
 
-  // Used ...
-  vector<*PairSystem> fPairSystems;
+  TMinuit *fMinuit;
+  vector<TString>  fMinuitParNames;
+  vector<Double_t> fMinuitParInitial;
+  /* vector<Double_t> fMinuitParMinimum; */
+  /* vector<Double_t> fMinuitParMaximum; */
+  /* vector<Double_t> fMinuitParCurrent; */
+  vector<Bool_t>   fMinuitParIsFixed;
+
   vector<*ParameterConstraint> fParamConstraints;
   Double_t fNParams;
+  vector<TString> fParamNames;
   Double_t fNSystems;
-  vector<Bool_t> fAllowImagF0; // Do we allow non-zero ImF0?  For each system
+  /* vector<Bool_t> fAllowImagF0; // Do we allow non-zero ImF0?  For each system */
   Int_t fMaxMinuitCalls;
   Bool_t fUseEstimatedLambdaParams;
-  Bool_t fFixRadius;
-  Bool_t fFixF0Real;
-  Bool_t fFixF0Imag;
-  Bool_t fFixD0;
-  Bool_t fFixNorm;
-  Bool_t fFixLambda;
+
+  // PairSystem information
+  vector<*PairSystem> fPairSystems;
+  vector<TString> fSystemNames;
+  vector<vector<Double_t> > fInitParams;
+  vector<vector<Bool_t> > fFixParams;
+  /* Bool_t fFixRadius; */
+  /* Bool_t fFixF0Real; */
+  /* Bool_t fFixF0Imag; */
+  /* Bool_t fFixD0; */
+  /* Bool_t fFixNorm; */
+  /* Bool_t fFixLambda; */
 }
 
 #endif

@@ -14,6 +14,12 @@ Fitter::Fitter():
   fMaxMinuitCalls(10000),
   fUseEstimatedLambdaParams(kTRUE)
 {
+  fParamNames.push_back("Radius");
+  fParamNames.push_back("ReF0");
+  fParamNames.push_back("ImF0");
+  fParamNames.push_back("D0");
+  fParamNames.push_back("Norm");
+  
 }
 
 Fitter::~Fitter()
@@ -81,6 +87,20 @@ void Fitter::CreateAllPairSystems(Int_t configuration)
     PairSystem *system = new PairSystem(cf, isIdenticalPrimary[iSystem]);
     fPairSystems.push_back(system);
   }
+}
+
+
+void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString histName, Bool_t isPrimaryIdentical, vector<Double_t> initParams, vector<Bool_t> fixParams)
+{
+  TFile inFile(fileName, "read");
+  TH1D *cf = inFile.Get(histName);
+  assert(cf);
+  cf->SetDirectory(0);
+  PairSystem *system = new PairSystem(cf, isPrimaryIdentical, simpleName);
+  fPairSystems.push_back(system);
+  fSystemNames.push_back(simpleName);
+  fInitParams.push_back(initParams);
+  fFixParams.push_back(fixParams);
 }
 
 void Fitter::CreateMinuit(/* */)
@@ -172,9 +192,13 @@ void Fitter::InitializeParameters(TMinuit *minuit)
   // Define the fit parameters
 
   Double_t startingStepSize = 0.001;
+  
+  // Allow the parameters to have no bounds
+  Double_t parameterMinimum = 0;
+  Double_t parameterMaximum = 0;
 
-  for(int iPar = 0; iPar < fNParams; iPar++){
-    minuit->DefineParameter(iPar, fParNames[iPar], fParInitial[iPar],  startingStepSize, fParMinimum[iPar], fParMaximum[iPar]);
+  for(int iPar = 0; iPar < fMinuitParNames.size(); iPar++){
+    minuit->DefineParameter(iPar, fParNames[iPar], fParInitial[iPar],  startingStepSize, parameterMinimum, parameterMaximum);
     if(fParIsFixed[iPar]) myMinut->FixParameter(iPar);
   }
   
@@ -220,14 +244,95 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare
   }
 }
 
+// void Fitter::SetupInitialParameters()
+// {
+//   // Very inelegant way of setting up initial parameters.
+
+//   for(Int_t iSys = 0; iSys < fNSystems; iSys++)
+//   {
+//     SystemType thisSys = 1 << iSys;
+
+//     for(Int_t iPar = 0; iPar < fNParams; iPar++)
+//     {
+//       // Check to see if this parameter has been constrained 
+//       // to be the same as the parameter from an earlier system
+//       if(IsParamConstrained(thisSys, iPar)) {
+// 	// This parameter is constrained. It has already been set 
+// 	// up for a previous system.  Ignore it here.
+// 	continue;
+//       }
+//       // New parameter.  Now set it up.
+//       if(kRad == iPar)
+//       {
+// 	fParNames.push_back("Radius");
+// 	fParInitial.push_back(3.);
+// 	fParMinimum.push_back(0);
+// 	fParMaximum.push_back(0);
+// 	fParIsFixed.push_back(fFixRadius);
+//       }
+//       if(kF0Real == iPar)
+//       {
+// 	fParNames.push_back("F0Real");
+// 	fParInitial.push_back(-1.);
+// 	fParMinimum.push_back(0);
+// 	fParMaximum.push_back(0);
+// 	fParIsFixed.push_back(fFixF0Real);
+//       }
+//       if(kF0Imag == iPar)
+//       {
+// 	fParNames.push_back("F0Imag");
+// 	if(fAllowImagF0(iSys)) 
+// 	{
+// 	  fParInitial.push_back(1.);
+// 	  fParIsFixed.push_back(fFixF0Imag);
+// 	}
+// 	else 
+// 	{
+// 	  fParInitial.push_back(0.);
+// 	  fParIsFixed.push_back(kTRUE);
+// 	}
+// 	fParMinimum.push_back(0);
+// 	fParMaximum.push_back(0);
+// 	fParIsFixed.push_back(fFixF0Real);
+//       }
+//       if(kD0 == iPar)
+//       {
+// 	fParNames.push_back("D0");
+// 	fParInitial.push_back(3.);
+// 	fParMinimum.push_back(0);
+// 	fParMaximum.push_back(0);
+// 	fParIsFixed.push_back(fFixD0);
+//       }
+//       if(kNorm == iPar)
+//       {
+// 	fParNames.push_back("Norm");
+// 	fParInitial.push_back(1.);
+// 	fParMinimum.push_back(0);
+// 	fParMaximum.push_back(0);
+// 	fParIsFixed.push_back(fFixNorm);
+//       }
+//       if(kLambda == iPar)
+//       {
+// 	assert(!fUseEstimatedLambdaParams);
+// 	fParNames.push_back("Lambda");
+// 	fParInitial.push_back(.2);
+// 	fParMinimum.push_back(0.);
+// 	fParMaximum.push_back(1.);
+// 	fParIsFixed.push_back(fFixLambda);
+//       }
+//     } // end parameter loop
+//   } // end system loop
+// }
+
+
+
+
 void Fitter::SetupInitialParameters()
 {
   // Very inelegant way of setting up initial parameters.
 
   for(Int_t iSys = 0; iSys < fNSystems; iSys++)
   {
-    SystemType thisSys = 1 << iSys;
-
     for(Int_t iPar = 0; iPar < fNParams; iPar++)
     {
       // Check to see if this parameter has been constrained 
@@ -238,67 +343,19 @@ void Fitter::SetupInitialParameters()
 	continue;
       }
       // New parameter.  Now set it up.
-      if(kRad == iPar)
-      {
-	fParNames.push_back("Radius");
-	fParInitial.push_back(3.);
-	fParMinimum.push_back(0);
-	fParMaximum.push_back(0);
-	fParIsFixed.push_back(fFixRadius);
-      }
-      if(kF0Real == iPar)
-      {
-	fParNames.push_back("F0Real");
-	fParInitial.push_back(-1.);
-	fParMinimum.push_back(0);
-	fParMaximum.push_back(0);
-	fParIsFixed.push_back(fFixF0Real);
-      }
-      if(kF0Imag == iPar)
-      {
-	fParNames.push_back("F0Imag");
-	if(fAllowImagF0(iSys)) 
-	{
-	  fParInitial.push_back(1.);
-	  fParIsFixed.push_back(fFixF0Imag);
-	}
-	else 
-	{
-	  fParInitial.push_back(0.);
-	  fParIsFixed.push_back(kTRUE);
-	}
-	fParMinimum.push_back(0);
-	fParMaximum.push_back(0);
-	fParIsFixed.push_back(fFixF0Real);
-      }
-      if(kD0 == iPar)
-      {
-	fParNames.push_back("D0");
-	fParInitial.push_back(3.);
-	fParMinimum.push_back(0);
-	fParMaximum.push_back(0);
-	fParIsFixed.push_back(fFixD0);
-      }
-      if(kNorm == iPar)
-      {
-	fParNames.push_back("Norm");
-	fParInitial.push_back(1.);
-	fParMinimum.push_back(0);
-	fParMaximum.push_back(0);
-	fParIsFixed.push_back(fFixNorm);
-      }
-      if(kLambda == iPar)
-      {
-	assert(!fUseEstimatedLambdaParams);
-	fParNames.push_back("Lambda");
-	fParInitial.push_back(.2);
-	fParMinimum.push_back(0.);
-	fParMaximum.push_back(1.);
-	fParIsFixed.push_back(fFixLambda);
-      }
+      TString parName = fParamNames[iPar] + fSystemNames[iSys];
+      fMinuitParNames.push_back(parName);
+      fMinuitParInitial.push_back(fInitParams[iSys][iPar]);
+      fMinuitParIsFixed.push_back(fInitParams[iSys][iPar]);
     } // end parameter loop
   } // end system loop
 }
+
+
+
+
+
+
 
 void Fitter::SetupParameterConstraints(const Int_t config)
 {
