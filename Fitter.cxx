@@ -39,7 +39,7 @@ Fitter::~Fitter()
   if(fMinuit) {delete fMinuit; fMinuit = NULL;}
 }
 
-Bool_t Fitter::IsParameterConstrained(const SystemType sys, const ParamType par)
+Bool_t Fitter::IsParameterConstrained(const Int_t currentSys, const Int_t currentPar)
 {
   // Check to see if this parameter has been constrained 
   // to be the same as the parameter from an earlier system
@@ -52,8 +52,6 @@ Bool_t Fitter::IsParameterConstrained(const SystemType sys, const ParamType par)
     
     vector<Int_t> consSystems = fParamConstraints[iCon]->GetConstrainedSystems();
 
-    // Ignore this system if it is the first system in the
-    // constraint.  If it is a subsequent system, return true.
     for(Int_t iSys = 1; iSys < consSystems; iSys++)
     {
       if(consSystems[iSys] == sys) return true;
@@ -62,32 +60,32 @@ Bool_t Fitter::IsParameterConstrained(const SystemType sys, const ParamType par)
   return kFALSE;
 }
 
-void Fitter::CreateAllPairSystems(Int_t configuration)
-{
-  // Create all the pair systems objects that will be used
-  // in the fitting.  Call CreateSinglePairSystem for each
-  // combination of pair type and centrality that will be 
-  // fit.
+// void Fitter::CreateAllPairSystems(Int_t configuration)
+// {
+//   // Create all the pair systems objects that will be used
+//   // in the fitting.  Call CreateSinglePairSystem for each
+//   // combination of pair type and centrality that will be 
+//   // fit.
 
-  vector<TString> fileNames;
-  vector<TString> histNames;
-  vector<Bool_t>  isIdenticalPrimary;
+//   vector<TString> fileNames;
+//   vector<TString> histNames;
+//   vector<Bool_t>  isIdenticalPrimary;
 
-  GetHistConfiguration(configuration, fileNames, histNames, isIdenticalPrimary);
-  fNSystems = fileNames.size();  
-  assert(fNSystems == histNames.size());
-  assert(fNSystems > 0);
+//   GetHistConfiguration(configuration, fileNames, histNames, isIdenticalPrimary);
+//   fNSystems = fileNames.size();  
+//   assert(fNSystems == histNames.size());
+//   assert(fNSystems > 0);
 
-  for(int iSystem = 0; iSystem < fNSystems; iSystem++)
-  {
-    TFile inFile((fileNames[iSystem]), "read");
-    TH1D *cf = inFile.Get(histNames[iSystem]);
-    assert(cf);
-    cf->SetDirectory(0);
-    PairSystem *system = new PairSystem(cf, isIdenticalPrimary[iSystem]);
-    fPairSystems.push_back(system);
-  }
-}
+//   for(int iSystem = 0; iSystem < fNSystems; iSystem++)
+//   {
+//     TFile inFile((fileNames[iSystem]), "read");
+//     TH1D *cf = inFile.Get(histNames[iSystem]);
+//     assert(cf);
+//     cf->SetDirectory(0);
+//     PairSystem *system = new PairSystem(cf, isIdenticalPrimary[iSystem]);
+//     fPairSystems.push_back(system);
+//   }
+// }
 
 
 void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString histName, Bool_t isPrimaryIdentical, vector<Double_t> initParams, vector<Bool_t> fixParams)
@@ -112,7 +110,7 @@ void Fitter::CreateMinuit(/* */)
   // Using the Fit Options and the number of LednickyEqns,
   // determine how many fit parameters there will be.
 
-  fMinuit = new TMinuit(fNParams);
+  fMinuit = new TMinuit(fMinuitParNames.size());
   fMinuit->SetFCN(SetParametersAndFit);
   InitializeParameters(fMinuit);
 
@@ -227,19 +225,45 @@ void Fitter::SetFitOptions(const Int_t constraintConfig)
 
 void Fitter::SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag)
 {
-  // Take the TMinuit parameters, set them for each pair 
-  // system, and get the resulting Chisquare of the fit.
+  // Take the TMinuit parameters, set the parameters for each
+  // pair system, and get the resulting chisquare of the fit.
 
-
-  totalChisquare = 0;
-
-  for(Int_t iSys = 0; iSys < fPairSystems.size(); iSys++)
+  // We'll copy par into the parameters vector, and insert 
+  // any constrained parameters into their appropriate
+  // positions
+  vector<Double_t> parameters(fNSystems * fNParams);
+  Int_t constrainedParams = 0;
+  for(Int_t iSys = 0; iSys < fNSystems; iSys++)
   {
-    vector<Double_t> newPars;
-    for(Int_t iPar = 0; iPar < fNParams; iPar++) {
-      newPars[iPar] = par[fNParams * iSys + iPar];
+    for(Int_t iPar = 0; iPar < fNParams; iPar++) 
+    {
+      Int_t thisParamIndex = iSys * fNParams + iPar;
+      // If the parameter is constrained, minuit won't have a value
+      // for it.  We'll need to copy the value from the 
+      // corresponding constrained parameter.
+      if(IsParamConstrained(iSys, iPar, true)){
+	Int_t priorIndex = GetConstrainedParamIndex(iSys, iPar);
+	assert(thisParamIndex > priorIndex);
+	parameters[thisParamIndex] = parameters[priorIndex];
+	constrainedParams++;
+  	continue;
+      }
+      parameters[thisParamIndex] = par[thisParamIndex - constrainedParams];
     }
-    fPairSystems[iSys]->SetLednickyParams(newPars);
+  }
+
+  assert(sizeof(par)/sizeof(Double_t) == fNParams * fNSystems - constrainedParams);
+
+  // Break up the total parameter vector into a mini-vector for
+  // each PairSystem. Then pass the vector to the system and 
+  // get chisquare
+  totalChisquare = 0;
+  for(Int_t iSys = 0; iSys < fNSystems; iSys++)
+  {
+    
+    vector<Double_t> pairSystemPars(&parameters[iSys * fNParams],
+				    &parameters[(iSys +1) * fNParams]);
+    fPairSystems[iSys]->SetLednickyParams(pairSystemPars);
     totalChisquare += fPairSystems[iSys]->CalculateFitChisquare();
   }
 }
@@ -329,7 +353,8 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare
 
 void Fitter::SetupInitialParameters()
 {
-  // Very inelegant way of setting up initial parameters.
+  // Get all the parameters put into arrays to be passed to Minuit.
+  // Exclude constrained parameters from the list.
 
   for(Int_t iSys = 0; iSys < fNSystems; iSys++)
   {
@@ -337,7 +362,7 @@ void Fitter::SetupInitialParameters()
     {
       // Check to see if this parameter has been constrained 
       // to be the same as the parameter from an earlier system
-      if(IsParamConstrained(thisSys, iPar)) {
+      if(IsParameterConstrained(thisSys, iPar)) {
 	// This parameter is constrained. It has already been set 
 	// up for a previous system.  Ignore it here.
 	continue;

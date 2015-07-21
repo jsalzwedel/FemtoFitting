@@ -26,9 +26,11 @@ class Fitter{
   Fitter();
   virtual ~Fitter();
   
-  void CreateAllPairSystems(Int_t configuration);
+  /* void CreateAllPairSystems(Int_t configuration); */
+  void CreatePairSystem(TString simpleName, TString fileName, TString histName, Bool_t isPrimaryIdentical, vector<Double_t> initParams, vector<Bool_t> fixParams)
   void CreateMinuit();
   void DoFitting();
+  Int_t GetNSystems() {return fNSystems;};
   void SaveOutputPlots();
   void SetFitOptions();
   void SetUseEstimatedLambdaParams(Bool_t useParam);
@@ -36,9 +38,10 @@ class Fitter{
  private:
   void ConstrainF0D0();
   void ConstrainRadii();
+  Double_t GetConstrainedParamIndex(const SystemType sys, const ParamType par);
   void GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames);
   void InitializeParameters(TMinuit *minuit);
-  Bool_t IsParameterConstrained(const SystemType sys, const ParamType par);
+  Bool_t IsParameterConstrained(const SystemType sys, const ParamType par, Bool_t constrainBackward);
   void SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag);
   void SetupInitialParameters()
   void SetupParameterConstraints(const Int_t config);
