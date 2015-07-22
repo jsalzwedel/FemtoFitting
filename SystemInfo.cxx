@@ -11,4 +11,5 @@ SystemInfo::SystemInfo(TString systemName, Double_t lambdaParam, TH2D *transform
 
 SystemInfo::~SystemInfo()
 {
+  //Transform matrices will be deleted by their lednicky eqns
 }
