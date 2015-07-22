@@ -201,7 +201,7 @@ void Fitter::SaveOutputPlots()
   // Save output plots for each fit
 }
 
-void Fitter::SetFitOptions(const Int_t constraintConfig)
+void Fitter::SetFitOptions()
 {
   // Set things like:
   // -How many correlations to fit
@@ -210,7 +210,7 @@ void Fitter::SetFitOptions(const Int_t constraintConfig)
 
 
   // SetupParameterVectors();
-  SetupParameterConstraints(constraintConfig);
+  // SetupParameterConstraints(constraintConfig);
   SetupInitialParameters();
  
   
@@ -295,34 +295,15 @@ void Fitter::SetupInitialParameters()
 
 
 
-void Fitter::SetupParameterConstraints(const Int_t config)
-{
-  
-  if(config /*  & ... */){
-    ConstrainF0D0();
-  }
-  if(config /*  & ... */){
-    ConstrainRadii();
-  }
-
-}
-
-// void Fitter::SetupParameterVectors()
+// void Fitter::SetupParameterConstraints(const Int_t config)
 // {
-//   // Initialize parameter values for Minuit
-//   // Set min and max values
-
- 
   
-//   // Set the size of the parameter vectors.
-//   fParNames.resize(fNParams*fNSystems);
-//   fParInitial.resize(fNParams*fNSystems);
-//   fParMinimum.resize(fNParams*fNSystems);
-//   fParMaximum.resize(fNParams*fNSystems);
-//   fParCurrent.resize(fNParams*fNSystems);
-//   fParIsFixed.resize(fNParams*fNSystems);
-
-//   // Basic param setup
+//   if(config /*  & ... */){
+//     ConstrainF0D0();
+//   }
+//   if(config /*  & ... */){
+//     ConstrainRadii();
+//   }
 
 // }
 
@@ -332,56 +313,56 @@ void Fitter::SetupParameterConstraints(const Int_t config)
 //   if(!useParam) fNParams = 6; // Or 5 + however many lambda params to fit
 // }
 
-void Fitter::ConstrainRadii()
-{
-  // Constrain radii between particle-particle and particle-antiparticle systems
-  ParamType param = kRadii;  
+// void Fitter::ConstrainRadii()
+// {
+//   // Constrain radii between particle-particle and particle-antiparticle systems
+//   ParamType param = kRadii;  
   
-  Int_t systemsArr010[2] = {kLL010, kLa010};
-  vector<Int_t> systems010(systemsArr010);
-  ParameterConstraint *constraint = new ParameterConstraint(param, systems010);
-  fParamConstraints.push_back(constraint);
+//   Int_t systemsArr010[2] = {kLL010, kLa010};
+//   vector<Int_t> systems010(systemsArr010);
+//   ParameterConstraint *constraint = new ParameterConstraint(param, systems010);
+//   fParamConstraints.push_back(constraint);
 
-  Int_t systemsArr1030[2] = {kLL1030, kLa1030};
-  vector<Int_t> systems1030(systemsArr1030);
-  constraint = new ParameterConstraint(param, systems1030);
-  fParamConstraints.push_back(constraint);
+//   Int_t systemsArr1030[2] = {kLL1030, kLa1030};
+//   vector<Int_t> systems1030(systemsArr1030);
+//   constraint = new ParameterConstraint(param, systems1030);
+//   fParamConstraints.push_back(constraint);
 
-  Int_t systemsArr3050[2] = {kLL3050, kLa3050};
-  vector<Int_t> systems3050(systemsArr3050);
-  constraint = new ParameterConstraint(param, systems1030);
-  fParamConstraints.push_back(constraint);
-}
+//   Int_t systemsArr3050[2] = {kLL3050, kLa3050};
+//   vector<Int_t> systems3050(systemsArr3050);
+//   constraint = new ParameterConstraint(param, systems1030);
+//   fParamConstraints.push_back(constraint);
+// }
 
-void Fitter::ConstrainF0D0()
-{
-  // Constrain all LL systems to use the same scattering
-  // length and d0.  Constrain the LA systems the same way.
+// void Fitter::ConstrainF0D0()
+// {
+//   // Constrain all LL systems to use the same scattering
+//   // length and d0.  Constrain the LA systems the same way.
 
-  Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
-  vector<Int_t> systemsLL(systemsArrLL);
+//   Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
+//   vector<Int_t> systemsLL(systemsArrLL);
 
-  Int_t systemsArrLA[3] = {kLA010, kLA1030, kLA3050};
-  vector<Int_t> systemsLA(systemsArrLA);
+//   Int_t systemsArrLA[3] = {kLA010, kLA1030, kLA3050};
+//   vector<Int_t> systemsLA(systemsArrLA);
 
-  ParamType param = kF0Real;  
-  ParameterConstraint *constraint = new ParameterConstraint(param, systemsLL);
-  fParamConstraints.push_back(constraint);
+//   ParamType param = kF0Real;  
+//   ParameterConstraint *constraint = new ParameterConstraint(param, systemsLL);
+//   fParamConstraints.push_back(constraint);
 
-  constraint = new ParameterConstraint(param, systemsLA);
-  fParamConstraints.push_back(constraint);
+//   constraint = new ParameterConstraint(param, systemsLA);
+//   fParamConstraints.push_back(constraint);
 
-  param = kF0Imag;
-  constraint = new ParameterConstraint(param, systemsLL);
-  fParamConstraints.push_back(constraint);
+//   param = kF0Imag;
+//   constraint = new ParameterConstraint(param, systemsLL);
+//   fParamConstraints.push_back(constraint);
 
-  constraint = new ParameterConstraint(param, systemsLA);
-  fParamConstraints.push_back(constraint);
+//   constraint = new ParameterConstraint(param, systemsLA);
+//   fParamConstraints.push_back(constraint);
 
-  param = kD0;
-  constraint = new ParameterConstraint(param, systemsLL);
-  fParamConstraints.push_back(constraint);
+//   param = kD0;
+//   constraint = new ParameterConstraint(param, systemsLL);
+//   fParamConstraints.push_back(constraint);
 
-  constraint = new ParameterConstraint(param, systemsLA);
-  fParamConstraints.push_back(constraint);
-}
+//   constraint = new ParameterConstraint(param, systemsLA);
+//   fParamConstraints.push_back(constraint);
+// }
