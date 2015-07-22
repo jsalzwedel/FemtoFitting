@@ -119,7 +119,7 @@ void UserSetupSystems(Fitter *fitter)
 
 void MinuitFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag)
 {
-  myFitter->SetParametersAndFit(totalChisquare, par);
+  myFitter->SetParametersAndFit(i, totalChisquare, par);
   return;
 }
 

@@ -45,7 +45,7 @@ class Fitter{
   void PassLednickyParameters(Double_t pairSystemPars);
   void SaveOutputPlots();
   void SetFitOptions();
-  void SetParametersAndFit(Double_t &totalChisquare, Double_t *par);
+  void SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par);
 
   /* void SetUseEstimatedLambdaParams(Bool_t useParam); */
 

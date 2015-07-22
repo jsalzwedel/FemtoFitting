@@ -3,13 +3,13 @@
 //**********************************************************
 
 #include "Fitter.h"
-
+#include <iostream>
 #include "TH1D.h"
 #include "TFile.h"
 
 #include <assert.h>
 
-
+using namespace std;
 
 
 Fitter::Fitter():
@@ -215,7 +215,7 @@ void Fitter::SetFitOptions()
   
 }
 
-void Fitter::SetParametersAndFit(Double_t &totalChisquare, Double_t *par)
+void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par)
 {
   // Take the TMinuit parameters, set the parameters for each
   // pair system, and get the resulting chisquare of the fit.
@@ -243,8 +243,9 @@ void Fitter::SetParametersAndFit(Double_t &totalChisquare, Double_t *par)
       parameters[thisParamIndex] = par[thisParamIndex - constrainedParams];
     }
   }
-
-  assert(sizeof(par)/sizeof(Double_t) == fNParams * fNSystems - constrainedParams);
+  
+  // Check that we have the correct number of parameters
+  assert(i == fNParams * fNSystems - constrainedParams);
 
   // Break up the total parameter vector into a mini-vector for
   // each PairSystem. Then pass the vector to the system and 
