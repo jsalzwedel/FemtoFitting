@@ -5,6 +5,19 @@
 #ifndef Fitter_H
 #define Fitter_H
 
+#include "LednickyInfo.h"
+#include "PairSystem.h"
+#include "ParameterConstraint.h"
+
+
+#include "Rtypes.h"
+#include "TMinuit.h"
+
+
+#include <vector>
+
+using std::vector;
+
 class LednickyInfo;
 
 
@@ -27,17 +40,18 @@ class Fitter{
   Int_t GetNSystems() const {return fNSystems;};
   void SaveOutputPlots();
   void SetFitOptions();
+  static void SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag);
+
   /* void SetUseEstimatedLambdaParams(Bool_t useParam); */
 
  private:
   void ConstrainF0D0();
   void ConstrainRadii();
-  Double_t GetConstrainedParamIndex(const Int_t sys, const Int_t par);
-  void GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames);
+  Double_t GetConstrainedParamIndex(const Int_t currentSys, const Int_t currentPar);
+  /* void GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames); */
   void InitializeParameters(TMinuit *minuit);
   Bool_t IsParameterConstrained(const Int_t sys, const Int_t par);
-  void SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag);
-  void SetupInitialParameters()
+  void SetupInitialParameters();
   void SetupParameterConstraints(const Int_t config);
   /* void SetupParameterVectors(); */
 
@@ -49,7 +63,7 @@ class Fitter{
   /* vector<Double_t> fMinuitParCurrent; */
   vector<Bool_t>   fMinuitParIsFixed;
 
-  vector<*ParameterConstraint> fParamConstraints;
+  vector<ParameterConstraint*> fParamConstraints;
   Double_t fNParams;
   vector<TString> fParamNames;
   Double_t fNSystems;
@@ -58,7 +72,7 @@ class Fitter{
   Bool_t fUseEstimatedLambdaParams;
 
   // PairSystem information
-  vector<*PairSystem> fPairSystems;
+  vector<PairSystem*> fPairSystems;
   vector<TString> fSystemNames;
   vector<vector<Double_t> > fInitParams;
   vector<vector<Double_t> > fMinParams;
@@ -70,6 +84,6 @@ class Fitter{
   /* Bool_t fFixD0; */
   /* Bool_t fFixNorm; */
   /* Bool_t fFixLambda; */
-}
+};
 
 #endif

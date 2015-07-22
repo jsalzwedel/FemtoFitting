@@ -8,7 +8,14 @@
 #ifndef PairSystem_H
 #define PairSystem_H
 
-/* class LednickyEqn; */
+#include "TH1D.h"
+#include "TGraph.h"
+
+#include <vector>
+
+using std::vector;
+
+class LednickyEqn;
 /* class TH1D; */
 
 class PairSystem{
