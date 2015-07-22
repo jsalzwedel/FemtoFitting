@@ -13,11 +13,11 @@
 
 class PairSystem{
  public:
-  PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName)
+  PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName);
   ~PairSystem();
   Double_t CalculateFitChisquare();
   void SetCFData(TH2D* correlationFunction);
-  void SetLednickyParams(vector<Double_t> pars);
+  void SetLednickyParameters(vector<Double_t> pars);
   TGraph *GetCombinedTGraph();
 
  private:
@@ -26,7 +26,7 @@ class PairSystem{
   /* void ReadInLambdaParams(); */
   TString fPairTypeName; // e.g. "LambdaLambda" or "LambdaAntilambda"
   TString fCentralityName; // e.g. "0-10"
-  vector<*LednickyEqn> fLednickyEqns; // List of primary and secondary L&L eqn objects
+  vector<LednickyEqn*> fLednickyEqns; // List of primary and secondary L&L eqn objects
   vector<Double_t> fLambdaParameters; // Lambda parameters associated with the L&L eqn objects
   TH1D *fCF; // Correlation function data for the pair type
   //... fit range (Double? Bin integer?)

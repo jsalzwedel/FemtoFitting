@@ -33,10 +33,10 @@ using namespace std;
 
 LednickyEqn::LednickyEqn(const LednickyInfo &info, Int_t nBins, Double_t binWidth)
 {
-  fName = info->GetSystemName;
-  fIsIdentical = info->GetIsIdenticalPair();
+  fName = info.GetSystemName();
+  fIsIdentical = info.GetIsIdenticalPair();
   //If transform matrix is null, this is a primary correlation
-  fTransformMatrix = info->GetTransformMatrix();
+  fTransformMatrix = info.GetTransformMatrix();
   fF0Real = 0.;
   fF0Imag = 0.;
   fD0 = 0.;

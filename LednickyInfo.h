@@ -1,6 +1,7 @@
 #ifndef LednickyInfo_H
 #define LednickyInfo_H
 
+#include "TH2D.h"
 
 class LednickyInfo {
  public: 

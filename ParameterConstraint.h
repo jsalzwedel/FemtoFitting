@@ -5,12 +5,17 @@
 #ifndef ParameterContraint_H
 #define ParameterContraint_H
 
+#include <vector>
+#include "Rtypes.h"
+
+using std::vector;
+
 class ParameterConstraint{
  public:
   ParameterConstraint(Int_t constrainedParam, vector<Int_t> constrainedSystems);
   virtual ~ParameterConstraint();
   Int_t GetConstrainedParam() {return fParameter;};
-  vector<Int_t> GetConstrainedSystems() {return fConstrainedSystems};
+  vector<Int_t> GetConstrainedSystems() {return fConstrainedSystems;};
   
 
  private:

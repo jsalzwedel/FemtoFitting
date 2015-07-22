@@ -1,5 +1,8 @@
 #include "LednickyInfo.h"
 #include "LednickyEqn.h"
+#include "PairSystem.h"
+#include <assert.h>
+
 
 Double_t PairSystem::CalculateFitChisquare()
 {
@@ -18,44 +21,13 @@ Double_t PairSystem::CalculateFitChisquare()
   for(Int_t iBin = fLowFitBin; iBin < fHighFitBin; iBin++)
   {
     Double_t diff = combinedGraph->GetY()[iBin] - fCF->GetBinContent(iBin+1);
-    Double_t err = fCf->GetBinError(iBin+1);
+    Double_t err = fCF->GetBinError(iBin+1);
     chi2 += pow(diff,2)/pow(err,2);
   }
   delete combinedGraph;
   return chi2;
 }
 
-// void PairSystem::CreateDefaultLednickyEqns()
-// {
-
-  
-//   // Make all the residual correlation lednicky eqns
-//   TH2D *transformLamSig; // = ... 
-//   CreateNewLednickyEqn("LamSig", kFALSE, transformLamSig);
-
-//   TH2D *transformLamXiC; // = ... 
-//   CreateNewLednickyEqn("LamXiC", kFALSE, transformLamXiC);
-
-//   TH2D *transformLamXi0; // = ... 
-//   CreateNewLednickyEqn("LamXi0", kFALSE, transformLamXi0);
-
-//   TH2D *transformSigSig; // = ... 
-//   CreateNewLednickyEqn("SigSig", isIdenticalPrimary, transformSigSig);  // This is identical unless we have particle-antiparticle system
-
-//   TH2D *transformSigXiC; // = ... 
-//   CreateNewLednickyEqn("SigXiC", kFALSE, transformSigXiC);
- 
-//   TH2D *transformSigXi0; // = ... 
-//   CreateNewLednickyEqn("SigXi0", kFALSE, transformSigXi0);
-
-// }
-
-// void PairSystem::CreateNewLednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix)
-// {
-//   // Called by Fitter
-//   LednickyEqn *lednicky = new LednickyEqn(name, isIdentical, transformMatrix, fNBins, fBinWidth);
-//   fLednickyEqns.push_back(lednicky);
-// }
 
 TGraph* PairSystem::GetCombinedTGraph()
 {
@@ -66,14 +38,15 @@ TGraph* PairSystem::GetCombinedTGraph()
   TGraph *combinedLednicky = fLednickyEqns[0]->GetLednickyGraph();
 
   // Calculate the y-value of the graph for each x-bin
-  for(Int_t iBin = 0; iBin < combinedLednicky->GetBinsX(); iBin++)
+  for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++)
   {
     Double_t combinedBinContent = 1.;
     for(Int_t iLed = 0; iLed < fLednickyEqns.size(); iLed++)
     {
       TGraph *ledEqn = fLednickyEqns[iLed]->GetLednickyGraph();
       Double_t graphValue = ledEqn->GetY()[iBin];
-      combinedBinContent += (graphValue - 1.) * fLambdaParameters(iLed);
+      Double_t lambdaParam = fLambdaParameters[iLed];
+      combinedBinContent += (graphValue - 1.) * lambdaParam;
       delete ledEqn;
     }
     combinedBinContent /= fNorm;
@@ -108,8 +81,8 @@ PairSystem::PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TStrin
 {
   assert(cfData);
   fCF = cfData;
-  fNBins = cfData->GetNBinsX();
-  fBinWidth = cfData->GetBinWidth;
+  fNBins = cfData->GetNbinsX();
+  fBinWidth = cfData->GetBinWidth(1);
   fNorm = 1.;
   fPairTypeName = pairTypeName;
   // fCentralityName = centrality;
@@ -118,7 +91,7 @@ PairSystem::PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TStrin
 
   for(Int_t iSys = 0; iSys < ledInfo.size(); iSys++)
   {
-    fLambdaParameters.push_back(ledInfo[iSys]->GetLambdaParam);
+    fLambdaParameters.push_back(ledInfo[iSys].GetLambdaParam());
     LednickyEqn *lednicky = new LednickyEqn(ledInfo[iSys], fNBins, fBinWidth);
     fLednickyEqns.push_back(lednicky);
   }
@@ -128,7 +101,7 @@ PairSystem::PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TStrin
 
 PairSystem::~PairSystem()
 {
-  if(fCf){
+  if(fCF){
     delete fCF;
     fCF = NULL;
   }
