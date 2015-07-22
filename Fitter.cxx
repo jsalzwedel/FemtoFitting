@@ -89,7 +89,7 @@ Bool_t Fitter::IsParameterConstrained(const Int_t currentSys, const Int_t curren
 // }
 
 
-void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString histName, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Bool_t> fixParams)
+void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString histName, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
 {
   TFile inFile(fileName, "read");
   TH1D *cf = inFile.Get(histName);
@@ -99,23 +99,19 @@ void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString hist
   fPairSystems.push_back(system);
   fSystemNames.push_back(simpleName);
   fInitParams.push_back(initParams);
+  fMinParams.push_back(minParams);
+  fMaxParams.push_back(maxParams);
   fFixParams.push_back(fixParams);
 }
 
-void Fitter::CreateMinuit(/* */)
+void Fitter::CreateMinuit()
 {
   // Create a TMinuit object.
   // Define, set and fix parameters.
 
-
-  // Using the Fit Options and the number of LednickyEqns,
-  // determine how many fit parameters there will be.
-
   fMinuit = new TMinuit(fMinuitParNames.size());
   fMinuit->SetFCN(SetParametersAndFit);
   InitializeParameters(fMinuit);
-
-
 }
 
 void Fitter::DoFitting()
@@ -192,13 +188,9 @@ void Fitter::InitializeParameters(TMinuit *minuit)
 
   Double_t startingStepSize = 0.001;
   
-  // Allow the parameters to have no bounds
-  Double_t parameterMinimum = 0;
-  Double_t parameterMaximum = 0;
-
   for(int iPar = 0; iPar < fMinuitParNames.size(); iPar++){
-    minuit->DefineParameter(iPar, fParNames[iPar], fParInitial[iPar],  startingStepSize, parameterMinimum, parameterMaximum);
-    if(fParIsFixed[iPar]) myMinut->FixParameter(iPar);
+    minuit->DefineParameter(iPar, fMinuitParNames[iPar], fMinuitParInitial[iPar],  startingStepSize, fMinuitParMinimum[iPar], fMinuitParMaximum[iPar]);
+    if(fMinuitParIsFixed[iPar]) myMinut->FixParameter(iPar);
   }
   
 }
@@ -217,7 +209,7 @@ void Fitter::SetFitOptions(const Int_t constraintConfig)
   // -What parameters to share
 
 
-  SetupParameterVectors();
+  // SetupParameterVectors();
   SetupParameterConstraints(constraintConfig);
   SetupInitialParameters();
  
@@ -290,7 +282,9 @@ void Fitter::SetupInitialParameters()
       TString parName = fParamNames[iPar] + fSystemNames[iSys];
       fMinuitParNames.push_back(parName);
       fMinuitParInitial.push_back(fInitParams[iSys][iPar]);
-      fMinuitParIsFixed.push_back(fInitParams[iSys][iPar]);
+      fMinuitParMinimum.push_back(fMinParams[iSys][iPar]);
+      fMinuitParMaximum.push_back(fMaxParams[iSys][iPar]);
+      fMinuitParIsFixed.push_back(fFixParams[iSys][iPar]);
     } // end parameter loop
   } // end system loop
 }
@@ -313,24 +307,24 @@ void Fitter::SetupParameterConstraints(const Int_t config)
 
 }
 
-void Fitter::SetupParameterVectors()
-{
-  // Initialize parameter values for Minuit
-  // Set min and max values
+// void Fitter::SetupParameterVectors()
+// {
+//   // Initialize parameter values for Minuit
+//   // Set min and max values
 
  
   
-  // Set the size of the parameter vectors.
-  fParNames.resize(fNParams*fNSystems);
-  fParInitial.resize(fNParams*fNSystems);
-  fParMinimum.resize(fNParams*fNSystems);
-  fParMaximum.resize(fNParams*fNSystems);
-  fParCurrent.resize(fNParams*fNSystems);
-  fParIsFixed.resize(fNParams*fNSystems);
+//   // Set the size of the parameter vectors.
+//   fParNames.resize(fNParams*fNSystems);
+//   fParInitial.resize(fNParams*fNSystems);
+//   fParMinimum.resize(fNParams*fNSystems);
+//   fParMaximum.resize(fNParams*fNSystems);
+//   fParCurrent.resize(fNParams*fNSystems);
+//   fParIsFixed.resize(fNParams*fNSystems);
 
-  // Basic param setup
+//   // Basic param setup
 
-}
+// }
 
 // void Fitter::SetUseEstimatedLambdaParams(Bool_t useParam)
 // {

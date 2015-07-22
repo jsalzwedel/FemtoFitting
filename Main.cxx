@@ -50,11 +50,16 @@ void UserSetupSystems(Fitter &fitter)
   // Make initial parameters: Radius, ReF0, ImF0, D0, Normalization 
   Double_t initParamsArr[5] = {3., -1., 0., 3., 1.}; 
   vector<Double_t> initParams(initParamsArr);
+  Double_t minParamsArr[5] = {0., 0., 0., 0., 0.};
+  vector<Double_t> minParams(minParamsArr);
+  Double_t maxParamsArr[5] = {0., 0., 0., 0., 0.};
+  vector<Double_t> maxParams(maxParamsArr);  
 
   // Determine which parameters should be fixed in the fitter.
   Bool_t allowImaginaryF0 = kFALSE;
   Bool_t fixParamsArr[5] = {kFALSE, kFALSE, allowImaginaryF0, kFALSE, kFALSE};
   vector<Bool_t> fixParams(fixParamsArr);
+
 
   // Does the primary-primary correlation function consist of
   // identical particles (i.e. both baryons or both antibaryons?)
@@ -90,7 +95,7 @@ void UserSetupSystems(Fitter &fitter)
 
   // Bool_t isPrimaryIdentical = kTRUE;
 
-  fitter.CreatePairSystem(simpleName, fileName, histName, isPrimaryIdentical, initParams, fixParams);
+  fitter.CreatePairSystem(simpleName, fileName, histName, isPrimaryIdentical, initParams, minParams, maxParams, fixParams);
   
 
   //************* Add more systems as needed ******************

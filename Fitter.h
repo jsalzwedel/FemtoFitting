@@ -21,7 +21,7 @@ class Fitter{
   virtual ~Fitter();
   
   /* void CreateAllPairSystems(Int_t configuration); */
-  void CreatePairSystem(TString simpleName, TString fileName, TString histName, const vector<LednickyInfo> &ledInfo, const vector<Double_t> &initParams, const vector<Bool_t> &fixParams);
+  void CreatePairSystem(TString simpleName, TString fileName, TString histName, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
   void CreateMinuit();
   void DoFitting();
   Int_t GetNSystems() const {return fNSystems;};
@@ -39,13 +39,13 @@ class Fitter{
   void SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag);
   void SetupInitialParameters()
   void SetupParameterConstraints(const Int_t config);
-  void SetupParameterVectors();
+  /* void SetupParameterVectors(); */
 
   TMinuit *fMinuit;
   vector<TString>  fMinuitParNames;
   vector<Double_t> fMinuitParInitial;
-  /* vector<Double_t> fMinuitParMinimum; */
-  /* vector<Double_t> fMinuitParMaximum; */
+  vector<Double_t> fMinuitParMinimum; 
+  vector<Double_t> fMinuitParMaximum;
   /* vector<Double_t> fMinuitParCurrent; */
   vector<Bool_t>   fMinuitParIsFixed;
 
@@ -61,6 +61,8 @@ class Fitter{
   vector<*PairSystem> fPairSystems;
   vector<TString> fSystemNames;
   vector<vector<Double_t> > fInitParams;
+  vector<vector<Double_t> > fMinParams;
+  vector<vector<Double_t> > fMaxParams;
   vector<vector<Bool_t> > fFixParams;
   /* Bool_t fFixRadius; */
   /* Bool_t fFixF0Real; */
