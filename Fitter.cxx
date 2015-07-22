@@ -40,29 +40,10 @@ Fitter::~Fitter()
     delete fParamConstraints[i];
     fParamConstraints[i] = NULL;
   }
-  if(fMinuit) {delete fMinuit; fMinuit = NULL;}
+  // if(fMinuit) {delete fMinuit; fMinuit = NULL;}
 }
 
-Bool_t Fitter::IsParameterConstrained(const Int_t currentSys, const Int_t currentPar)
-{
-  // Check to see if this parameter has been constrained 
-  // to be the same as the parameter from an earlier system
-  
-  for(Int_t iCon = 0; iCon < fParamConstraints.size(); iCon++)
-  {
-    // Check for constraints on this type of parameter
-    ParameterConstraint *constraint = fParamConstraints[iCon];
-    if(constraint->GetConstrainedParam() != currentPar) continue;
-    
-    const vector<Int_t> &consSystems = fParamConstraints[iCon]->GetConstrainedSystems();
 
-    for(Int_t iSys = 1; iSys < consSystems.size(); iSys++)
-    {
-      if(consSystems[iSys] == currentSys) return true;
-    } 
-  }
-  return kFALSE;
-}
 
 void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString histName, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
 {
@@ -79,34 +60,28 @@ void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString hist
   fFixParams.push_back(fixParams);
 }
 
-void Fitter::CreateMinuit()
-{
-  // Create a TMinuit object.
-  // Define, set and fix parameters.
-
-  fMinuit = new TMinuit(fMinuitParNames.size());
-  fMinuit->SetFCN(SetParametersAndFit);
-  InitializeParameters(fMinuit);
-}
-
-void Fitter::DoFitting()
+// void Fitter::CreateMinuit()
+// {
+//   InitializeParameters(fMinuit);
+// } 
+void Fitter::DoFitting(TMinuit *minuit)
 {
   // Run the fit procedure
   Double_t arglist[5] = {0,0,0,0,0}; //Arguments that can be passed with Minuit commands
   Int_t errFlag = 0;
   // arglist[0] = 1;
-  // fMinuit->mnexcm("CALL FCN", arglist, 1, errFlag);
+  // minuit->mnexcm("CALL FCN", arglist, 1, errFlag);
 
   // Set how verbose the output is (from no output at -1, to max at 3)
   arglist[0] = 0;
-  fMinuit->mnexcm("SET PRINT", arglist, 1, errFlag);
+  minuit->mnexcm("SET PRINT", arglist, 1, errFlag);
 
   // Maybe have all output results go to a file?
 
 
   // Run Migrad with a specified max number of calls
   arglist[0] = fMaxMinuitCalls;
-  fMinuit->mnexcm("MIGRAD", arglist, 1, errFlag);
+  minuit->mnexcm("MIGRAD", arglist, 1, errFlag);
 
   // If outputting to file, return output to terminal now
 }
@@ -157,7 +132,35 @@ void Fitter::DoFitting()
 
 // }
 
-void Fitter::InitializeParameters(TMinuit *minuit)
+Int_t Fitter::GetConstrainedParamIndex(const Int_t currentSys, const Int_t currentPar)
+{
+  // Find index of the earlier matching constrained parameter
+  
+
+  // Loop through the constraints until we find the relevant one
+  for(Int_t iCon = 0; iCon < fParamConstraints.size(); iCon++)
+  {
+    // Check for constraints on this type of parameter
+    ParameterConstraint *constraint = fParamConstraints[iCon];
+    const Int_t parIndex = constraint->GetConstrainedParam();
+    if(parIndex != currentPar) continue;
+    
+    const vector<Int_t> &consSystems = fParamConstraints[iCon]->GetConstrainedSystems();
+
+    for(Int_t iSys = 1; iSys < consSystems.size(); iSys++)
+    {
+      if(consSystems[iSys] == currentSys) {
+	const Int_t sysIndex = consSystems[iSys];
+        Int_t absoluteIndex = sysIndex * fNParams + parIndex;
+	return absoluteIndex;
+      }
+    } 
+  }
+  // Should not get to this point
+  return 100000;
+}
+
+void Fitter::InitializeMinuitParameters(TMinuit *minuit)
 {
   // Define the fit parameters
 
@@ -165,11 +168,31 @@ void Fitter::InitializeParameters(TMinuit *minuit)
   
   for(int iPar = 0; iPar < fMinuitParNames.size(); iPar++){
     minuit->DefineParameter(iPar, fMinuitParNames[iPar], fMinuitParInitial[iPar],  startingStepSize, fMinuitParMinimum[iPar], fMinuitParMaximum[iPar]);
-    if(fMinuitParIsFixed[iPar]) fMinuit->FixParameter(iPar);
+    if(fMinuitParIsFixed[iPar]) minuit->FixParameter(iPar);
   }
   
 }
 
+Bool_t Fitter::IsParameterConstrained(const Int_t currentSys, const Int_t currentPar)
+{
+  // Check to see if this parameter has been constrained 
+  // to be the same as the parameter from an earlier system
+  
+  for(Int_t iCon = 0; iCon < fParamConstraints.size(); iCon++)
+  {
+    // Check for constraints on this type of parameter
+    ParameterConstraint *constraint = fParamConstraints[iCon];
+    if(constraint->GetConstrainedParam() != currentPar) continue;
+    
+    const vector<Int_t> &consSystems = fParamConstraints[iCon]->GetConstrainedSystems();
+
+    for(Int_t iSys = 1; iSys < consSystems.size(); iSys++)
+    {
+      if(consSystems[iSys] == currentSys) return true;
+    } 
+  }
+  return kFALSE;
+}
 
 void Fitter::SaveOutputPlots()
 {
@@ -191,7 +214,7 @@ void Fitter::SetFitOptions()
   
 }
 
-void Fitter::SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag)
+void Fitter::SetParametersAndFit(Double_t &totalChisquare, Double_t *par)
 {
   // Take the TMinuit parameters, set the parameters for each
   // pair system, and get the resulting chisquare of the fit.

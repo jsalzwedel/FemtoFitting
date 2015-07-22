@@ -35,21 +35,25 @@ class Fitter{
   
   /* void CreateAllPairSystems(Int_t configuration); */
   void CreatePairSystem(TString simpleName, TString fileName, TString histName, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
-  void CreateMinuit();
-  void DoFitting();
+  /* void CreateMinuit(); */
+  void DoFitting(TMinuit *minuit);
+  Int_t GetNMinuitParams() const {return fMinuitParNames.size();};
   Int_t GetNSystems() const {return fNSystems;};
+  Int_t GetNParams() const {return fNParams;};
+  Int_t GetTotalParams() const {return fNSystems * fNParams;};
+  void InitializeMinuitParameters(TMinuit *minuit);
+  void PassLednickyParameters(Double_t pairSystemPars);
   void SaveOutputPlots();
   void SetFitOptions();
-  static void SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag);
+  void SetParametersAndFit(Double_t &totalChisquare, Double_t *par);
 
   /* void SetUseEstimatedLambdaParams(Bool_t useParam); */
 
  private:
   void ConstrainF0D0();
   void ConstrainRadii();
-  Double_t GetConstrainedParamIndex(const Int_t currentSys, const Int_t currentPar);
+  Int_t GetConstrainedParamIndex(const Int_t currentSys, const Int_t currentPar);
   /* void GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames); */
-  void InitializeParameters(TMinuit *minuit);
   Bool_t IsParameterConstrained(const Int_t sys, const Int_t par);
   void SetupInitialParameters();
   void SetupParameterConstraints(const Int_t config);

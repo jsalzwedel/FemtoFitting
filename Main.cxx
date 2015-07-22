@@ -3,13 +3,17 @@
 #include "LednickyInfo.h"
 // #include "PairSystem.h"
 // #include "ParameterConstraint.h"
-// #include "Fitter.h"
+#include "Fitter.h"
 #include <iostream>
+#include "TMinuit.h"
 #include "TH2D.h"
 #include "TFile.h"
 #include <vector>
+#include <assert.h>
 
+using namespace std;
 
+Fitter *myFitter = NULL;
 
 
 // int main()
@@ -39,7 +43,17 @@
 // }
 
 
-void UserSetupSystems(Fitter &fitter)
+TH2D *GetTransformMatrix(TString rootFileName, TString histName)
+{
+  TFile f(rootFileName,"read");
+  TH2D *h = (TH2D*) f.Get(histName);
+  assert(h);
+  h->SetDirectory(0);
+  f.Close();
+  return h;
+}
+
+void UserSetupSystems(Fitter *fitter)
 {
   // The user should modify this to suit their fitting needs
 
@@ -49,16 +63,16 @@ void UserSetupSystems(Fitter &fitter)
   TString simpleName = "LL010";
   // Make initial parameters: Radius, ReF0, ImF0, D0, Normalization 
   Double_t initParamsArr[5] = {3., -1., 0., 3., 1.}; 
-  vector<Double_t> initParams(initParamsArr);
+  vector<Double_t> initParams(initParamsArr, initParamsArr+5);
   Double_t minParamsArr[5] = {0., 0., 0., 0., 0.};
-  vector<Double_t> minParams(minParamsArr);
+  vector<Double_t> minParams(minParamsArr, minParamsArr+5);
   Double_t maxParamsArr[5] = {0., 0., 0., 0., 0.};
-  vector<Double_t> maxParams(maxParamsArr);  
+  vector<Double_t> maxParams(maxParamsArr, maxParamsArr+5);  
 
   // Determine which parameters should be fixed in the fitter.
   Bool_t allowImaginaryF0 = kFALSE;
   Bool_t fixParamsArr[5] = {kFALSE, kFALSE, allowImaginaryF0, kFALSE, kFALSE};
-  vector<Bool_t> fixParams(fixParamsArr);
+  vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+5);
 
 
   // Does the primary-primary correlation function consist of
@@ -90,26 +104,23 @@ void UserSetupSystems(Fitter &fitter)
   ledInfo.push_back(infoSXC);
 
   LednickyInfo infoX0XC("Xi0XiC", 0.04, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCXi0"), kFALSE);
-  ledInfo.push_back(infoX0Xc);
+  ledInfo.push_back(infoX0XC);
 
 
   // Bool_t isPrimaryIdentical = kTRUE;
 
-  fitter.CreatePairSystem(simpleName, fileName, histName, isPrimaryIdentical, initParams, minParams, maxParams, fixParams);
+  fitter->CreatePairSystem(simpleName, fileName, histName, ledInfo, initParams, minParams, maxParams, fixParams);
   
 
   //************* Add more systems as needed ******************
 
 }
 
-TH2D *GetTransformMatrix(TString rootFileName, TString histName)
+
+void MinuitFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag)
 {
-  TFile f(rootFileName,"read");
-  TH2D *h = (TH2D*) f.Get(histName);
-  assert(h);
-  histName->SetDirectory(0);
-  f.Close();
-  return h;
+  myFitter->SetParametersAndFit(totalChisquare, par);
+  return;
 }
 
 // main for full program
@@ -119,19 +130,25 @@ int main(int argc, char **argv)
 
 
   // Setup
-  Fitter myFitter();
+  myFitter = new Fitter();
   UserSetupSystems(myFitter);
   // Add more systems as needed, either here or in UserSetupSystems
-  if(myFitter.GetNSystems() < 1) {
+  if(myFitter->GetNSystems() < 1) {
     cout<<"No systems to fit."<<endl;
     return 1;
   }
-  myFitter.SetFitOptions();
+  myFitter->SetFitOptions();
 
-  // Fitting
-  myFitter.CreateMinuit();
-  myFitter.DoFitting();
-  myFitter.SaveOutputPlots();
+
+  // Create a TMinuit object.
+  // Define, set and fix parameters.
+  const Int_t nParams = myFitter->GetNMinuitParams();
+  TMinuit *myMinuit = new TMinuit(nParams);
+  myMinuit->SetFCN(MinuitFit);
+  myFitter->InitializeMinuitParameters(myMinuit);
+  // myFitter->CreateMinuit();
+  myFitter->DoFitting(myMinuit);
+  myFitter->SaveOutputPlots();
   
   return 0;
 }
