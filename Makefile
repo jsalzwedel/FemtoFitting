@@ -1,6 +1,6 @@
 # LednickyEqn makefile
 
-LIBS   = $(shell root-config --libs)
+LIBS   = $(shell root-config --libs) -lMinuit
 CFLAGS = $(shell root-config --cflags)
 #IFLAGS = -I$(ROOTSYS)/include
 #.PHONY: clean
@@ -8,7 +8,7 @@ CFLAGS = $(shell root-config --cflags)
 all: main
 
 main: lednickyEqn faddeeva lednickyInfo constraint pairsystem fitter Main.cxx
-	g++ Main.cxx Faddeeva.o LednickyEqn.o LednickyInfo.o ParameterConstraint.o PairSystem.o Fitter.o -o runMe $(LIBS) $(CFLAGS)
+	g++ Main.cxx Faddeeva.o LednickyEqn.o LednickyInfo.o ParameterConstraint.o PairSystem.o Fitter.o -o runMe $(LIBS) $(CFLAGS) 
 
 faddeeva: Faddeeva.cc
 	g++ -c Faddeeva.cc
