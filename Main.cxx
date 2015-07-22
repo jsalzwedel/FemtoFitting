@@ -1,5 +1,6 @@
 
 #include "LednickyEqn.h"
+#include "SystemType.h"
 // #include "PairSystem.h"
 // #include "ParameterConstraint.h"
 // #include "Fitter.h"
@@ -7,6 +8,7 @@
 #include "TH2D.h"
 #include "TFile.h"
 #include <vector>
+
 
 
 
@@ -40,43 +42,76 @@
 void UserSetupSystems(Fitter &fitter)
 {
   // The user should modify this to suit their fitting needs
-  
-  // Int_t systems = Fitter::kLL010 
-  //   + Fitter::kLL1030
-  //   + Fitter::kLL3050
-  //   + Fitter::kLA010
-  //   + Fitter::kLA1030
-  //   + Fitter::kLA3050;
 
-  // Add systems to the analysis
-
+  //************* Add systems to the analysis ****************
   TString fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root";
   TString histName = "CombinedLLAA0-10KstarMomCorrected";
   TString simpleName = "LL010";
-  Bool_t isPrimaryIdentical = kTRUE;
-  Bool_t allowImaginaryF0 = kFALSE;
+  // Make initial parameters: Radius, ReF0, ImF0, D0, Normalization 
   Double_t initParamsArr[5] = {3., -1., 0., 3., 1.}; 
   vector<Double_t> initParams(initParamsArr);
-  // Make initial parameters: Radius, ReF0, ImF0, D0, Normalization 
+
+  // Determine which parameters should be fixed in the fitter.
+  Bool_t allowImaginaryF0 = kFALSE;
   Bool_t fixParamsArr[5] = {kFALSE, kFALSE, allowImaginaryF0, kFALSE, kFALSE};
   vector<Bool_t> fixParams(fixParamsArr);
 
-  fitter.CreatePairSystem(simpleName, fileName, histName, isPrimaryIdentical, initParams, fixParams);
+  // Does the primary-primary correlation function consist of
+  // identical particles (i.e. both baryons or both antibaryons?)
+  
+  // Create SystemInfo for each primary and residual correlation
+  // Args: TString name, Double_t lambdaParamter, TH2D *transformMatrix, Bool_t isIdenticalPair
+  vector<SystemInfo*> systems;
+  SystemInfo *sysLL = new System("LambdaLambda", 0.28, NULL, kTRUE);
+  systems.push_back(systems);
+  
+  TString fileNameMatrix = "~/Analysis/lambda/AliAnalysisLambda/Fitting/FemtoFitting/PreparedTransformMatrices.root";
+  SystemInfo *sysLS = new System("LambdaSigma", 0.21, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaLambda"), kFALSE);
+  systems.push_back(systems);
 
-  // Add more as needed
+  SystemInfo *sysLX0 = new System("LambdaXi0", 0.14, GetTransformMatrix(fileNameMatrix, "TransformMatrixXi0Lambda"), kFALSE);
+  systems.push_back(systems);
+
+  SystemInfo *sysLXC = new System("LambdaXiC", 0.14, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCLambda"), kFALSE);
+  systems.push_back(systems);
+
+  SystemInfo *sysSS = new System("SigmaSigma", 0.04, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaSigma"), kTRUE);
+  systems.push_back(systems);
+
+  SystemInfo *sysSX0 = new System("SigmaXi0", 0.05, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXi0"), kFALSE);
+  systems.push_back(systems);
+
+  SystemInfo *sysSXC= new System("SigmaXiC", 0.05, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXiC"), kFALSE);
+  systems.push_back(systems);
+
+  SystemInfo *sysX0XC = new System("Xi0XiC", 0.04, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCXi0"), kFALSE);
+  systems.push_back(systems);
+
+
+  // Bool_t isPrimaryIdentical = kTRUE;
+
+  fitter.CreatePairSystem(simpleName, fileName, histName, isPrimaryIdentical, initParams, fixParams);
+  
+
+  //************* Add more systems as needed ******************
 
 }
 
-
+TH2D *GetTransformMatrix(TString rootFileName, TString histName)
+{
+  TFile f(rootFileName,"read");
+  TH2D *h = (TH2D*) f.Get(histName);
+  assert(h);
+  histName->SetDirectory(0);
+  f.Close();
+  return h;
+}
 
 // main for full program
 int main(int argc, char **argv)
 {
   
-  // // Check that the first argument (configuration number)
-  // // is an integer.
-  // Int_t config;
-  // if (sscanf (argv[1], "%i", &config)!=1) { printf ("error - not an integer"); }
+
 
   // Setup
   Fitter myFitter();
@@ -86,7 +121,6 @@ int main(int argc, char **argv)
     cout<<"No systems to fit."<<endl;
     return 1;
   }
-  // myFitter.CreateAllPairSystems(config);
   myFitter.SetFitOptions();
 
   // Fitting
