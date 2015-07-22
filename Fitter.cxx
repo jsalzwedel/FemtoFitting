@@ -414,11 +414,11 @@ void Fitter::SetupParameterVectors()
 
 }
 
-void Fitter::SetUseEstimatedLambdaParams(Bool_t useParam)
-{
-  fUseEstimatedLambdaParams = useParam;
-  if(!useParam) fNParams = 6; // Or 5 + however many lambda params to fit
-}
+// void Fitter::SetUseEstimatedLambdaParams(Bool_t useParam)
+// {
+//   fUseEstimatedLambdaParams = useParam;
+//   if(!useParam) fNParams = 6; // Or 5 + however many lambda params to fit
+// }
 
 void Fitter::ConstrainRadii()
 {
