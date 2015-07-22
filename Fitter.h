@@ -5,43 +5,37 @@
 #ifndef Fitter_H
 #define Fitter_H
 
-
+class SystemInfo;
 
 
 class Fitter{
  public:
-  enum SystemType {kLL010  = 1 << 0, 
-		   kLL1030 = 1 << 1, 
-		   kLL3050 = 1 << 2,
-		   kLA010  = 1 << 3,
-		   kLA1030 = 1 << 4,
-		   kLA3050 = 1 << 5};
   
-  enum ParamType  {kRad    = 0, 
-		   kF0Real = 1,
-		   kF0Imag = 2,
-		   kD0     = 3,
-		   kNorm   = 4,
-		   kLambda = 5};
+  enum ParamType  {kRad    = 0,
+  		   kF0Real = 1,
+  		   kF0Imag = 2,
+  		   kD0     = 3,
+  		   kNorm   = 4,
+  		   kLambda = 5};
   Fitter();
   virtual ~Fitter();
   
   /* void CreateAllPairSystems(Int_t configuration); */
-  void CreatePairSystem(TString simpleName, TString fileName, TString histName, Bool_t isPrimaryIdentical, vector<Double_t> initParams, vector<Bool_t> fixParams)
+  void CreatePairSystem(TString simpleName, TString fileName, TString histName, vector<SystemInfo*> systemInfos, vector<Double_t> initParams, vector<Bool_t> fixParams);
   void CreateMinuit();
   void DoFitting();
   Int_t GetNSystems() const {return fNSystems;};
   void SaveOutputPlots();
   void SetFitOptions();
-  void SetUseEstimatedLambdaParams(Bool_t useParam);
+  /* void SetUseEstimatedLambdaParams(Bool_t useParam); */
 
  private:
   void ConstrainF0D0();
   void ConstrainRadii();
-  Double_t GetConstrainedParamIndex(const SystemType sys, const ParamType par);
+  Double_t GetConstrainedParamIndex(const Int_t sys, const Int_t par);
   void GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames);
   void InitializeParameters(TMinuit *minuit);
-  Bool_t IsParameterConstrained(const SystemType sys, const ParamType par);
+  Bool_t IsParameterConstrained(const Int_t sys, const Int_t par);
   void SetParametersAndFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag);
   void SetupInitialParameters()
   void SetupParameterConstraints(const Int_t config);
