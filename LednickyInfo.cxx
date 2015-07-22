@@ -1,7 +1,7 @@
 
-#include "SystemInfo.h"
+#include "LednickyInfo.h"
 
-SystemInfo::SystemInfo(TString systemName, Double_t lambdaParam, TH2D *transformMatrix, Bool_t isIdenticalPair):
+LednickyInfo::LednickyInfo(TString systemName, Double_t lambdaParam, TH2D *transformMatrix, Bool_t isIdenticalPair):
   fSystemName(systemName),
   fLambdaParam(lambdaParam),
   fTransformMatrix(transformMatrix),
@@ -9,7 +9,7 @@ SystemInfo::SystemInfo(TString systemName, Double_t lambdaParam, TH2D *transform
 {
 }
 
-SystemInfo::~SystemInfo()
+LednickyInfo::~LednickyInfo()
 {
   //Transform matrices will be deleted by their lednicky eqns
 }
