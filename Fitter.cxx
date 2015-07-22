@@ -3,7 +3,7 @@
 //**********************************************************
 
 #include "Fitter.h"
-#include "SystemInfo.h"
+#include "LednickyInfo.h"
 #include "PairSystem.h"
 #include "ParameterConstraint.h"
 
@@ -89,13 +89,13 @@ Bool_t Fitter::IsParameterConstrained(const Int_t currentSys, const Int_t curren
 // }
 
 
-void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString histName, vector<SystemInfo*> systemInfos, vector<Double_t> initParams, vector<Bool_t> fixParams)
+void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString histName, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Bool_t> fixParams)
 {
   TFile inFile(fileName, "read");
   TH1D *cf = inFile.Get(histName);
   assert(cf);
   cf->SetDirectory(0);
-  PairSystem *system = new PairSystem(cf, systemInfos, simpleName);
+  PairSystem *system = new PairSystem(cf, ledInfo, simpleName);
   fPairSystems.push_back(system);
   fSystemNames.push_back(simpleName);
   fInitParams.push_back(initParams);

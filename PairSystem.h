@@ -8,11 +8,12 @@
 #ifndef PairSystem_H
 #define PairSystem_H
 
-#include "LednickyEqn.h"
+/* class LednickyEqn; */
+/* class TH1D; */
 
 class PairSystem{
  public:
-  PairSystem(TH1D *cfData, Bool_t isIdenticalPrimary/*, */);
+  PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName)
   ~PairSystem();
   Double_t CalculateFitChisquare();
   void SetCFData(TH2D* correlationFunction);
@@ -20,9 +21,9 @@ class PairSystem{
   TGraph *GetCombinedTGraph();
 
  private:
-  void CreateDefaultLednickyEqns();
-  void CreateNewLednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix);
-  void ReadInLambdaParams();
+  /* void CreateDefaultLednickyEqns(); */
+  /* void CreateNewLednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix); */
+  /* void ReadInLambdaParams(); */
   TString fPairTypeName; // e.g. "LambdaLambda" or "LambdaAntilambda"
   TString fCentralityName; // e.g. "0-10"
   vector<*LednickyEqn> fLednickyEqns; // List of primary and secondary L&L eqn objects

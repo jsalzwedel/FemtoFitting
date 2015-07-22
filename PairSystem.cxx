@@ -1,4 +1,5 @@
-
+#include "LednickyInfo.h"
+#include "LednickyEqn.h"
 
 Double_t PairSystem::CalculateFitChisquare()
 {
@@ -24,39 +25,37 @@ Double_t PairSystem::CalculateFitChisquare()
   return chi2;
 }
 
-void PairSystem::CreateDefaultLednickyEqns()
-{
-  // Make the primary-primary lednicky eqn.  
-  TH2D *transformLamLam; // = ...
-  CreateNewLednickyEqn("LamLam", isIdenticalPrimary, NULL);
+// void PairSystem::CreateDefaultLednickyEqns()
+// {
+
   
-  // Make all the residual correlation lednicky eqns
-  TH2D *transformLamSig; // = ... 
-  CreateNewLednickyEqn("LamSig", kFALSE, transformLamSig);
+//   // Make all the residual correlation lednicky eqns
+//   TH2D *transformLamSig; // = ... 
+//   CreateNewLednickyEqn("LamSig", kFALSE, transformLamSig);
 
-  TH2D *transformLamXiC; // = ... 
-  CreateNewLednickyEqn("LamXiC", kFALSE, transformLamXiC);
+//   TH2D *transformLamXiC; // = ... 
+//   CreateNewLednickyEqn("LamXiC", kFALSE, transformLamXiC);
 
-  TH2D *transformLamXi0; // = ... 
-  CreateNewLednickyEqn("LamXi0", kFALSE, transformLamXi0);
+//   TH2D *transformLamXi0; // = ... 
+//   CreateNewLednickyEqn("LamXi0", kFALSE, transformLamXi0);
 
-  TH2D *transformSigSig; // = ... 
-  CreateNewLednickyEqn("SigSig", isIdenticalPrimary, transformSigSig);  // This is identical unless we have particle-antiparticle system
+//   TH2D *transformSigSig; // = ... 
+//   CreateNewLednickyEqn("SigSig", isIdenticalPrimary, transformSigSig);  // This is identical unless we have particle-antiparticle system
 
-  TH2D *transformSigXiC; // = ... 
-  CreateNewLednickyEqn("SigXiC", kFALSE, transformSigXiC);
+//   TH2D *transformSigXiC; // = ... 
+//   CreateNewLednickyEqn("SigXiC", kFALSE, transformSigXiC);
  
-  TH2D *transformSigXi0; // = ... 
-  CreateNewLednickyEqn("SigXi0", kFALSE, transformSigXi0);
+//   TH2D *transformSigXi0; // = ... 
+//   CreateNewLednickyEqn("SigXi0", kFALSE, transformSigXi0);
 
-}
+// }
 
-void PairSystem::CreateNewLednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix)
-{
-  // Called by Fitter
-  LednickyEqn *lednicky = new LednickyEqn(name, isIdentical, transformMatrix, fNBins, fBinWidth);
-  fLednickyEqns.push_back(lednicky);
-}
+// void PairSystem::CreateNewLednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix)
+// {
+//   // Called by Fitter
+//   LednickyEqn *lednicky = new LednickyEqn(name, isIdentical, transformMatrix, fNBins, fBinWidth);
+//   fLednickyEqns.push_back(lednicky);
+// }
 
 TGraph* PairSystem::GetCombinedTGraph()
 {
@@ -105,20 +104,24 @@ void PairSystem::SetLednickyParameters(vector<Double_t> pars)
   
 }
 
-PairSystem::PairSystem(TH1D *cfData, Bool_t isIdenticalPrimary, TString pairType, TString centrality, Bool_t useEstimatedLambdaParams)
+PairSystem::PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName)
 {
   assert(cfData);
   fCF = cfData;
   fNBins = cfData->GetNBinsX();
   fBinWidth = cfData->GetBinWidth;
   fNorm = 1.;
-  fPairTypeName = pairType;
-  fCentralityName = centrality;
+  fPairTypeName = pairTypeName;
+  // fCentralityName = centrality;
   // Create a Lednicky eqn for primary-primary correlation function
-  // and for each of the residual correlations.
-  CreateDefaultLednickyEqns();
+  // with no transform matrix (i.e. NULL ptr).
 
-
+  for(Int_t iSys = 0; iSys < ledInfo.size(); iSys++)
+  {
+    fLambdaParameters.push_back(ledInfo[iSys]->GetLambdaParam);
+    LednickyEqn *lednicky = new LednickyEqn(ledInfo[iSys], fNBins, fBinWidth);
+    fLednickyEqns.push_back(lednicky);
+  }
 }
 
 
@@ -137,7 +140,7 @@ PairSystem::~PairSystem()
   }
 }
 
-void PairSystem::ReadInLambdaParams()
-{
+// void PairSystem::ReadInLambdaParams()
+// {
 
-}
+// }

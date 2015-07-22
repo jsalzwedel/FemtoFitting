@@ -13,13 +13,14 @@
 #include "TGraph.h"
 #include <vector>
 
-
+class LednickyInfo;
 
 using std::vector;
 
 class LednickyEqn{
  public:
-  LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix, Int_t nBins, Double_t binWidth);
+  /* LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix, Int_t nBins, Double_t binWidth); */
+  LednickyEqn(const LednickyInfo &info, Int_t nBins, Double_t binWidth);
   virtual ~LednickyEqn();
   TGraph *GetLednickyGraph();
   void SetParameters(const vector<Double_t> pars);
@@ -40,8 +41,8 @@ class LednickyEqn{
   Double_t GetLednickyF2(Double_t z); // Calculate the F2 function
   TGraph *GetBaseLednickyGraph(); //Calculate Lednicky in parent k* frame
   TGraph *TransformLednickyGraph(TGraph *base);
-  Double_t HbarC() {return 0.197327;};
-  void LednickyEqn::RebinTransformMatrix(TH2D* matrix);
+  Double_t HbarC() const {return 0.197327;};
+  /* void LednickyEqn::RebinTransformMatrix(TH2D* matrix); */
   
 
 };

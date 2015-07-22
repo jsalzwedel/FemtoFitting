@@ -5,7 +5,7 @@
 #ifndef Fitter_H
 #define Fitter_H
 
-class SystemInfo;
+class LednickyInfo;
 
 
 class Fitter{
@@ -21,7 +21,7 @@ class Fitter{
   virtual ~Fitter();
   
   /* void CreateAllPairSystems(Int_t configuration); */
-  void CreatePairSystem(TString simpleName, TString fileName, TString histName, vector<SystemInfo*> systemInfos, vector<Double_t> initParams, vector<Bool_t> fixParams);
+  void CreatePairSystem(TString simpleName, TString fileName, TString histName, const vector<LednickyInfo> &ledInfo, const vector<Double_t> &initParams, const vector<Bool_t> &fixParams);
   void CreateMinuit();
   void DoFitting();
   Int_t GetNSystems() const {return fNSystems;};

@@ -1,6 +1,6 @@
 
-#include "LednickyEqn.h"
-#include "SystemType.h"
+// #include "LednickyEqn.h"
+#include "LednickyInfo.h"
 // #include "PairSystem.h"
 // #include "ParameterConstraint.h"
 // #include "Fitter.h"
@@ -59,33 +59,33 @@ void UserSetupSystems(Fitter &fitter)
   // Does the primary-primary correlation function consist of
   // identical particles (i.e. both baryons or both antibaryons?)
   
-  // Create SystemInfo for each primary and residual correlation
+  // Create LednickyInfo for each primary and residual correlation
   // Args: TString name, Double_t lambdaParamter, TH2D *transformMatrix, Bool_t isIdenticalPair
-  vector<SystemInfo*> systems;
-  SystemInfo *sysLL = new System("LambdaLambda", 0.28, NULL, kTRUE);
-  systems.push_back(systems);
+  vector<LednickyInfo> ledInfo;
+  LednickyInfo infoLL("LambdaLambda", 0.28, NULL, kTRUE);
+  ledInfo.push_back(infoLL);
   
   TString fileNameMatrix = "~/Analysis/lambda/AliAnalysisLambda/Fitting/FemtoFitting/PreparedTransformMatrices.root";
-  SystemInfo *sysLS = new System("LambdaSigma", 0.21, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaLambda"), kFALSE);
-  systems.push_back(systems);
+  LednickyInfo infoLS("LambdaSigma", 0.21, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaLambda"), kFALSE);
+  ledInfo.push_back(infoLS);
 
-  SystemInfo *sysLX0 = new System("LambdaXi0", 0.14, GetTransformMatrix(fileNameMatrix, "TransformMatrixXi0Lambda"), kFALSE);
-  systems.push_back(systems);
+  LednickyInfo infoLX0("LambdaXi0", 0.14, GetTransformMatrix(fileNameMatrix, "TransformMatrixXi0Lambda"), kFALSE);
+  ledInfo.push_back(infoLX0);
 
-  SystemInfo *sysLXC = new System("LambdaXiC", 0.14, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCLambda"), kFALSE);
-  systems.push_back(systems);
+  LednickyInfo infoLXC("LambdaXiC", 0.14, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCLambda"), kFALSE);
+  ledInfo.push_back(infoLXC);
 
-  SystemInfo *sysSS = new System("SigmaSigma", 0.04, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaSigma"), kTRUE);
-  systems.push_back(systems);
+  LednickyInfo infoSS("SigmaSigma", 0.04, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaSigma"), kTRUE);
+  ledInfo.push_back(infoSS);
 
-  SystemInfo *sysSX0 = new System("SigmaXi0", 0.05, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXi0"), kFALSE);
-  systems.push_back(systems);
+  LednickyInfo infoSX0("SigmaXi0", 0.05, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXi0"), kFALSE);
+  ledInfo.push_back(infoSX0);
 
-  SystemInfo *sysSXC= new System("SigmaXiC", 0.05, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXiC"), kFALSE);
-  systems.push_back(systems);
+  LednickyInfo infoSXC("SigmaXiC", 0.05, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXiC"), kFALSE);
+  ledInfo.push_back(infoSXC);
 
-  SystemInfo *sysX0XC = new System("Xi0XiC", 0.04, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCXi0"), kFALSE);
-  systems.push_back(systems);
+  LednickyInfo infoX0XC("Xi0XiC", 0.04, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCXi0"), kFALSE);
+  ledInfo.push_back(infoX0Xc);
 
 
   // Bool_t isPrimaryIdentical = kTRUE;

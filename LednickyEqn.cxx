@@ -12,15 +12,31 @@
 #include "LednickyEqn.h"
 #include "Faddeeva.hh"
 #include <iostream>
+#include "LednickyInfo.h"
+
 
 using namespace std;
 
-LednickyEqn::LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix, Int_t nBins, Double_t binWidth)
+// LednickyEqn::LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix, Int_t nBins, Double_t binWidth)
+// {
+//   fName = name;
+//   fIsIdentical = isIdentical;
+//   //If transform matrix is null, this is a primary correlation
+//   fTransformMatrix = transformMatrix;
+//   fF0Real = 0.;
+//   fF0Imag = 0.;
+//   fD0 = 0.;
+//   fRadius = 0.;
+//   fNBins = nBins;
+//   fBinWidth = binWidth;
+// }
+
+LednickyEqn::LednickyEqn(const LednickyInfo &info, Int_t nBins, Double_t binWidth)
 {
-  fName = name;
-  fIsIdentical = isIdentical;
+  fName = info->GetSystemName;
+  fIsIdentical = info->GetIsIdenticalPair();
   //If transform matrix is null, this is a primary correlation
-  fTransformMatrix = transformMatrix;
+  fTransformMatrix = info->GetTransformMatrix();
   fF0Real = 0.;
   fF0Imag = 0.;
   fD0 = 0.;
@@ -127,7 +143,7 @@ TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
 
   //If not the same number of bins as transform matrix, rebin it...
   // if(...) ... divide nbinsTransform by nBins graph, take modulus...
-  RebinTransformMatrix(fTransformMatrix);
+  // RebinTransformMatrix(fTransformMatrix);
 
   const Int_t nBins = transformedGraph->GetN();
   
@@ -166,9 +182,9 @@ Double_t LednickyEqn::GetLednickyF2(Double_t z)
   return lednickyF2.Eval(z);
 }
 
-void LednickyEqn::RebinTransformMatrix(TH2D* matrix)
-{
-  // Very inelegant way of rebinning...
-  matrix->RebinX(4);
-  matrix->RebinY(4);
-}
+// void LednickyEqn::RebinTransformMatrix(TH2D* matrix)
+// {
+//   // Very inelegant way of rebinning...
+//   matrix->RebinX(4);
+//   matrix->RebinY(4);
+// }
