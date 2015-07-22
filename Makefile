@@ -7,14 +7,25 @@ CFLAGS = $(shell root-config --cflags)
 
 all: main
 
-main: lednicky faddeeva Main.cxx
-	g++ Main.cxx Faddeeva.o LednickyEqn.o -o lednicky $(LIBS) $(CFLAGS)
+main: lednickyEqn faddeeva lednickyInfo constraint pairsystem Main.cxx
+	g++ Main.cxx Faddeeva.o LednickyEqn.o LednickyInfo.o ParameterConstraint.o PairSystem.o -o runMe $(LIBS) $(CFLAGS)
 
 faddeeva: Faddeeva.cc
 	g++ -c Faddeeva.cc
 
-lednicky: LednickyEqn.cxx 
+lednickyEqn: LednickyEqn.cxx 
 	g++ -c LednickyEqn.cxx $(CFLAGS) 
 
+lednickyInfo: LednickyInfo.cxx 
+	g++ -c LednickyInfo.cxx $(CFLAGS) 
+
+constraint: ParameterConstraint.cxx
+	g++ -c ParameterConstraint.cxx $(CFLAGS)
+
+pairsystem: PairSystem.cxx
+	g++ -c PairSystem.cxx $(CFLAGS)
+
+
+
 clean: 
-	rm -f lednicky Lednicky.o Faddeeva.o
+	rm -f runMe LednickyEqn.o Faddeeva.o LednickyInfo.o PairSystem.o ParameterConstraint.o
