@@ -58,6 +58,7 @@ void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString hist
   fMinParams.push_back(minParams);
   fMaxParams.push_back(maxParams);
   fFixParams.push_back(fixParams);
+  fNSystems++;
 }
 
 // void Fitter::CreateMinuit()
