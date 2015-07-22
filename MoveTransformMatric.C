@@ -6,6 +6,8 @@ void MoveTransformMatric(TString inFileName, TString matrixName)
   TFile outFile("PreparedTransformMatrices.root","update");
   if(transform) {
     outFile.cd();
+    transform->RebixX(4);
+    transform->RebinY(4);
     transform->Write(transform->GetName(), TObject::kOverwrite);
   }
   else cout<<"Could not find matrix with that name"<<endl;
