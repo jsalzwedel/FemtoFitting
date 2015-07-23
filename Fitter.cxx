@@ -9,6 +9,7 @@
 #include "TStopwatch.h"
 
 #include <assert.h>
+#include "TCanvas.h"
 
 using namespace std;
 
@@ -16,7 +17,7 @@ using namespace std;
 Fitter::Fitter():
   fNParams(5),
   fNSystems(0),
-  fMaxMinuitCalls(3),
+  fMaxMinuitCalls(100),
   fUseEstimatedLambdaParams(kTRUE),
   fFitCalls(0)
 {
@@ -175,7 +176,7 @@ void Fitter::InitializeMinuitParameters(TMinuit *minuit)
   SetupInitialParameters();
   // Define the fit parameters
 
-  Double_t startingStepSize = 0.001;
+  Double_t startingStepSize = 0.1;
   
   for(int iPar = 0; iPar < fMinuitParNames.size(); iPar++){
     minuit->DefineParameter(iPar, fMinuitParNames[iPar], fMinuitParInitial[iPar],  startingStepSize, fMinuitParMinimum[iPar], fMinuitParMaximum[iPar]);
@@ -208,6 +209,22 @@ Bool_t Fitter::IsParameterConstrained(const Int_t currentSys, const Int_t curren
 void Fitter::SaveOutputPlots()
 {
   // Save output plots for each fit
+  TFile outFile("FitResults.root","update");
+  for(Int_t iSys = 0; iSys < fNSystems; iSys++)
+  {
+    TH1D *cf = fPairSystems[iSys]->GetCF();
+    cf->Write(cf->GetName(), TObject::kOverwrite);
+    TGraph *g = fPairSystems[iSys]->GetCombinedTGraph();
+    g->Write(g->GetName(), TObject::kOverwrite);
+    TCanvas c1("c1","c1");
+    cf->DrawCopy();
+    g->Draw("same");
+    TString plotName = "Plot";
+    plotName += g->GetName();
+    plotName += ".pdf";
+    c1.SaveAs(plotName);
+    cout<<"Saved file "<<plotName<<endl;
+  }
 }
 
 // void Fitter::SetFitOptions()
