@@ -10,6 +10,7 @@
 #include "ParameterConstraint.h"
 
 
+#include "TStopwatch.h"
 #include "Rtypes.h"
 #include "TMinuit.h"
 
@@ -43,8 +44,10 @@ class Fitter{
   Int_t GetTotalParams() const {return fNSystems * fNParams;};
   void InitializeMinuitParameters(TMinuit *minuit);
   void PassLednickyParameters(Double_t pairSystemPars);
+  void SetHighFitBin(Int_t bin);
+  void SetLowFitBin(Int_t bin);
   void SaveOutputPlots();
-  void SetFitOptions();
+  /* void SetFitOptions(); */
   void SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par);
 
   /* void SetUseEstimatedLambdaParams(Bool_t useParam); */
@@ -57,6 +60,7 @@ class Fitter{
   Bool_t IsParameterConstrained(const Int_t sys, const Int_t par);
   void SetupInitialParameters();
   void SetupParameterConstraints(const Int_t config);
+  void Timer();
   /* void SetupParameterVectors(); */
 
   TMinuit *fMinuit;
@@ -82,12 +86,11 @@ class Fitter{
   vector<vector<Double_t> > fMinParams;
   vector<vector<Double_t> > fMaxParams;
   vector<vector<Bool_t> > fFixParams;
-  /* Bool_t fFixRadius; */
-  /* Bool_t fFixF0Real; */
-  /* Bool_t fFixF0Imag; */
-  /* Bool_t fFixD0; */
-  /* Bool_t fFixNorm; */
-  /* Bool_t fFixLambda; */
+
+  Int_t fFitCalls;
+  
+  //Debug
+  TStopwatch *fTimer;
 };
 
 #endif

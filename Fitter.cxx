@@ -6,6 +6,7 @@
 #include <iostream>
 #include "TH1D.h"
 #include "TFile.h"
+#include "TStopwatch.h"
 
 #include <assert.h>
 
@@ -15,9 +16,11 @@ using namespace std;
 Fitter::Fitter():
   fNParams(5),
   fNSystems(0),
-  fMaxMinuitCalls(10000),
-  fUseEstimatedLambdaParams(kTRUE)
+  fMaxMinuitCalls(3),
+  fUseEstimatedLambdaParams(kTRUE),
+  fFitCalls(0)
 {
+  fTimer = new TStopwatch();
   fParamNames.push_back("Radius");
   fParamNames.push_back("ReF0");
   fParamNames.push_back("ImF0");
@@ -41,6 +44,7 @@ Fitter::~Fitter()
     fParamConstraints[i] = NULL;
   }
   // if(fMinuit) {delete fMinuit; fMinuit = NULL;}
+  if(fTimer) {delete fTimer; fTimer = NULL;}
 }
 
 
@@ -67,23 +71,27 @@ void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString hist
 // } 
 void Fitter::DoFitting(TMinuit *minuit)
 {
+  cout<<"DoFitting"<<endl;
+  Timer();
   // Run the fit procedure
   Double_t arglist[5] = {0,0,0,0,0}; //Arguments that can be passed with Minuit commands
   Int_t errFlag = 0;
   // arglist[0] = 1;
   // minuit->mnexcm("CALL FCN", arglist, 1, errFlag);
 
+  
   // Set how verbose the output is (from no output at -1, to max at 3)
-  arglist[0] = 0;
+  arglist[0] = 3;
   minuit->mnexcm("SET PRINT", arglist, 1, errFlag);
 
   // Maybe have all output results go to a file?
 
-
+  Timer();
   // Run Migrad with a specified max number of calls
   arglist[0] = fMaxMinuitCalls;
+  arglist[1] = 0.1;
   minuit->mnexcm("MIGRAD", arglist, 1, errFlag);
-
+  Timer();
   // If outputting to file, return output to terminal now
 }
 
@@ -163,6 +171,8 @@ Int_t Fitter::GetConstrainedParamIndex(const Int_t currentSys, const Int_t curre
 
 void Fitter::InitializeMinuitParameters(TMinuit *minuit)
 {
+
+  SetupInitialParameters();
   // Define the fit parameters
 
   Double_t startingStepSize = 0.001;
@@ -200,23 +210,40 @@ void Fitter::SaveOutputPlots()
   // Save output plots for each fit
 }
 
-void Fitter::SetFitOptions()
-{
-  // Set things like:
-  // -How many correlations to fit
-  // -What parameters to fix
-  // -What parameters to share
+// void Fitter::SetFitOptions()
+// {
+//   // Set things like:
+//   // -How many correlations to fit
+//   // -What parameters to fix
+//   // -What parameters to share
 
 
-  // SetupParameterVectors();
-  // SetupParameterConstraints(constraintConfig);
-  SetupInitialParameters();
+//   // SetupParameterVectors();
+//   // SetupParameterConstraints(constraintConfig);
  
   
+// }
+
+void Fitter::SetHighFitBin(Int_t bin)
+{
+  for(Int_t iSys = 0; iSys < fNSystems; iSys++)
+  {
+    fPairSystems[iSys]->SetHighFitBin(bin);
+  }
+}
+
+void Fitter::SetLowFitBin(Int_t bin)
+{
+  for(Int_t iSys = 0; iSys < fNSystems; iSys++)
+  {
+    fPairSystems[iSys]->SetLowFitBin(bin);
+  }
 }
 
 void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par)
 {
+  cout<<"SetParametersAndFitBegin:\t"<<++fFitCalls<<endl;
+  
   // Take the TMinuit parameters, set the parameters for each
   // pair system, and get the resulting chisquare of the fit.
 
@@ -259,6 +286,8 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *p
     fPairSystems[iSys]->SetLednickyParameters(pairSystemPars);
     totalChisquare += fPairSystems[iSys]->CalculateFitChisquare();
   }
+  cout<<"SetParametersAndFitEnd:\t"<<endl;
+  Timer();
 }
 
 
@@ -289,7 +318,12 @@ void Fitter::SetupInitialParameters()
   } // end system loop
 }
 
-
+void Fitter::Timer()
+{
+  if(!fTimer) return;
+  fTimer->Print();
+  fTimer->Continue();
+}
 
 
 
