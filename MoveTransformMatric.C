@@ -6,7 +6,7 @@ void MoveTransformMatric(TString inFileName, TString matrixName)
   TFile outFile("PreparedTransformMatrices.root","update");
   if(transform) {
     outFile.cd();
-    transform->RebixX(4);
+    transform->RebinX(4);
     transform->RebinY(4);
     transform->Write(transform->GetName(), TObject::kOverwrite);
   }
