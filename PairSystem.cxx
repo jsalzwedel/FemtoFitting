@@ -1,11 +1,16 @@
 #include "LednickyInfo.h"
 #include "LednickyEqn.h"
 #include "PairSystem.h"
+
+#include <iostream>
 #include <assert.h>
+
+using namespace std;
 
 
 Double_t PairSystem::CalculateFitChisquare()
 {
+  cout<<"PairSystem::CalculateFitChisquare"<<endl;
   // Calculate the chisquare difference between the
   // correlation function data and the combined LednickyEqns
   
@@ -18,19 +23,25 @@ Double_t PairSystem::CalculateFitChisquare()
   // Find the difference between the fit and the data.  Note that
   // TGraph bins start counting at 0, while histograms bins start
   // counting at 1 (the 0 bin is underflow)
+  // cout<<"fLowFitBin:\t"<<fLowFitBin<<".\tfHighFitBin:\t"<<fHighFitBin<<endl;
   for(Int_t iBin = fLowFitBin; iBin < fHighFitBin; iBin++)
   {
+    // cout<<"Graph:\t"<<combinedGraph->GetY()[iBin]
+    // 	<<".\tCF:\t"<<fCF->GetBinContent(iBin+1)<<endl;
     Double_t diff = combinedGraph->GetY()[iBin] - fCF->GetBinContent(iBin+1);
     Double_t err = fCF->GetBinError(iBin+1);
+    // cout<<"Diff:\t"<<diff<<".\tError:\t"<<err<<endl;
     chi2 += pow(diff,2)/pow(err,2);
   }
   delete combinedGraph;
+  cout<<"Chi2 for these parameters:\t"<<chi2<<endl;
   return chi2;
 }
 
 
 TGraph* PairSystem::GetCombinedTGraph()
 {
+  cout<<"PairSystem::GetCombinedTGraph"<<endl;
   // Make a TGraph object that sums all the LednickyEqns with
   // lambda parameters.  
 
@@ -46,6 +57,8 @@ TGraph* PairSystem::GetCombinedTGraph()
       TGraph *ledEqn = fLednickyEqns[iLed]->GetLednickyGraph();
       Double_t graphValue = ledEqn->GetY()[iBin];
       Double_t lambdaParam = fLambdaParameters[iLed];
+      // cout<<"Graph value:\t"<<graphValue
+	  // <<".\tLambdaParam:\t"<<lambdaParam<<endl;
       combinedBinContent += (graphValue - 1.) * lambdaParam;
       delete ledEqn;
     }
@@ -57,6 +70,7 @@ TGraph* PairSystem::GetCombinedTGraph()
 
 void PairSystem::SetLednickyParameters(vector<Double_t> pars)
 {
+  cout<<"PairSystem::SetLednickyParameters"<<endl;
   // Pass the new fit parameters to each LednickyEqn
   for(Int_t iLed = 0; iLed < fLednickyEqns.size(); iLed++){
     fLednickyEqns[iLed]->SetParameters(pars);
@@ -77,7 +91,9 @@ void PairSystem::SetLednickyParameters(vector<Double_t> pars)
   
 }
 
-PairSystem::PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName)
+PairSystem::PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName):
+fLowFitBin(0),
+fHighFitBin(50)
 {
   assert(cfData);
   fCF = cfData;

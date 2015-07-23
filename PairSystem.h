@@ -25,6 +25,8 @@ class PairSystem{
   Double_t CalculateFitChisquare();
   void SetCFData(TH2D* correlationFunction);
   void SetLednickyParameters(vector<Double_t> pars);
+  void SetLowFitBin(Int_t bin) {fLowFitBin = bin;};
+  void SetHighFitBin(Int_t bin) {fHighFitBin = bin;};
   TGraph *GetCombinedTGraph();
 
  private:
@@ -40,7 +42,7 @@ class PairSystem{
   Double_t fNorm; // Normalization parameter for combined Lednicky graph
   Bool_t fUseEstimatedLambdaParams;
   Int_t fNBins; // Number of kstar bins in correlation function
-  Int_t fBinWidth; // Width of each kstar bin
+  Double_t fBinWidth; // Width of each kstar bin
   Int_t fLowFitBin; // Lowest bin that will be fit
   Int_t fHighFitBin; // Highest bin that will be fit
 
