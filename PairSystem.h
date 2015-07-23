@@ -28,6 +28,7 @@ class PairSystem{
   void SetLowFitBin(Int_t bin) {fLowFitBin = bin;};
   void SetHighFitBin(Int_t bin) {fHighFitBin = bin;};
   TGraph *GetCombinedTGraph();
+  TH1D *GetCF() {return fCF;};
 
  private:
   /* void CreateDefaultLednickyEqns(); */

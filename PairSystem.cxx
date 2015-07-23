@@ -47,7 +47,9 @@ TGraph* PairSystem::GetCombinedTGraph()
 
   // Set up the graph's dimensions
   TGraph *combinedLednicky = fLednickyEqns[0]->GetLednickyGraph();
-
+  TString graphName = fCF->GetName();
+  graphName += "Fit";
+  combinedLednicky->SetName(graphName);
   // Calculate the y-value of the graph for each x-bin
   for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++)
   {
