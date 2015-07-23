@@ -2,6 +2,7 @@
 #include "LednickyEqn.h"
 #include "PairSystem.h"
 
+#include "TStopwatch.h"
 #include <iostream>
 #include <assert.h>
 
@@ -10,7 +11,7 @@ using namespace std;
 
 Double_t PairSystem::CalculateFitChisquare()
 {
-  cout<<"PairSystem::CalculateFitChisquare"<<endl;
+  // cout<<"PairSystem::CalculateFitChisquare"<<endl;
   // Calculate the chisquare difference between the
   // correlation function data and the combined LednickyEqns
   
@@ -34,45 +35,88 @@ Double_t PairSystem::CalculateFitChisquare()
     chi2 += pow(diff,2)/pow(err,2);
   }
   delete combinedGraph;
-  cout<<"Chi2 for these parameters:\t"<<chi2<<endl;
+  // cout<<"Chi2 for these parameters:\t"<<chi2<<endl;
   return chi2;
 }
 
 
 TGraph* PairSystem::GetCombinedTGraph()
 {
-  cout<<"PairSystem::GetCombinedTGraph"<<endl;
+  // TStopwatch timer;
+  // cout<<"PairSystem::GetCombinedTGraph"<<endl;
   // Make a TGraph object that sums all the LednickyEqns with
   // lambda parameters.  
 
   // Set up the graph's dimensions
+  // timer.Print(); timer.Continue(); cout<<"GetGraph"<<endl;
   TGraph *combinedLednicky = fLednickyEqns[0]->GetLednickyGraph();
+  // timer.Print(); timer.Continue(); cout<<"Got TGraph"<<endl;
+
   TString graphName = fCF->GetName();
   graphName += "Fit";
   combinedLednicky->SetName(graphName);
   // Calculate the y-value of the graph for each x-bin
-  for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++)
+
+
+
+  for(Int_t iLed = 0; iLed < fLednickyEqns.size(); iLed++)
   {
-    Double_t combinedBinContent = 1.;
-    for(Int_t iLed = 0; iLed < fLednickyEqns.size(); iLed++)
+    // TStopwatch subTimer;
+    TGraph *ledEqn = fLednickyEqns[iLed]->GetLednickyGraph();
+    Double_t lambdaParam = fLambdaParameters[iLed];
+    // cout<<"Graph value:\t"<<graphValue
+    // <<".\tLambdaParam:\t"<<lambdaParam<<endl;
+
+    for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++)
     {
-      TGraph *ledEqn = fLednickyEqns[iLed]->GetLednickyGraph();
       Double_t graphValue = ledEqn->GetY()[iBin];
-      Double_t lambdaParam = fLambdaParameters[iLed];
-      // cout<<"Graph value:\t"<<graphValue
-	  // <<".\tLambdaParam:\t"<<lambdaParam<<endl;
-      combinedBinContent += (graphValue - 1.) * lambdaParam;
-      delete ledEqn;
+      Double_t partialBinContent = (graphValue - 1.) * lambdaParam;
+      partialBinContent /= fNorm;
+      combinedLednicky->GetY()[iBin] += partialBinContent;
+
     }
-    combinedBinContent /= fNorm;
-    combinedLednicky->GetY()[iBin] = combinedBinContent;
+    delete ledEqn;
+    // subTimer.Print(); 
+    // timer.Print(); timer.Continue();
   }
+
+
+
+
+
+
+
+
+
+
+
+
+  // for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++)
+  // {
+  //   Double_t combinedBinContent = 1.;
+  //   for(Int_t iLed = 0; iLed < fLednickyEqns.size(); iLed++)
+  //   {
+  //     TStopwatch subTimer;
+  //     TGraph *ledEqn = fLednickyEqns[iLed]->GetLednickyGraph();
+  //     Double_t graphValue = ledEqn->GetY()[iBin];
+  //     Double_t lambdaParam = fLambdaParameters[iLed];
+  //     // cout<<"Graph value:\t"<<graphValue
+  // 	  // <<".\tLambdaParam:\t"<<lambdaParam<<endl;
+  //     combinedBinContent += (graphValue - 1.) * lambdaParam;
+  //     delete ledEqn;
+  //     subTimer.Print(); 
+  //   }
+  //   combinedBinContent /= fNorm;
+  //   combinedLednicky->GetY()[iBin] = combinedBinContent;
+  // // timer.Print(); timer.Continue();
+  // }
+  // timer.Print(); cout<<"End of GetCombinedTGraph"<<endl;
   return combinedLednicky;
 }
 
 void PairSystem::SetLednickyParameters(vector<Double_t> pars)
 {
-  cout<<"PairSystem::SetLednickyParameters"<<endl;
+  // cout<<"PairSystem::SetLednickyParameters"<<endl;
   // Pass the new fit parameters to each LednickyEqn
   for(Int_t iLed = 0; iLed < fLednickyEqns.size(); iLed++){
     fLednickyEqns[iLed]->SetParameters(pars);
