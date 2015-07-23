@@ -56,6 +56,7 @@ class Fitter{
   void ConstrainF0D0();
   void ConstrainRadii();
   Int_t GetConstrainedParamIndex(const Int_t currentSys, const Int_t currentPar);
+  Double_t GetChisquarePerNDF();
   /* void GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames); */
   Bool_t IsParameterConstrained(const Int_t sys, const Int_t par);
   void SetupInitialParameters();
@@ -73,6 +74,10 @@ class Fitter{
 
   vector<ParameterConstraint*> fParamConstraints;
   Double_t fNParams;
+  Int_t fFixedParams;
+  Int_t fFitBins;
+  Int_t fHighFitBin;
+  Int_t fLowFitBin;
   vector<TString> fParamNames;
   Double_t fNSystems;
   /* vector<Bool_t> fAllowImagF0; // Do we allow non-zero ImF0?  For each system */
@@ -88,6 +93,7 @@ class Fitter{
   vector<vector<Bool_t> > fFixParams;
 
   Int_t fFitCalls;
+  Double_t fChisquare;
   
   //Debug
   TStopwatch *fTimer;

@@ -16,10 +16,12 @@ using namespace std;
 
 Fitter::Fitter():
   fNParams(5),
+  fFixedParams(0),
   fNSystems(0),
   fMaxMinuitCalls(10000),
   fUseEstimatedLambdaParams(kTRUE),
-  fFitCalls(0)
+  fFitCalls(0),
+  fChisquare(0.)
 {
   fTimer = new TStopwatch();
   fParamNames.push_back("Radius");
@@ -64,6 +66,10 @@ void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString hist
   fMaxParams.push_back(maxParams);
   fFixParams.push_back(fixParams);
   fNSystems++;
+  for(Int_t i = 0; i < fixParams.size(); i++)
+  {
+    if(fixParams[i]) fFixedParams++;
+  }
 }
 
 // void Fitter::CreateMinuit()
@@ -93,6 +99,10 @@ void Fitter::DoFitting(TMinuit *minuit)
   arglist[1] = 0.1;
   minuit->mnexcm("MIGRAD", arglist, 1, errFlag);
   Timer();
+  cout<<"Finalchi2:\t"<<fChisquare<<endl
+      <<"Fit bins:\t"<<fFitBins*fNSystems<<endl
+      <<"Free Params:\t"<<fMinuitParNames.size() - fFixedParams<<endl
+      <<"Chi2/ndf:\t"<<GetChisquarePerNDF()<<endl;
   // If outputting to file, return output to terminal now
 }
 
@@ -168,6 +178,12 @@ Int_t Fitter::GetConstrainedParamIndex(const Int_t currentSys, const Int_t curre
   }
   // Should not get to this point
   return 100000;
+}
+
+Double_t Fitter::GetChisquarePerNDF()
+{
+  Double_t ndf = 1.*fFitBins - (1.*fMinuitParNames.size() - 1.*fFixedParams);
+  return fChisquare/ndf;
 }
 
 void Fitter::InitializeMinuitParameters(TMinuit *minuit)
@@ -247,6 +263,8 @@ void Fitter::SetHighFitBin(Int_t bin)
   {
     fPairSystems[iSys]->SetHighFitBin(bin);
   }
+  fHighFitBin = bin;
+  fFitBins = (fHighFitBin - fLowFitBin) * fNSystems;
 }
 
 void Fitter::SetLowFitBin(Int_t bin)
@@ -255,6 +273,8 @@ void Fitter::SetLowFitBin(Int_t bin)
   {
     fPairSystems[iSys]->SetLowFitBin(bin);
   }
+  fLowFitBin = bin;
+  fFitBins = (fHighFitBin - fLowFitBin) * fNSystems;
 }
 
 void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par)
@@ -305,6 +325,7 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *p
   }
   // cout<<"SetParametersAndFitEnd:\t"<<endl;
   // Timer();
+  fChisquare = totalChisquare;
 }
 
 
