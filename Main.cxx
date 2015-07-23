@@ -116,6 +116,12 @@ void UserSetupSystems(Fitter *fitter)
 
 }
 
+void UserSetFitOptions(Fitter *myFitter)
+{
+  myFitter->SetHighFitBin(50);
+
+}
+
 
 void MinuitFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, Int_t iflag)
 {
@@ -137,7 +143,8 @@ int main(int argc, char **argv)
     cout<<"No systems to fit."<<endl;
     return 1;
   }
-  myFitter->SetFitOptions();
+  UserSetFitOptions(myFitter);
+  // myFitter->SetFitOptions();
 
 
   // Create a TMinuit object.
