@@ -270,9 +270,9 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *p
       parameters[thisParamIndex] = par[thisParamIndex - constrainedParams];
     }
   }
-  
+  // cout<<"Parameters:\t"<<i<<endl;
   // Check that we have the correct number of parameters
-  assert(i == fNParams * fNSystems - constrainedParams);
+  // assert(i == fNParams * fNSystems - constrainedParams);
 
   // Break up the total parameter vector into a mini-vector for
   // each PairSystem. Then pass the vector to the system and 
