@@ -70,8 +70,8 @@ void UserSetupSystems(Fitter *fitter)
   vector<Double_t> maxParams(maxParamsArr, maxParamsArr+5);  
 
   // Determine which parameters should be fixed in the fitter.
-  Bool_t allowImaginaryF0 = kFALSE;
-  Bool_t fixParamsArr[5] = {kFALSE, kFALSE, allowImaginaryF0, kFALSE, kFALSE};
+  // Bool_t allowImaginaryF0 = kFALSE;
+  Bool_t fixParamsArr[5] = {kFALSE, kFALSE, kTRUE, kFALSE, kTRUE};
   vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+5);
 
 
