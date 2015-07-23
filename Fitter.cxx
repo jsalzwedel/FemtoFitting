@@ -17,7 +17,7 @@ using namespace std;
 Fitter::Fitter():
   fNParams(5),
   fNSystems(0),
-  fMaxMinuitCalls(100),
+  fMaxMinuitCalls(10000),
   fUseEstimatedLambdaParams(kTRUE),
   fFitCalls(0)
 {
@@ -259,7 +259,7 @@ void Fitter::SetLowFitBin(Int_t bin)
 
 void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par)
 {
-  cout<<"SetParametersAndFitBegin:\t"<<++fFitCalls<<endl;
+  // cout<<"SetParametersAndFitBegin:\t"<<++fFitCalls<<endl;
   
   // Take the TMinuit parameters, set the parameters for each
   // pair system, and get the resulting chisquare of the fit.
@@ -303,8 +303,8 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *p
     fPairSystems[iSys]->SetLednickyParameters(pairSystemPars);
     totalChisquare += fPairSystems[iSys]->CalculateFitChisquare();
   }
-  cout<<"SetParametersAndFitEnd:\t"<<endl;
-  Timer();
+  // cout<<"SetParametersAndFitEnd:\t"<<endl;
+  // Timer();
 }
 
 
