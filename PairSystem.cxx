@@ -71,7 +71,7 @@ TGraph* PairSystem::GetCombinedTGraph()
     {
       Double_t graphValue = ledEqn->GetY()[iBin];
       Double_t partialBinContent = (graphValue - 1.) * lambdaParam;
-      partialBinContent /= fNorm;
+      // partialBinContent /= fNorm;
       combinedLednicky->GetY()[iBin] += partialBinContent;
 
     }
@@ -80,7 +80,12 @@ TGraph* PairSystem::GetCombinedTGraph()
     // timer.Print(); timer.Continue();
   }
 
+  for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++)
+  {
+    combinedLednicky->GetY()[iBin] += 1.;
+    combinedLednicky->GetY()[iBin] /= fNorm;
 
+  }
 
 
 
@@ -137,9 +142,10 @@ void PairSystem::SetLednickyParameters(vector<Double_t> pars)
   
 }
 
-PairSystem::PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName):
+PairSystem::PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName, Int_t sysIndex):
 fLowFitBin(0),
-fHighFitBin(50)
+fHighFitBin(50),
+fSystemIndex(sysIndex)
 {
   assert(cfData);
   fCF = cfData;

@@ -20,13 +20,15 @@ class LednickyEqn;
 
 class PairSystem{
  public:
-  PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName);
+  PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName, Int_t sysIndex);
   ~PairSystem();
   Double_t CalculateFitChisquare();
+  Int_t GetSystemIndex() const {return fSystemIndex;};
   void SetCFData(TH2D* correlationFunction);
   void SetLednickyParameters(vector<Double_t> pars);
   void SetLowFitBin(Int_t bin) {fLowFitBin = bin;};
   void SetHighFitBin(Int_t bin) {fHighFitBin = bin;};
+  void SetSystemIndex(Int_t sysIndex) {fSystemIndex = sysIndex;};
   TGraph *GetCombinedTGraph();
   TH1D *GetCF() {return fCF;};
 
@@ -46,6 +48,7 @@ class PairSystem{
   Double_t fBinWidth; // Width of each kstar bin
   Int_t fLowFitBin; // Lowest bin that will be fit
   Int_t fHighFitBin; // Highest bin that will be fit
+  Int_t fSystemIndex; // Index of the system (based on enum in Main.cxx)
 
 };
 
