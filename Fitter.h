@@ -25,17 +25,17 @@ class LednickyInfo;
 class Fitter{
  public:
   
-  enum ParamType  {kRad    = 0,
-  		   kF0Real = 1,
-  		   kF0Imag = 2,
-  		   kD0     = 3,
-  		   kNorm   = 4,
-  		   kLambda = 5};
+  /* enum ParamType  {kRad    = 0, */
+  /* 		   kF0Real = 1, */
+  /* 		   kF0Imag = 2, */
+  /* 		   kD0     = 3, */
+  /* 		   kNorm   = 4, */
+  /* 		   kLambda = 5}; */
   Fitter();
   virtual ~Fitter();
   
   /* void CreateAllPairSystems(Int_t configuration); */
-  void CreatePairSystem(TString simpleName, TString fileName, TString histName, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
+  void CreatePairSystem(TString simpleName, TString fileName, TString histName, Int_t sysIndex,  const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
   /* void CreateMinuit(); */
   void DoFitting(TMinuit *minuit);
   Int_t GetNMinuitParams() const {return fMinuitParNames.size();};
@@ -49,6 +49,7 @@ class Fitter{
   void SaveOutputPlots();
   /* void SetFitOptions(); */
   void SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par);
+  void SetupConstraint(Int_t param, vector<Int_t> systems);
 
   /* void SetUseEstimatedLambdaParams(Bool_t useParam); */
 
@@ -60,7 +61,7 @@ class Fitter{
   /* void GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames); */
   Bool_t IsParameterConstrained(const Int_t sys, const Int_t par);
   void SetupInitialParameters();
-  void SetupParameterConstraints(const Int_t config);
+  /* void SetupParameterConstraints(const Int_t config); */
   void Timer();
   /* void SetupParameterVectors(); */
 

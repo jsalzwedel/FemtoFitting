@@ -52,13 +52,13 @@ Fitter::~Fitter()
 
 
 
-void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString histName, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
+void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString histName, Int_t sysIndex, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
 {
   TFile inFile(fileName, "read");
   TH1D *cf = (TH1D*) inFile.Get(histName);
   assert(cf);
   cf->SetDirectory(0);
-  PairSystem *system = new PairSystem(cf, ledInfo, simpleName);
+  PairSystem *system = new PairSystem(cf, ledInfo, simpleName, sysIndex);
   fPairSystems.push_back(system);
   fSystemNames.push_back(simpleName);
   fInitParams.push_back(initParams);
@@ -205,18 +205,23 @@ Bool_t Fitter::IsParameterConstrained(const Int_t currentSys, const Int_t curren
 {
   // Check to see if this parameter has been constrained 
   // to be the same as the parameter from an earlier system
-  
+  // cout<<"IsParameterConstrained\n";
+  Int_t sysIndex = fPairSystems[currentSys]->GetSystemIndex();
   for(Int_t iCon = 0; iCon < fParamConstraints.size(); iCon++)
   {
     // Check for constraints on this type of parameter
     ParameterConstraint *constraint = fParamConstraints[iCon];
     if(constraint->GetConstrainedParam() != currentPar) continue;
-    
     const vector<Int_t> &consSystems = fParamConstraints[iCon]->GetConstrainedSystems();
+    cout<<"Possible constraint. Num constrained systems:\t"<<consSystems.size()<<endl;
 
     for(Int_t iSys = 1; iSys < consSystems.size(); iSys++)
     {
-      if(consSystems[iSys] == currentSys) return true;
+      cout<<"Checking system\t"<<consSystems[iSys]<<" vs "<<sysIndex<<endl;
+      if(consSystems[iSys] == sysIndex) {
+	cout<<"Found constraint for system "<<sysIndex<<endl;
+	return true;
+      }
     } 
   }
   return kFALSE;
@@ -438,3 +443,9 @@ void Fitter::Timer()
 //   constraint = new ParameterConstraint(param, systemsLA);
 //   fParamConstraints.push_back(constraint);
 // }
+
+void Fitter::SetupConstraint(Int_t param, vector<Int_t> systems)
+{
+  ParameterConstraint *constraint = new ParameterConstraint(param, systems);
+  fParamConstraints.push_back(constraint);
+}
