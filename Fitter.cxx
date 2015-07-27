@@ -52,13 +52,13 @@ Fitter::~Fitter()
 
 
 
-void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString histName, Int_t sysIndex, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
+void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString histName, Int_t sysType, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
 {
   TFile inFile(fileName, "read");
   TH1D *cf = (TH1D*) inFile.Get(histName);
   assert(cf);
   cf->SetDirectory(0);
-  PairSystem *system = new PairSystem(cf, ledInfo, simpleName, sysIndex);
+  PairSystem *system = new PairSystem(cf, ledInfo, simpleName, sysType);
   fPairSystems.push_back(system);
   fSystemNames.push_back(simpleName);
   fInitParams.push_back(initParams);
@@ -156,6 +156,7 @@ Int_t Fitter::GetConstrainedParamIndex(const Int_t currentSys, const Int_t curre
 {
   // Find index of the earlier matching constrained parameter
   
+  Int_t sysType = fPairSystems[currentSys]->GetSystemType();
 
   // Loop through the constraints until we find the relevant one
   for(Int_t iCon = 0; iCon < fParamConstraints.size(); iCon++)
@@ -169,9 +170,25 @@ Int_t Fitter::GetConstrainedParamIndex(const Int_t currentSys, const Int_t curre
 
     for(Int_t iSys = 1; iSys < consSystems.size(); iSys++)
     {
-      if(consSystems[iSys] == currentSys) {
-	const Int_t sysIndex = consSystems[iSys];
-        Int_t absoluteIndex = sysIndex * fNParams + parIndex;
+      
+      // Does this system have this constraint?
+      if(consSystems[iSys] == sysType) 
+      {
+	// Get the type of the first system in the constraint
+	const Int_t sysTypePrior = consSystems[0];
+	// Now find the index of the system with that type.
+	Int_t sysIndexPrior = 100;
+	for(Int_t iPairSys = 0; iPairSys < fNSystems; iPairSys++)
+	{
+	  if(sysTypePrior == fPairSystems[iPairSys]->GetSystemType())
+	  {
+	    sysIndexPrior = iPairSys;
+	  }
+	}
+	assert(sysIndexPrior != 100);
+	// Return the absolute index of the first parameter in the 
+	// constraint
+        Int_t absoluteIndex = sysIndexPrior * fNParams + parIndex;
 	return absoluteIndex;
       }
     } 
@@ -206,20 +223,16 @@ Bool_t Fitter::IsParameterConstrained(const Int_t currentSys, const Int_t curren
   // Check to see if this parameter has been constrained 
   // to be the same as the parameter from an earlier system
   // cout<<"IsParameterConstrained\n";
-  Int_t sysIndex = fPairSystems[currentSys]->GetSystemIndex();
+  Int_t sysType = fPairSystems[currentSys]->GetSystemType();
   for(Int_t iCon = 0; iCon < fParamConstraints.size(); iCon++)
   {
     // Check for constraints on this type of parameter
     ParameterConstraint *constraint = fParamConstraints[iCon];
     if(constraint->GetConstrainedParam() != currentPar) continue;
     const vector<Int_t> &consSystems = fParamConstraints[iCon]->GetConstrainedSystems();
-    cout<<"Possible constraint. Num constrained systems:\t"<<consSystems.size()<<endl;
-
     for(Int_t iSys = 1; iSys < consSystems.size(); iSys++)
     {
-      cout<<"Checking system\t"<<consSystems[iSys]<<" vs "<<sysIndex<<endl;
-      if(consSystems[iSys] == sysIndex) {
-	cout<<"Found constraint for system "<<sysIndex<<endl;
+      if(consSystems[iSys] == sysType) {
 	return true;
       }
     } 
