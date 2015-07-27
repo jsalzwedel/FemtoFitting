@@ -5,30 +5,30 @@ CFLAGS = $(shell root-config --cflags)
 #IFLAGS = -I$(ROOTSYS)/include
 #.PHONY: clean
 
-all: main
+all: runMe
 
-main: lednickyEqn faddeeva lednickyInfo constraint pairsystem fitter Main.cxx
+runMe: LednickyEqn.o Faddeeva.o LednickyInfo.o ParameterConstraint.o PairSystem.o Fitter.o Main.cxx
 	g++ Main.cxx Faddeeva.o LednickyEqn.o LednickyInfo.o ParameterConstraint.o PairSystem.o Fitter.o -o runMe $(LIBS) $(CFLAGS) 
 
-faddeeva: Faddeeva.cc
+Faddeeva.o: Faddeeva.cc
 	g++ -c Faddeeva.cc
 
-lednickyEqn: LednickyEqn.cxx 
-	g++ -c LednickyEqn.cxx $(CFLAGS) 
+LednickyEqn.o: LednickyEqn.cxx 
+	g++ -c LednickyEqn.cxx $(CFLAGS)
 
-lednickyInfo: LednickyInfo.cxx 
+LednickyInfo.o: LednickyInfo.cxx 
 	g++ -c LednickyInfo.cxx $(CFLAGS) 
 
-constraint: ParameterConstraint.cxx
+ParameterConstraint.o: ParameterConstraint.cxx
 	g++ -c ParameterConstraint.cxx $(CFLAGS)
 
-pairsystem: PairSystem.cxx
+PairSystem.o: PairSystem.cxx
 	g++ -c PairSystem.cxx $(CFLAGS)
 
-fitter: Fitter.cxx
+Fitter.o: Fitter.cxx
 	g++ -c Fitter.cxx $(CFLAGS)
 
 
 
 clean: 
-	rm -f runMe LednickyEqn.o Faddeeva.o LednickyInfo.o PairSystem.o ParameterConstraint.o Fitter.o
+	rm -f runMe *.o
