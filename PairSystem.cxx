@@ -142,10 +142,10 @@ void PairSystem::SetLednickyParameters(vector<Double_t> pars)
   
 }
 
-PairSystem::PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName, Int_t sysIndex):
+PairSystem::PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName, Int_t sysType):
 fLowFitBin(0),
 fHighFitBin(50),
-fSystemIndex(sysIndex)
+fSystemType(sysType)
 {
   assert(cfData);
   fCF = cfData;
