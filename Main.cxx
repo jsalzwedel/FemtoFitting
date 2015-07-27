@@ -116,28 +116,28 @@ void UserSetupSystems(Fitter *fitter)
   vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+5);
   // Prepare the lednicky eqn info (lambda parameters, transform matrix locations, whether or not particles are identical)
   vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE);
-  fitter->CreatePairSystem(simpleName, fileName, histName, kLL010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->CreatePairSystem(simpleName, fileName, histName, kLL010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   //Setting up Lambda-Antilambda 0-10%
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsLamALamKstarMomCorrected.root";
   histName = "LamALam0-10centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA010";
-  Double_t initParamsArrLA[5] = {3., -1., 1., 3., 1.}; 
+  Double_t initParamsArrLA[5] = {3.147, -.377, .205, 2.347, 0.99561}; 
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + 5);
-  Bool_t fixParamsArrLA[5] = {kFALSE, kFALSE, kFALSE, kFALSE, kTRUE};
+  Bool_t fixParamsArrLA[5] = {kFALSE, kFALSE, kFALSE, kFALSE, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 5);
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE);
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // Setup Lambda-Antilambda 10-30
   histName = "LamALam10-30centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA1030";
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // Setup Lambda-Antilambda 30-50
   histName = "LamALam30-50centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA3050";
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   //************* Add more systems as needed ******************
 
 }
@@ -145,10 +145,21 @@ void UserSetupSystems(Fitter *fitter)
 void UserSetConstraints(Fitter *myFitter)
 {
   // Set up any constraints between parameters of different systems.
+  // Share real f0 among partical-antiparticle
   Int_t systemsArrLA[3] = {kLA010, kLA1030,kLA3050};
   vector<Int_t> systemsLA(systemsArrLA, systemsArrLA + 3);
   ParamType par = kF0Real;
+  myFitter->SetupConstraint(par, systemsLA);
+
+  // share imaginary f0 among particle-antiparticle
+  par = kF0Imag;
+  myFitter->SetupConstraint(par, systemsLA);
+
+  // share d0 among particle-antiparticle
+  par = kD0;
   // myFitter->SetupConstraint(par, systemsLA);
+
+
 }
 
 void UserSetFitOptions(Fitter *myFitter)
