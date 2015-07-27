@@ -100,7 +100,7 @@ void Fitter::DoFitting(TMinuit *minuit)
   minuit->mnexcm("MIGRAD", arglist, 1, errFlag);
   Timer();
   cout<<"Finalchi2:\t"<<fChisquare<<endl
-      <<"Fit bins:\t"<<fFitBins*fNSystems<<endl
+      <<"Fit bins:\t"<<fFitBins<<endl
       <<"Free Params:\t"<<fMinuitParNames.size() - fFixedParams<<endl
       <<"Chi2/ndf:\t"<<GetChisquarePerNDF()<<endl;
   // If outputting to file, return output to terminal now
@@ -247,7 +247,7 @@ void Fitter::SaveOutputPlots()
   for(Int_t iSys = 0; iSys < fNSystems; iSys++)
   {
     TH1D *cf = fPairSystems[iSys]->GetCF();
-    cf->SetAxisRange(0,4,"Y");
+    cf->SetAxisRange(0.7,1.05,"Y");
     cf->Write(cf->GetName(), TObject::kOverwrite);
     TGraph *g = fPairSystems[iSys]->GetCombinedTGraph();
     g->Write(g->GetName(), TObject::kOverwrite);
@@ -298,7 +298,7 @@ void Fitter::SetLowFitBin(Int_t bin)
 
 void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par)
 {
-  cout<<"SetParametersAndFitBegin:\t"<<++fFitCalls<<endl;
+  // cout<<"SetParametersAndFitBegin:\t"<<++fFitCalls<<endl;
   
   // Take the TMinuit parameters, set the parameters for each
   // pair system, and get the resulting chisquare of the fit.
