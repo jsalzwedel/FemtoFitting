@@ -48,16 +48,21 @@ TGraph* PairSystem::GetCombinedTGraph()
   // lambda parameters.  
 
   // Set up the graph's dimensions
-  // timer.Print(); timer.Continue(); cout<<"GetGraph"<<endl;
   TGraph *combinedLednicky = fLednickyEqns[0]->GetLednickyGraph();
-  // timer.Print(); timer.Continue(); cout<<"Got TGraph"<<endl;
 
   TString graphName = fCF->GetName();
   graphName += "Fit";
   combinedLednicky->SetName(graphName);
+  
+  // Initialize the y-values to zero
+  for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++){
+    combinedLednicky->GetY()[iBin] = 0.0;
+  }
+
+
   // Calculate the y-value of the graph for each x-bin
 
-
+  
 
   for(Int_t iLed = 0; iLed < fLednickyEqns.size(); iLed++)
   {
@@ -73,7 +78,6 @@ TGraph* PairSystem::GetCombinedTGraph()
       Double_t partialBinContent = (graphValue - 1.) * lambdaParam;
       // partialBinContent /= fNorm;
       combinedLednicky->GetY()[iBin] += partialBinContent;
-
     }
     delete ledEqn;
     // subTimer.Print(); 
