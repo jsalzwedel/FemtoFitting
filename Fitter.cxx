@@ -248,6 +248,7 @@ void Fitter::SaveOutputPlots()
   {
     TH1D *cf = fPairSystems[iSys]->GetCF();
     cf->SetAxisRange(0.7,1.05,"Y");
+    cf->SetAxisRange(0.,1.,"X");
     cf->Write(cf->GetName(), TObject::kOverwrite);
     TGraph *g = fPairSystems[iSys]->GetCombinedTGraph();
     g->Write(g->GetName(), TObject::kOverwrite);
