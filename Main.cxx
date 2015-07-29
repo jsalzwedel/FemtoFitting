@@ -258,6 +258,20 @@ void UserSetConstraints(Fitter *myFitter)
   systems3050.push_back(kLA3050);
   // myFitter->SetupConstraint(parRad, systems3050);
 
+  vector<Int_t> sysLLAA010;
+  sysLLAA010.push_back(kLL010);
+  sysLLAA010.push_back(kAA010);
+  myFitter->SetupConstraint(parRad, sysLLAA010);
+
+  vector<Int_t> sysLLAA1030;
+  sysLLAA1030.push_back(kLL1030);
+  sysLLAA1030.push_back(kAA1030);
+  myFitter->SetupConstraint(parRad, sysLLAA1030);
+
+  vector<Int_t> sysLLAA3050;
+  sysLLAA3050.push_back(kLL3050);
+  sysLLAA3050.push_back(kAA3050);
+  myFitter->SetupConstraint(parRad, sysLLAA3050);
 
 }
 
