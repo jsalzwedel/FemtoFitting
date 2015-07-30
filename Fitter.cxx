@@ -7,6 +7,7 @@
 #include "TH1D.h"
 #include "TFile.h"
 #include "TStopwatch.h"
+#include "TMath.h"
 
 #include <assert.h>
 #include "TCanvas.h"
@@ -88,7 +89,7 @@ void Fitter::DoFitting(TMinuit *minuit)
 
   
   // Set how verbose the output is (from no output at -1, to max at 3)
-  arglist[0] = 3;
+  arglist[0] = 0;
   minuit->mnexcm("SET PRINT", arglist, 1, errFlag);
 
   // Maybe have all output results go to a file?
@@ -99,10 +100,15 @@ void Fitter::DoFitting(TMinuit *minuit)
   arglist[1] = 0.1;
   minuit->mnexcm("MIGRAD", arglist, 1, errFlag);
   Timer();
+
   cout<<"Finalchi2:\t"<<fChisquare<<endl
       <<"Fit bins:\t"<<fFitBins<<endl
+      <<"Actual Minuit Pars:\t"<<fMinuitParNames.size()<<endl
+      <<"Fixed params\t"<<fFixedParams<<endl
       <<"Free Params:\t"<<fMinuitParNames.size() - fFixedParams<<endl
-      <<"Chi2/ndf:\t"<<GetChisquarePerNDF()<<endl;
+      <<"Chi2/ndf:\t"<<GetChisquarePerNDF()<<endl
+      <<"Pvalue:\t"<<GetPvalue()<<endl;
+
   // If outputting to file, return output to terminal now
 }
 
@@ -201,6 +207,12 @@ Double_t Fitter::GetChisquarePerNDF()
 {
   Double_t ndf = 1.*fFitBins - (1.*fMinuitParNames.size() - 1.*fFixedParams);
   return fChisquare/ndf;
+}
+
+Double_t Fitter::GetPvalue()
+{
+  Double_t ndf = 1.*fFitBins - (1.*fMinuitParNames.size() - 1.*fFixedParams);
+  return TMath::Prob(fChisquare,ndf); 
 }
 
 void Fitter::InitializeMinuitParameters(TMinuit *minuit)

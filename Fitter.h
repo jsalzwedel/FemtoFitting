@@ -58,6 +58,7 @@ class Fitter{
   void ConstrainRadii();
   Int_t GetConstrainedParamIndex(const Int_t currentSys, const Int_t currentPar);
   Double_t GetChisquarePerNDF();
+  Double_t GetPvalue();
   /* void GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames); */
   Bool_t IsParameterConstrained(const Int_t sys, const Int_t par);
   void SetupInitialParameters();
