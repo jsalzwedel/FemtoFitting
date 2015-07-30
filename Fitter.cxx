@@ -100,6 +100,8 @@ void Fitter::DoFitting(TMinuit *minuit)
   arglist[1] = 0.1;
   minuit->mnexcm("MIGRAD", arglist, 1, errFlag);
   Timer();
+  
+  minuit->mnexcm("SHOw CORrelations", arglist, 1, errFlag);
 
   cout<<"Finalchi2:\t"<<fChisquare<<endl
       <<"Fit bins:\t"<<fFitBins<<endl
