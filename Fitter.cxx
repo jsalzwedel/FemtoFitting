@@ -271,8 +271,8 @@ void Fitter::SaveOutputPlots()
     g->Draw("same");
     TString plotName = "Plot";
     plotName += g->GetName();
-    plotName += ".pdf";
-    c1.SaveAs(plotName);
+    c1.SaveAs(plotName + ".pdf");
+    c1.SaveAs(plotName + ".png");
     cout<<"Saved file "<<plotName<<endl;
   }
 }
