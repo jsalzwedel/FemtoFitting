@@ -120,19 +120,19 @@ void UserSetupSystems(Fitter *fitter)
   vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+5);
   // Prepare the lednicky eqn info (lambda parameters, transform matrix locations, whether or not particles are identical)
   vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE);
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "CombinedLLAA10-30KstarMomCorrected";
   simpleName = "LLAA1030";
   initParams[0] = 3.;
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "CombinedLLAA30-50KstarMomCorrected";
   simpleName = "LLAA3050";
   initParams[0] = 2.6;
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
   ////////////////// Setting up Lambda-Lambda ////////////////////
@@ -140,19 +140,19 @@ void UserSetupSystems(Fitter *fitter)
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsLamLam.root";
   histName = "LamLam0-10";
   simpleName = "LL010";
-  fitter->CreatePairSystem(simpleName, fileName, histName, kLL010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->CreatePairSystem(simpleName, fileName, histName, kLL010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "LamLam10-30";
   simpleName = "LL1030";
   initParams[0] = 3.;
-  fitter->CreatePairSystem(simpleName, fileName, histName, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->CreatePairSystem(simpleName, fileName, histName, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "LamLam30-50";
   simpleName = "LL3050";
   initParams[0] = 2.6;
-  fitter->CreatePairSystem(simpleName, fileName, histName, kLL3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->CreatePairSystem(simpleName, fileName, histName, kLL3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
   ////////////////// Setting up Antilambda-Antilambda ////////////////////
@@ -160,19 +160,19 @@ void UserSetupSystems(Fitter *fitter)
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsALamALam.root";
   histName = "ALamALam0-10";
   simpleName = "AA010";
-  fitter->CreatePairSystem(simpleName, fileName, histName, kAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->CreatePairSystem(simpleName, fileName, histName, kAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "ALamALam10-30";
   simpleName = "AA1030";
   initParams[0] = 3.;
-  fitter->CreatePairSystem(simpleName, fileName, histName, kAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->CreatePairSystem(simpleName, fileName, histName, kAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "ALamALam30-50";
   simpleName = "AA3050";
   initParams[0] = 2.6;
-  fitter->CreatePairSystem(simpleName, fileName, histName, kAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->CreatePairSystem(simpleName, fileName, histName, kAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
 
@@ -187,19 +187,19 @@ void UserSetupSystems(Fitter *fitter)
   Bool_t fixParamsArrLA[5] = {kFALSE, kFALSE, kFALSE, kTRUE, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 5);
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE);
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 10-30
   histName = "LamALam10-30centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA1030";
   initParamsLA[0] = 3.;
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 30-50
   histName = "LamALam30-50centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA3050";
   initParamsLA[0] = 2.6;
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   //************* Add more systems as needed ******************
 
 }
@@ -214,31 +214,39 @@ void UserSetConstraints(Fitter *myFitter)
   ParamType parRe = kF0Real;
   ParamType parIm = kF0Imag;
   ParamType parD0 = kD0;
-  // myFitter->SetupConstraint(parRe, systemsLA);
-  // myFitter->SetupConstraint(parIm, systemsLA);
+  myFitter->SetupConstraint(parRe, systemsLA);
+  myFitter->SetupConstraint(parIm, systemsLA);
   // myFitter->SetupConstraint(parD0, systemsLA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030,kLLAA3050};
   vector<Int_t> systemsLLAA(systemsArrLLAA, systemsArrLLAA + 3);
-  // myFitter->SetupConstraint(parRe, systemsLLAA);
+  myFitter->SetupConstraint(parRe, systemsLLAA);
   // myFitter->SetupConstraint(parIm, systemsLLAA);
   // myFitter->SetupConstraint(parD0, systemsLLAA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda
   Int_t systemsArrLL[3] = {kLL010, kLL1030,kLL3050};
   vector<Int_t> systemsLL(systemsArrLL, systemsArrLL + 3);
-  myFitter->SetupConstraint(parRe, systemsLL);
-  myFitter->SetupConstraint(parIm, systemsLL);
-  myFitter->SetupConstraint(parD0, systemsLL);
+  // myFitter->SetupConstraint(parRe, systemsLL);
+  // myFitter->SetupConstraint(parIm, systemsLL);
+  // myFitter->SetupConstraint(parD0, systemsLL);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda
   Int_t systemsArrAA[3] = {kAA010, kAA1030,kAA3050};
   vector<Int_t> systemsAA(systemsArrAA, systemsArrAA + 3);
-  myFitter->SetupConstraint(parRe, systemsAA);
-  myFitter->SetupConstraint(parIm, systemsAA);
-  myFitter->SetupConstraint(parD0, systemsAA);
+  // myFitter->SetupConstraint(parRe, systemsAA);
+  // myFitter->SetupConstraint(parIm, systemsAA);
+  // myFitter->SetupConstraint(parD0, systemsAA);
 
+
+  // Constrain LL and AA together
+  Int_t systemsArrLLandAA[6] = {kLL010, kLL1030,kLL3050,
+				kAA010, kAA1030,kAA3050};
+  vector<Int_t> systemsLLandAA(systemsArrLLandAA, systemsArrLLandAA + 6);
+  // myFitter->SetupConstraint(parRe, systemsLLandAA);
+  // myFitter->SetupConstraint(parIm, systemsLL);
+  // myFitter->SetupConstraint(parD0, systemsLL);
 
 
   // share radii among like centralities
@@ -246,32 +254,32 @@ void UserSetConstraints(Fitter *myFitter)
   systems010.push_back(kLLAA010);
   systems010.push_back(kLA010);
   ParamType parRad = kRad;
-  // myFitter->SetupConstraint(parRad, systems010);
+  myFitter->SetupConstraint(parRad, systems010);
 
   vector<Int_t> systems1030;
   systems1030.push_back(kLLAA1030);
   systems1030.push_back(kLA1030);
-  // myFitter->SetupConstraint(parRad, systems1030);
+  myFitter->SetupConstraint(parRad, systems1030);
 
- vector<Int_t> systems3050;
+  vector<Int_t> systems3050;
   systems3050.push_back(kLLAA3050);
   systems3050.push_back(kLA3050);
-  // myFitter->SetupConstraint(parRad, systems3050);
+  myFitter->SetupConstraint(parRad, systems3050);
 
   vector<Int_t> sysLLAA010;
   sysLLAA010.push_back(kLL010);
   sysLLAA010.push_back(kAA010);
-  myFitter->SetupConstraint(parRad, sysLLAA010);
+  // myFitter->SetupConstraint(parRad, sysLLAA010);
 
   vector<Int_t> sysLLAA1030;
   sysLLAA1030.push_back(kLL1030);
   sysLLAA1030.push_back(kAA1030);
-  myFitter->SetupConstraint(parRad, sysLLAA1030);
+  // myFitter->SetupConstraint(parRad, sysLLAA1030);
 
   vector<Int_t> sysLLAA3050;
   sysLLAA3050.push_back(kLL3050);
   sysLLAA3050.push_back(kAA3050);
-  myFitter->SetupConstraint(parRad, sysLLAA3050);
+  // myFitter->SetupConstraint(parRad, sysLLAA3050);
 
 }
 
