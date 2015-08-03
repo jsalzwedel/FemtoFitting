@@ -22,7 +22,8 @@ Fitter::Fitter():
   fMaxMinuitCalls(10000),
   fUseEstimatedLambdaParams(kTRUE),
   fFitCalls(0),
-  fChisquare(0.)
+  fChisquare(0.),
+  fMinuitVerbosity(0)
 {
   fTimer = new TStopwatch();
   fParamNames.push_back("Radius");
@@ -73,24 +74,21 @@ void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString hist
   }
 }
 
-// void Fitter::CreateMinuit()
-// {
-//   InitializeParameters(fMinuit);
-// } 
-void Fitter::DoFitting(TMinuit *minuit)
+void Fitter::DoFitting()
 {
   cout<<"DoFitting"<<endl;
+  assert(fMinuit); // fMinuit needs to have been created by now
   Timer();
   // Run the fit procedure
   Double_t arglist[5] = {0,0,0,0,0}; //Arguments that can be passed with Minuit commands
   Int_t errFlag = 0;
   arglist[0] = 1;
-  minuit->mnexcm("CALL FCN", arglist, 1, errFlag);
+  fMinuit->mnexcm("CALL FCN", arglist, 1, errFlag);
 
   
   // Set how verbose the output is (from no output at -1, to max at 3)
-  arglist[0] = 0;
-  minuit->mnexcm("SET PRINT", arglist, 1, errFlag);
+  arglist[0] = fMinuitVerbosity;
+  fMinuit->mnexcm("SET PRINT", arglist, 1, errFlag);
 
   // Maybe have all output results go to a file?
 
@@ -98,10 +96,10 @@ void Fitter::DoFitting(TMinuit *minuit)
   // Run Migrad with a specified max number of calls
   arglist[0] = fMaxMinuitCalls;
   arglist[1] = 0.1;
-  minuit->mnexcm("MIGRAD", arglist, 1, errFlag);
+  fMinuit->mnexcm("MIGRAD", arglist, 1, errFlag);
   Timer();
   
-  minuit->mnexcm("SHOw CORrelations", arglist, 1, errFlag);
+  fMinuit->mnexcm("SHOw CORrelations", arglist, 1, errFlag);
 
   cout<<"Finalchi2:\t"<<fChisquare<<endl
       <<"Fit bins:\t"<<fFitBins<<endl
@@ -114,51 +112,6 @@ void Fitter::DoFitting(TMinuit *minuit)
   // If outputting to file, return output to terminal now
 }
 
-// void Fitter::GetHistConfiguration(Int_t config, vector<TString> &fileNames, vector<TString> &histNames, vector<Bool_t> &isIdenticalPrimary)
-// {
-//   // Returns a vector of TFile names and corresponding hist names.
-//   // Can put many different correlation function histograms in 
-//   // here.  Call any combination of them by adding their numbers
-//   // to the config variable.
-
-//   if(kLL010 & config) {
-//     fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
-//     histNames.push_back("CombinedLLAA0-10KstarMomCorrected");
-//     isIdenticalPrimary.push_back(kTRUE);
-//     // Add more as needed
-//   }
-//   if(kLL1030 & config) {
-//     fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
-//     histNames.push_back("CombinedLLAA10-30KstarMomCorrected");
-//     isIdenticalPrimary.push_back(kTRUE);
-//     // Add more as needed
-//   }
-//   if(kLL3050 & config) {
-//     fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsLamALamKstarMomCorrected.root");
-//     histNames.push_back("CombinedLLAA30-50KstarMomCorrected");
-//     isIdenticalPrimary.push_back(kTRUE);
-//     // Add more as needed
-//   }
-//   if(kLA010 & config) {
-//     fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
-//     histNames.push_back("LamALam0-10centrality_varBin5BothFieldsKstarMomCorrected");
-//     isIdenticalPrimary.push_back(kFALSE);
-//     // Add more as needed
-//   }
-//   if(kLA1030 & config) {
-//     fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
-//     histNames.push_back("LamALam10-30centrality_varBin5BothFieldsKstarMomCorrected");
-//     isIdenticalPrimary.push_back(kFALSE);
-//     // Add more as needed
-//   }
-//   if(kLA3050 & config) {
-//     fileNames.push_back("/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root");
-//     histNames.push_back("LamALam30-50centrality_varBin5BothFieldsKstarMomCorrected");
-//     isIdenticalPrimary.push_back(kFALSE);
-//     // Add more as needed
-//   }
-
-// }
 
 Int_t Fitter::GetConstrainedParamIndex(const Int_t currentSys, const Int_t currentPar)
 {
@@ -222,12 +175,12 @@ void Fitter::InitializeMinuitParameters(TMinuit *minuit)
 
   SetupInitialParameters();
   // Define the fit parameters
-
+  fMinuit = minuit;
   Double_t startingStepSize = 0.1;
   
   for(int iPar = 0; iPar < fMinuitParNames.size(); iPar++){
-    minuit->DefineParameter(iPar, fMinuitParNames[iPar], fMinuitParInitial[iPar],  startingStepSize, fMinuitParMinimum[iPar], fMinuitParMaximum[iPar]);
-    if(fMinuitParIsFixed[iPar]) minuit->FixParameter(iPar);
+    fMinuit->DefineParameter(iPar, fMinuitParNames[iPar], fMinuitParInitial[iPar],  startingStepSize, fMinuitParMinimum[iPar], fMinuitParMaximum[iPar]);
+    if(fMinuitParIsFixed[iPar]) fMinuit->FixParameter(iPar);
   }
   
 }
@@ -277,20 +230,6 @@ void Fitter::SaveOutputPlots()
   }
 }
 
-// void Fitter::SetFitOptions()
-// {
-//   // Set things like:
-//   // -How many correlations to fit
-//   // -What parameters to fix
-//   // -What parameters to share
-
-
-//   // SetupParameterVectors();
-//   // SetupParameterConstraints(constraintConfig);
- 
-  
-// }
-
 void Fitter::SetHighFitBin(Int_t bin)
 {
   for(Int_t iSys = 0; iSys < fNSystems; iSys++)
@@ -309,6 +248,19 @@ void Fitter::SetLowFitBin(Int_t bin)
   }
   fLowFitBin = bin;
   fFitBins = (fHighFitBin - fLowFitBin) * fNSystems;
+}
+
+void Fitter::SetMinuitVerbosity(Int_t verbosity)
+{
+  // Set the verbosity level of minuit fitting
+  // -1, 0, 1, 2, 3 (-1 for minimal output, 3 for max output)
+  fMinuitVerbosity = verbosity;
+  if(fMinuit) {
+    Double_t arglist[1] = {fMinuitVerbosity};
+    Int_t errFlag = 0;
+    fMinuit->mnexcm("SET PRINT", arglist, 1, errFlag);
+  }
+  
 }
 
 void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par)
@@ -341,9 +293,6 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *p
       parameters[thisParamIndex] = par[thisParamIndex - constrainedParams];
     }
   }
-  // cout<<"Parameters:\t"<<i<<endl;
-  // Check that we have the correct number of parameters
-  // assert(i == fNParams * fNSystems - constrainedParams);
 
   // Break up the total parameter vector into a mini-vector for
   // each PairSystem. Then pass the vector to the system and 
@@ -396,82 +345,6 @@ void Fitter::Timer()
   fTimer->Print();
   fTimer->Continue();
 }
-
-
-
-
-
-// void Fitter::SetupParameterConstraints(const Int_t config)
-// {
-  
-//   if(config /*  & ... */){
-//     ConstrainF0D0();
-//   }
-//   if(config /*  & ... */){
-//     ConstrainRadii();
-//   }
-
-// }
-
-// void Fitter::SetUseEstimatedLambdaParams(Bool_t useParam)
-// {
-//   fUseEstimatedLambdaParams = useParam;
-//   if(!useParam) fNParams = 6; // Or 5 + however many lambda params to fit
-// }
-
-// void Fitter::ConstrainRadii()
-// {
-//   // Constrain radii between particle-particle and particle-antiparticle systems
-//   ParamType param = kRadii;  
-  
-//   Int_t systemsArr010[2] = {kLL010, kLa010};
-//   vector<Int_t> systems010(systemsArr010);
-//   ParameterConstraint *constraint = new ParameterConstraint(param, systems010);
-//   fParamConstraints.push_back(constraint);
-
-//   Int_t systemsArr1030[2] = {kLL1030, kLa1030};
-//   vector<Int_t> systems1030(systemsArr1030);
-//   constraint = new ParameterConstraint(param, systems1030);
-//   fParamConstraints.push_back(constraint);
-
-//   Int_t systemsArr3050[2] = {kLL3050, kLa3050};
-//   vector<Int_t> systems3050(systemsArr3050);
-//   constraint = new ParameterConstraint(param, systems1030);
-//   fParamConstraints.push_back(constraint);
-// }
-
-// void Fitter::ConstrainF0D0()
-// {
-//   // Constrain all LL systems to use the same scattering
-//   // length and d0.  Constrain the LA systems the same way.
-
-//   Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
-//   vector<Int_t> systemsLL(systemsArrLL);
-
-//   Int_t systemsArrLA[3] = {kLA010, kLA1030, kLA3050};
-//   vector<Int_t> systemsLA(systemsArrLA);
-
-//   ParamType param = kF0Real;  
-//   ParameterConstraint *constraint = new ParameterConstraint(param, systemsLL);
-//   fParamConstraints.push_back(constraint);
-
-//   constraint = new ParameterConstraint(param, systemsLA);
-//   fParamConstraints.push_back(constraint);
-
-//   param = kF0Imag;
-//   constraint = new ParameterConstraint(param, systemsLL);
-//   fParamConstraints.push_back(constraint);
-
-//   constraint = new ParameterConstraint(param, systemsLA);
-//   fParamConstraints.push_back(constraint);
-
-//   param = kD0;
-//   constraint = new ParameterConstraint(param, systemsLL);
-//   fParamConstraints.push_back(constraint);
-
-//   constraint = new ParameterConstraint(param, systemsLA);
-//   fParamConstraints.push_back(constraint);
-// }
 
 void Fitter::SetupConstraint(Int_t param, vector<Int_t> systems)
 {

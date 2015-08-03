@@ -37,17 +37,17 @@ class Fitter{
   /* void CreateAllPairSystems(Int_t configuration); */
   void CreatePairSystem(TString simpleName, TString fileName, TString histName, Int_t sysIndex,  const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
   /* void CreateMinuit(); */
-  void DoFitting(TMinuit *minuit);
+  void DoFitting();
   Int_t GetNMinuitParams() const {return fMinuitParNames.size();};
   Int_t GetNSystems() const {return fNSystems;};
   Int_t GetNParams() const {return fNParams;};
   Int_t GetTotalParams() const {return fNSystems * fNParams;};
   void InitializeMinuitParameters(TMinuit *minuit);
   void PassLednickyParameters(Double_t pairSystemPars);
+  void SaveOutputPlots();
   void SetHighFitBin(Int_t bin);
   void SetLowFitBin(Int_t bin);
-  void SaveOutputPlots();
-  /* void SetFitOptions(); */
+  void SetMinuitVerbosity(Int_t verbosity);
   void SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par);
   void SetupConstraint(Int_t param, vector<Int_t> systems);
 
@@ -97,8 +97,9 @@ class Fitter{
   Int_t fFitCalls;
   Double_t fChisquare;
   
-  //Debug
+  // For debug use
   TStopwatch *fTimer;
+  Int_t fMinuitVerbosity;
 };
 
 #endif
