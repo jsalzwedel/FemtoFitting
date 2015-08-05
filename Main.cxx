@@ -220,42 +220,32 @@ void UserSetConstraints(Fitter *myFitter)
 				kAA010, kAA1030,kAA3050};
   vector<Int_t> systemsLLandAA(systemsArrLLandAA, systemsArrLLandAA + 6);
   myFitter->SetupConstraint(parRe, systemsLLandAA);
-  // myFitter->SetupConstraint(parIm, systemsLLandLA);
-  // myFitter->SetupConstraint(parD0, systemsLLandLA);
+  // myFitter->SetupConstraint(parIm, systemsLLandAA);
+  myFitter->SetupConstraint(parD0, systemsLLandAA);
 
 
   // share radii among like centralities
   vector<Int_t> systems010;
-  systems010.push_back(kLLAA010);
-  systems010.push_back(kLA010);
+  // systems010.push_back(kLLAA010);
+  // systems010.push_back(kLA010);
+  systems010.push_back(kLL010);
+  systems010.push_back(kAA010);
   ParamType parRad = kRad;
-  // myFitter->SetupConstraint(parRad, systems010);
+  myFitter->SetupConstraint(parRad, systems010);
 
   vector<Int_t> systems1030;
-  systems1030.push_back(kLLAA1030);
-  systems1030.push_back(kLA1030);
-  // myFitter->SetupConstraint(parRad, systems1030);
+  // systems1030.push_back(kLLAA1030);
+  // systems1030.push_back(kLA1030);
+  systems1030.push_back(kLL010);
+  systems1030.push_back(kAA010);
+  myFitter->SetupConstraint(parRad, systems1030);
 
   vector<Int_t> systems3050;
-  systems3050.push_back(kLLAA3050);
-  systems3050.push_back(kLA3050);
-  // myFitter->SetupConstraint(parRad, systems3050);
-
-  vector<Int_t> sysLLAA010;
-  sysLLAA010.push_back(kLL010);
-  sysLLAA010.push_back(kAA010);
-  // myFitter->SetupConstraint(parRad, sysLLAA010);
-
-  vector<Int_t> sysLLAA1030;
-  sysLLAA1030.push_back(kLL1030);
-  sysLLAA1030.push_back(kAA1030);
-  // myFitter->SetupConstraint(parRad, sysLLAA1030);
-
-  vector<Int_t> sysLLAA3050;
-  sysLLAA3050.push_back(kLL3050);
-  sysLLAA3050.push_back(kAA3050);
-  // myFitter->SetupConstraint(parRad, sysLLAA3050);
-
+  // systems3050.push_back(kLLAA3050);
+  // systems3050.push_back(kLA3050);
+  systems3050.push_back(kLL010);
+  systems3050.push_back(kAA010);
+  myFitter->SetupConstraint(parRad, systems3050);
 }
 
 void UserSetFitOptions(Fitter *myFitter)
