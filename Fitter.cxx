@@ -36,13 +36,13 @@ Fitter::Fitter():
 
 Fitter::~Fitter()
 {
-  for(Int_t i = 0; i < fPairSystems.size(); i++)
+  for(UInt_t i = 0; i < fPairSystems.size(); i++)
   {
     if(!fPairSystems[i]) continue;
     delete fPairSystems[i];
     fPairSystems[i] = NULL;
   }
-  for(Int_t i = 0; i < fParamConstraints.size(); i++)
+  for(UInt_t i = 0; i < fParamConstraints.size(); i++)
   {
     if(!fParamConstraints[i]) continue;
     delete fParamConstraints[i];
@@ -68,7 +68,7 @@ void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString hist
   fMaxParams.push_back(maxParams);
   fFixParams.push_back(fixParams);
   fNSystems++;
-  for(Int_t i = 0; i < fixParams.size(); i++)
+  for(UInt_t i = 0; i < fixParams.size(); i++)
   {
     if(fixParams[i]) fFixedParams++;
   }
@@ -120,7 +120,7 @@ Int_t Fitter::GetConstrainedParamIndex(const Int_t currentSys, const Int_t curre
   Int_t sysType = fPairSystems[currentSys]->GetSystemType();
 
   // Loop through the constraints until we find the relevant one
-  for(Int_t iCon = 0; iCon < fParamConstraints.size(); iCon++)
+  for(UInt_t iCon = 0; iCon < fParamConstraints.size(); iCon++)
   {
     // Check for constraints on this type of parameter
     ParameterConstraint *constraint = fParamConstraints[iCon];
@@ -129,7 +129,7 @@ Int_t Fitter::GetConstrainedParamIndex(const Int_t currentSys, const Int_t curre
     
     const vector<Int_t> &consSystems = fParamConstraints[iCon]->GetConstrainedSystems();
 
-    for(Int_t iSys = 1; iSys < consSystems.size(); iSys++)
+    for(UInt_t iSys = 1; iSys < consSystems.size(); iSys++)
     {
       
       // Does this system have this constraint?
@@ -178,7 +178,7 @@ void Fitter::InitializeMinuitParameters(TMinuit *minuit)
   fMinuit = minuit;
   Double_t startingStepSize = 0.1;
   
-  for(int iPar = 0; iPar < fMinuitParNames.size(); iPar++){
+  for(UInt_t iPar = 0; iPar < fMinuitParNames.size(); iPar++){
     fMinuit->DefineParameter(iPar, fMinuitParNames[iPar], fMinuitParInitial[iPar],  startingStepSize, fMinuitParMinimum[iPar], fMinuitParMaximum[iPar]);
     if(fMinuitParIsFixed[iPar]) fMinuit->FixParameter(iPar);
   }
@@ -191,13 +191,13 @@ Bool_t Fitter::IsParameterConstrained(const Int_t currentSys, const Int_t curren
   // to be the same as the parameter from an earlier system
   // cout<<"IsParameterConstrained\n";
   Int_t sysType = fPairSystems[currentSys]->GetSystemType();
-  for(Int_t iCon = 0; iCon < fParamConstraints.size(); iCon++)
+  for(UInt_t iCon = 0; iCon < fParamConstraints.size(); iCon++)
   {
     // Check for constraints on this type of parameter
     ParameterConstraint *constraint = fParamConstraints[iCon];
     if(constraint->GetConstrainedParam() != currentPar) continue;
     const vector<Int_t> &consSystems = fParamConstraints[iCon]->GetConstrainedSystems();
-    for(Int_t iSys = 1; iSys < consSystems.size(); iSys++)
+    for(UInt_t iSys = 1; iSys < consSystems.size(); iSys++)
     {
       if(consSystems[iSys] == sysType) {
 	return true;
@@ -232,7 +232,7 @@ void Fitter::SaveOutputPlots()
 
 void Fitter::SetHighFitBin(Int_t bin)
 {
-  for(Int_t iSys = 0; iSys < fNSystems; iSys++)
+  for(UInt_t iSys = 0; iSys < fNSystems; iSys++)
   {
     fPairSystems[iSys]->SetHighFitBin(bin);
   }
@@ -242,7 +242,7 @@ void Fitter::SetHighFitBin(Int_t bin)
 
 void Fitter::SetLowFitBin(Int_t bin)
 {
-  for(Int_t iSys = 0; iSys < fNSystems; iSys++)
+  for(UInt_t iSys = 0; iSys < fNSystems; iSys++)
   {
     fPairSystems[iSys]->SetLowFitBin(bin);
   }
@@ -256,7 +256,7 @@ void Fitter::SetMinuitVerbosity(Int_t verbosity)
   // -1, 0, 1, 2, 3 (-1 for minimal output, 3 for max output)
   fMinuitVerbosity = verbosity;
   if(fMinuit) {
-    Double_t arglist[1] = {fMinuitVerbosity};
+    Double_t arglist[1] = {(Double_t)fMinuitVerbosity};
     Int_t errFlag = 0;
     fMinuit->mnexcm("SET PRINT", arglist, 1, errFlag);
   }
