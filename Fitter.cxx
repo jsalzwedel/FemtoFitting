@@ -285,6 +285,8 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *p
       // corresponding constrained parameter.
       if(IsParameterConstrained(iSys, iPar)){
 	Int_t priorIndex = GetConstrainedParamIndex(iSys, iPar);
+	// cout<<"ThisIndex:\t"<<thisParamIndex<<".\t"<<parameters[thisParamIndex]<<endl;
+	// cout<<"PriorIndex:\t"<<priorIndex<<".\t"<<parameters[priorIndex]<<endl;
 	assert(thisParamIndex > priorIndex);
 	parameters[thisParamIndex] = parameters[priorIndex];
 	constrainedParams++;
@@ -348,6 +350,6 @@ void Fitter::Timer()
 
 void Fitter::SetupConstraint(Int_t param, vector<Int_t> systems)
 {
-  ParameterConstraint *constraint = new ParameterConstraint(param, systems);
+  ParameterConstraint *constraint = new ParameterConstraint(param, systems, fPairSystems);
   fParamConstraints.push_back(constraint);
 }

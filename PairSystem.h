@@ -8,7 +8,9 @@
 #ifndef PairSystem_H
 #define PairSystem_H
 
+#include "LednickyInfo.h"
 #include "TH1D.h"
+#include "TH2D.h"
 #include "TGraph.h"
 
 #include <vector>
