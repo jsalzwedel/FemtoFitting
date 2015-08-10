@@ -266,7 +266,11 @@ void Fitter::SetMinuitVerbosity(Int_t verbosity)
 void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par)
 {
   // cout<<"SetParametersAndFitBegin:\t"<<++fFitCalls<<endl;
-  
+  Int_t nCalls = fMinuit->fNfcn;
+  if(nCalls % 100 == 0) {
+    cout<<"Begin fit iteration:\t"<<nCalls<<".\t\t";
+    Timer();
+  }
   // Take the TMinuit parameters, set the parameters for each
   // pair system, and get the resulting chisquare of the fit.
 
