@@ -19,7 +19,8 @@ Fitter::Fitter():
   fNParams(5),
   fFixedParams(0),
   fNSystems(0),
-  fMaxMinuitCalls(10000),
+  fMaxMinuitCalls(20000),
+  fStepSize(0.1),
   fUseEstimatedLambdaParams(kTRUE),
   fFitCalls(0),
   fChisquare(0.),
@@ -176,8 +177,7 @@ void Fitter::InitializeMinuitParameters(TMinuit *minuit)
   SetupInitialParameters();
   // Define the fit parameters
   fMinuit = minuit;
-  Double_t startingStepSize = 0.1;
-  
+  Double_t startingStepSize = fStepSize;
   for(UInt_t iPar = 0; iPar < fMinuitParNames.size(); iPar++){
     fMinuit->DefineParameter(iPar, fMinuitParNames[iPar], fMinuitParInitial[iPar],  startingStepSize, fMinuitParMinimum[iPar], fMinuitParMaximum[iPar]);
     if(fMinuitParIsFixed[iPar]) fMinuit->FixParameter(iPar);
@@ -268,7 +268,8 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *p
   // cout<<"SetParametersAndFitBegin:\t"<<++fFitCalls<<endl;
   Int_t nCalls = fMinuit->fNfcn;
   if(nCalls % 100 == 0) {
-    cout<<"Begin fit iteration:\t"<<nCalls<<".\t\t";
+    cout<<"Begin fit iteration:\t"<<nCalls<<".\t"
+	<<"Last Chi^2:\t"<<fChisquare<<".\t";
     Timer();
   }
   // Take the TMinuit parameters, set the parameters for each
@@ -316,7 +317,6 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *p
   // Timer();
   fChisquare = totalChisquare;
 }
-
 
 void Fitter::SetupInitialParameters()
 {

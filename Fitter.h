@@ -38,6 +38,7 @@ class Fitter{
   void SetLowFitBin(Int_t bin);
   void SetMinuitVerbosity(Int_t verbosity);
   void SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par);
+  void SetStartingStepSize(Double_t step) {fStepSize = step;};
   void SetupConstraint(Int_t param, vector<Int_t> systems);
 
  private:
@@ -64,6 +65,7 @@ class Fitter{
   vector<TString> fParamNames;
   Double_t fNSystems;
   Int_t fMaxMinuitCalls;
+  Double_t fStepSize;
   Bool_t fUseEstimatedLambdaParams;
 
   // PairSystem information
