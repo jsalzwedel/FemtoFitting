@@ -82,7 +82,8 @@ void UserSetupSystems(Fitter *fitter)
   TString simpleName = "LLAA010";
   // Make initial parameters: Radius, ReF0, ImF0, D0, Normalization 
   // Double_t initParamsArr[5] = {3.47, -.25, 0., 3., 1.};
-  Double_t initParamsArr[5] = {6.1, -1.3, 0., 3, 1.}; 
+  Double_t radiiParams[3] = {0.1, 0.1, 0.1};
+  Double_t initParamsArr[5] = {radiiParams[0], 0.1, 0., 0.1, 1.}; 
   vector<Double_t> initParams(initParamsArr, initParamsArr+5);
   Double_t minParamsArr[5] = {0., 0., 0., 0., 0.};
   vector<Double_t> minParams(minParamsArr, minParamsArr+5);
@@ -98,13 +99,13 @@ void UserSetupSystems(Fitter *fitter)
   // 10-30
   histName = "CombinedLLAA10-30KstarMomCorrected";
   simpleName = "LLAA1030";
-  // initParams[0] = 3.6;
+  initParams[0] = radiiParams[1];
   // fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "CombinedLLAA30-50KstarMomCorrected";
   simpleName = "LLAA3050";
-  // initParams[0] = 3.2;
+  initParams[0] = radiiParams[2];
   // fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
@@ -113,18 +114,19 @@ void UserSetupSystems(Fitter *fitter)
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsLamLam.root";
   histName = "LamLam0-10";
   simpleName = "LL010";
+  initParams[0] = radiiParams[0];
   fitter->CreatePairSystem(simpleName, fileName, histName, kLL010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "LamLam10-30";
   simpleName = "LL1030";
-  initParams[0] = 5.25;
+  initParams[0] = radiiParams[1];
   fitter->CreatePairSystem(simpleName, fileName, histName, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "LamLam30-50";
   simpleName = "LL3050";
-  initParams[0] = 4.2;
+  initParams[0] = radiiParams[2];
   fitter->CreatePairSystem(simpleName, fileName, histName, kLL3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
@@ -133,19 +135,19 @@ void UserSetupSystems(Fitter *fitter)
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsALamALam.root";
   histName = "ALamALam0-10";
   simpleName = "AA010";
-  initParams[0] = 6.1;
+  initParams[0] = radiiParams[0];
   fitter->CreatePairSystem(simpleName, fileName, histName, kAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "ALamALam10-30";
   simpleName = "AA1030";
-  initParams[0] = 5.25;
+  initParams[0] = radiiParams[1];
   fitter->CreatePairSystem(simpleName, fileName, histName, kAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "ALamALam30-50";
   simpleName = "AA3050";
-  initParams[0] = 4.2;
+  initParams[0] = radiiParams[2];
   fitter->CreatePairSystem(simpleName, fileName, histName, kAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
@@ -156,7 +158,7 @@ void UserSetupSystems(Fitter *fitter)
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsLamALamKstarMomCorrected.root";
   histName = "LamALam0-10centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA010";
-  Double_t initParamsArrLA[5] = {6.1, -.65, .32, 1.56, 1.}; 
+  Double_t initParamsArrLA[5] = {radiiParams[0], 0.1, 0.1, 0.1, 1.}; 
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + 5);
   Bool_t fixParamsArrLA[5] = {kFALSE, kFALSE, kFALSE, kFALSE, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 5);
@@ -166,13 +168,13 @@ void UserSetupSystems(Fitter *fitter)
   // 10-30
   histName = "LamALam10-30centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA1030";
-  initParamsLA[0] = 5.25;
+  initParamsLA[0] = radiiParams[1];
   fitter->CreatePairSystem(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 30-50
   histName = "LamALam30-50centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA3050";
-  initParamsLA[0] = 4.2;
+  initParamsLA[0] = radiiParams[2];
   fitter->CreatePairSystem(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   //************* Add more systems as needed ******************
 
