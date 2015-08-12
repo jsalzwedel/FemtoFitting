@@ -41,29 +41,29 @@ vector<LednickyInfo> PrepareLednickyInfo(Bool_t isIdentical)
   vector<LednickyInfo> ledInfo;
 
   // Args: TString name, Double_t lambdaParamter, TH2D *transformMatrix, Bool_t isIdenticalPair
-  LednickyInfo infoLL("LambdaLambda", 0.28, NULL, isIdentical); 
+  LednickyInfo infoLL("LambdaLambda", 0.25, NULL, isIdentical); 
   ledInfo.push_back(infoLL);
   
   TString fileNameMatrix = "~/Analysis/lambda/AliAnalysisLambda/Fitting/FemtoFitting/PreparedTransformMatrices.root";
-  LednickyInfo infoLS("LambdaSigma", 0.21, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaLambda"), kFALSE);
+  LednickyInfo infoLS("LambdaSigma", 0.194, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaLambda"), kFALSE);
   ledInfo.push_back(infoLS);
 
-  LednickyInfo infoLX0("LambdaXi0", 0.14, GetTransformMatrix(fileNameMatrix, "TransformMatrixXi0Lambda"), kFALSE);
+  LednickyInfo infoLX0("LambdaXi0", 0.130, GetTransformMatrix(fileNameMatrix, "TransformMatrixXi0Lambda"), kFALSE);
   ledInfo.push_back(infoLX0);
 
-  LednickyInfo infoLXC("LambdaXiC", 0.14, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCLambda"), kFALSE);
+  LednickyInfo infoLXC("LambdaXiC", 0.117, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCLambda"), kFALSE);
   ledInfo.push_back(infoLXC);
 
-  LednickyInfo infoSS("SigmaSigma", 0.04, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaSigma"), isIdentical);
+  LednickyInfo infoSS("SigmaSigma", 0.034, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaSigma"), isIdentical);
   ledInfo.push_back(infoSS);
 
-  LednickyInfo infoSX0("SigmaXi0", 0.05, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXi0"), kFALSE);
+  LednickyInfo infoSX0("SigmaXi0", 0.049, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXi0"), kFALSE);
   ledInfo.push_back(infoSX0);
 
-  LednickyInfo infoSXC("SigmaXiC", 0.05, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXiC"), kFALSE);
+  LednickyInfo infoSXC("SigmaXiC", 0.043, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXiC"), kFALSE);
   ledInfo.push_back(infoSXC);
 
-  LednickyInfo infoX0XC("Xi0XiC", 0.04, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCXi0"), kFALSE);
+  LednickyInfo infoX0XC("Xi0XiC", 0.029, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCXi0"), kFALSE);
   ledInfo.push_back(infoX0XC);
 
   return ledInfo;
