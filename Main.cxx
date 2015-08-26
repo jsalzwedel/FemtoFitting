@@ -114,19 +114,19 @@ void UserSetupSystems(Fitter *fitter)
   histName = "LamLam0-10";
   simpleName = "LL010";
   initParams[0] = radiiParams[0];
-  fitter->CreatePairSystem(simpleName, fileName, histName, kLL010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->CreatePairSystem(simpleName, fileName, histName, kLL010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "LamLam10-30";
   simpleName = "LL1030";
   initParams[0] = radiiParams[1];
-  fitter->CreatePairSystem(simpleName, fileName, histName, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->CreatePairSystem(simpleName, fileName, histName, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "LamLam30-50";
   simpleName = "LL3050";
   initParams[0] = radiiParams[2];
-  fitter->CreatePairSystem(simpleName, fileName, histName, kLL3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->CreatePairSystem(simpleName, fileName, histName, kLL3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
   ////////////////// Setting up Antilambda-Antilambda ////////////////////
@@ -162,19 +162,19 @@ void UserSetupSystems(Fitter *fitter)
   Bool_t fixParamsArrLA[5] = {kFALSE, kFALSE, kFALSE, kFALSE, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 5);
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE);
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 10-30
   histName = "LamALam10-30centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA1030";
   initParamsLA[0] = radiiParams[1];
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 30-50
   histName = "LamALam30-50centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA3050";
   initParamsLA[0] = radiiParams[2];
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   //************* Add more systems as needed ******************
 
 }
@@ -190,7 +190,7 @@ void UserSetConstraints(Fitter *myFitter)
   Int_t systemsArrLA[3] = {kLA010, kLA1030, kLA3050};
   vector<Int_t> systemsLA(systemsArrLA, systemsArrLA + 3);
   // myFitter->SetupConstraint(kF0Real, systemsLA);
-  // myFitter->SetupConstraint(kF0Imag, systemsLA);
+  myFitter->SetupConstraint(kF0Imag, systemsLA);
   // myFitter->SetupConstraint(kD0, systemsLA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
@@ -223,6 +223,14 @@ void UserSetConstraints(Fitter *myFitter)
   // myFitter->SetupConstraint(kF0Imag, systemsLLandAA);
   // myFitter->SetupConstraint(kD0, systemsLLandAA);
 
+  // Constrain Averaged LLAA with LA
+  Int_t systemsArrLLAALA[6] = {kLLAA010, kLLAA1030, kLLAA3050,
+			     kLA010, kLA1030, kLA3050};
+  vector<Int_t> systemsLLAALA(systemsArrLLAALA, systemsArrLLAALA + 6);
+  myFitter->SetupConstraint(kF0Real, systemsLLAALA);
+  // myFitter->SetupConstraint(kF0Imag, systemsLLAALA);
+  myFitter->SetupConstraint(kD0, systemsLLAALA);
+
 
   // share radii among like centralities
   vector<Int_t> systems010;
@@ -230,21 +238,21 @@ void UserSetConstraints(Fitter *myFitter)
   systems010.push_back(kLA010);
   // systems010.push_back(kLL010);
   // systems010.push_back(kAA010);
-  // myFitter->SetupConstraint(kRad, systems010);
+  myFitter->SetupConstraint(kRad, systems010);
 
   vector<Int_t> systems1030;
   systems1030.push_back(kLLAA1030);
   systems1030.push_back(kLA1030);
   // systems1030.push_back(kLL1030);
   // systems1030.push_back(kAA1030);
-  // myFitter->SetupConstraint(kRad, systems1030);
+  myFitter->SetupConstraint(kRad, systems1030);
 
   vector<Int_t> systems3050;
   systems3050.push_back(kLLAA3050);
   systems3050.push_back(kLA3050);
   // systems3050.push_back(kLL3050);
   // systems3050.push_back(kAA3050);
-  // myFitter->SetupConstraint(kRad, systems3050);
+  myFitter->SetupConstraint(kRad, systems3050);
 }
 
 void UserSetFitOptions(Fitter *myFitter)
