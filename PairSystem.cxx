@@ -79,6 +79,44 @@ TGraph* PairSystem::GetCombinedTGraph()
   return combinedLednicky;
 }
 
+TCanvas* PairSystem::GetResidualComponentCanvas()
+{
+  // Create a canvas with all the primary and residual
+  // correlation components drawn onto it
+  
+  TCanvas *can = new TCanvas(fPairTypeName, fPairTypeName);
+
+  // Prepare a legend
+
+  // Draw the primary-primary correlation function with lambda
+  // weight
+  TGraph *primaryGraph = fLednickyEqns[0]->GetLednickyGraph();
+  TF1 *unity = new TF1("unity", "1", 0, 2);
+  Double_t lambda = fLambdaParameters[0];
+  primaryGraph->Add(unity,-1);
+  primaryGraph->Scale(lambda);
+  primaryGraph->Add(unity, 1);
+  primaryGraph->Scale(1./fNorm);
+  primaryGraph->Draw();
+
+  // Draw all the residual correlation functions;
+  for(UInt_t iLed = 1; iLed < fLednickyEqns.size(); iLed++)
+  {
+    TGraph *residual = fLednickyEqns[iLed]->GetLednickyGraph();
+    Double_t lambda = fLambdaParameters[iLed];
+    residual->Add(unity,-1);
+    residual->Scale(lambda);
+    residual->Add(unity, 1);
+    residual->Scale(1./fNorm);
+    // change symbol/color
+    // ...
+    residual->Draw("same");
+  }
+  
+  
+  return can;
+}
+
 void PairSystem::SetLednickyParameters(vector<Double_t> pars)
 {
   // Pass the new fit parameters to each LednickyEqn

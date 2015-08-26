@@ -12,27 +12,28 @@
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TGraph.h"
+#include "TCanvas.h"
 
 #include <vector>
 
 using std::vector;
 
 class LednickyEqn;
-/* class TH1D; */
 
 class PairSystem{
  public:
   PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName, Int_t sysType);
   ~PairSystem();
   Double_t CalculateFitChisquare();
-  Int_t GetSystemType() const {return fSystemType;};
+  TH1D*    GetCF() {return fCF;};
+  TGraph*  GetCombinedTGraph();
+  TCanvas* GetResidualComponentCanvas();
+  Int_t    GetSystemType() const {return fSystemType;};
   void SetCFData(TH2D* correlationFunction);
   void SetLednickyParameters(vector<Double_t> pars);
   void SetLowFitBin(Int_t bin) {fLowFitBin = bin;};
   void SetHighFitBin(Int_t bin) {fHighFitBin = bin;};
   void SetSystemType(Int_t sysType) {fSystemType = sysType;};
-  TGraph *GetCombinedTGraph();
-  TH1D *GetCF() {return fCF;};
 
  private:
   /* void CreateDefaultLednickyEqns(); */

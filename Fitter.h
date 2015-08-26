@@ -34,6 +34,7 @@ class Fitter{
   Int_t GetTotalParams() const {return fNSystems * fNParams;};
   void InitializeMinuitParameters(TMinuit *minuit);
   void SaveOutputPlots();
+  void SetDisplayResidualComponents(Bool_t shouldDraw) {fDisplayResidualComponents = shouldDraw;};
   void SetHighFitBin(Int_t bin);
   void SetLowFitBin(Int_t bin);
   void SetMinuitVerbosity(Int_t verbosity);
@@ -47,6 +48,7 @@ class Fitter{
   Double_t GetPvalue();
   Bool_t IsParameterConstrained(const Int_t sys, const Int_t par);
   void SetupInitialParameters();
+  void SaveResidualComponentPlot(Int_t sysIndex);
   void Timer();
 
   TMinuit *fMinuit;
@@ -67,6 +69,7 @@ class Fitter{
   Int_t fMaxMinuitCalls;
   Double_t fStepSize;
   Bool_t fUseEstimatedLambdaParams;
+  Bool_t fDisplayResidualComponents;
 
   // PairSystem information
   vector<PairSystem*> fPairSystems;

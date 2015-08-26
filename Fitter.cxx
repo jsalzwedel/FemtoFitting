@@ -22,6 +22,7 @@ Fitter::Fitter():
   fMaxMinuitCalls(20000),
   fStepSize(0.1),
   fUseEstimatedLambdaParams(kTRUE),
+  fDisplayResidualComponents(kFALSE),
   fFitCalls(0),
   fChisquare(0.),
   fMinuitVerbosity(0)
@@ -227,7 +228,25 @@ void Fitter::SaveOutputPlots()
     c1.SaveAs(plotName + ".pdf");
     c1.SaveAs(plotName + ".png");
     cout<<"Saved file "<<plotName<<endl;
+    if(fDisplayResidualComponents) SaveResidualComponentPlot(iSys);
   }
+}
+
+void Fitter::SaveResidualComponentPlot(Int_t sys)
+{
+  // Save output plot showing all primary and residual correlation
+  // components of the correlation function.
+  TCanvas *components = fPairSystems[sys]->GetResidualComponentCanvas();
+  if(!components) {
+    cout<<"No Residual Components plot found\n";
+    return;
+  }
+  TString plotName = "Plot";
+  plotName += components->GetName();
+  components->SaveAs(plotName + ".pdf");
+  components->SaveAs(plotName + ".png");
+  cout<<"Saved file "<<plotName<<endl;
+  delete components; components = NULL;
 }
 
 void Fitter::SetHighFitBin(Int_t bin)
