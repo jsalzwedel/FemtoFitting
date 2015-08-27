@@ -36,6 +36,8 @@ class PairSystem{
   void SetSystemType(Int_t sysType) {fSystemType = sysType;};
 
  private:
+  void AddToGraph(TGraph *graph, Double_t d);
+  void ScaleGraph(TGraph *graph, Double_t d);
   /* void CreateDefaultLednickyEqns(); */
   /* void CreateNewLednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix); */
   /* void ReadInLambdaParams(); */

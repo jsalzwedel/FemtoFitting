@@ -3,11 +3,19 @@
 #include "PairSystem.h"
 
 #include "TStopwatch.h"
+#include "TStyle.h"
+#include "TLegend.h"
 #include <iostream>
 #include <assert.h>
 
 using namespace std;
 
+void PairSystem::AddToGraph(TGraph *graph, Double_t d)
+{
+  for(Int_t iBin = 0; iBin < graph->GetN(); iBin++){
+    graph->GetY()[iBin] += d;
+  }
+}
 
 Double_t PairSystem::CalculateFitChisquare()
 {
@@ -83,38 +91,60 @@ TCanvas* PairSystem::GetResidualComponentCanvas()
 {
   // Create a canvas with all the primary and residual
   // correlation components drawn onto it
-  
+
+  //Prepare the canvas
   TCanvas *can = new TCanvas(fPairTypeName, fPairTypeName);
+  TStyle style;
+  style.SetPalette(55,0);
 
-  // Prepare a legend
-
+  // Prepare legend
+  TLegend *leg = new TLegend(0.5, 0.3, 0.9, 0.6);
+  leg->SetHeader("Primary and residual correlations");
+  
   // Draw the primary-primary correlation function with lambda
   // weight
   TGraph *primaryGraph = fLednickyEqns[0]->GetLednickyGraph();
-  TF1 *unity = new TF1("unity", "1", 0, 2);
   Double_t lambda = fLambdaParameters[0];
-  primaryGraph->Add(unity,-1);
-  primaryGraph->Scale(lambda);
-  primaryGraph->Add(unity, 1);
-  primaryGraph->Scale(1./fNorm);
+  AddToGraph(primaryGraph, -1);
+  ScaleGraph(primaryGraph, lambda);
+  AddToGraph(primaryGraph, 1);
+  ScaleGraph(primaryGraph, 1./fNorm);
+  primaryGraph->Draw();
+  // Make nice axes
+  primaryGraph->GetXaxis()->SetRangeUser(0., 1.);
+  primaryGraph->GetYaxis()->SetRangeUser(0.85, 1.02);
+  primaryGraph->SetLineWidth(2);
   primaryGraph->Draw();
 
+  leg->AddEntry(primaryGraph, "", "L");
+
+  
   // Draw all the residual correlation functions;
   for(UInt_t iLed = 1; iLed < fLednickyEqns.size(); iLed++)
   {
     TGraph *residual = fLednickyEqns[iLed]->GetLednickyGraph();
-    Double_t lambda = fLambdaParameters[iLed];
-    residual->Add(unity,-1);
-    residual->Scale(lambda);
-    residual->Add(unity, 1);
-    residual->Scale(1./fNorm);
+    Double_t lambdaRes = fLambdaParameters[iLed];
+    AddToGraph(residual, -1);
+    ScaleGraph(residual, lambdaRes);
+    AddToGraph(residual, 1);
+    ScaleGraph(residual, 1./fNorm);
     // change symbol/color
-    // ...
+    residual->SetLineWidth(2);
+    residual->SetLineColor((iLed+1) % 50);
+    residual->SetLineStyle((iLed+1) % 11);
     residual->Draw("same");
+    leg->AddEntry(residual, "", "L");
   }
-  
+  leg->Draw();
   
   return can;
+}
+
+void PairSystem::ScaleGraph(TGraph *graph, Double_t d)
+{
+  for(Int_t iBin = 0; iBin < graph->GetN(); iBin++){
+    graph->GetY()[iBin] *= d;
+  }
 }
 
 void PairSystem::SetLednickyParameters(vector<Double_t> pars)
