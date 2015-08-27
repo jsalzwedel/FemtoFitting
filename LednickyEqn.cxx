@@ -119,6 +119,7 @@ TGraph *LednickyEqn::GetLednickyGraph()
 
   TGraph *lednickyGraph = GetBaseLednickyGraph();
   lednickyGraph = TransformLednickyGraph(lednickyGraph);
+  lednickyGraph->SetName(fName);
   return lednickyGraph;
 }
 
