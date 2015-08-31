@@ -108,7 +108,7 @@ TCanvas* PairSystem::GetResidualComponentCanvas()
   AddToGraph(primaryGraph, -1);
   ScaleGraph(primaryGraph, lambda);
   AddToGraph(primaryGraph, 1);
-  ScaleGraph(primaryGraph, 1./fNorm);
+  // ScaleGraph(primaryGraph, 1./fNorm);
   primaryGraph->Draw();
   // Make nice axes
   primaryGraph->GetXaxis()->SetRangeUser(0., 1.);
@@ -127,7 +127,7 @@ TCanvas* PairSystem::GetResidualComponentCanvas()
     AddToGraph(residual, -1);
     ScaleGraph(residual, lambdaRes);
     AddToGraph(residual, 1);
-    ScaleGraph(residual, 1./fNorm);
+    // ScaleGraph(residual, 1./fNorm);
     // change symbol/color
     residual->SetLineWidth(2);
     residual->SetLineColor((iLed+1) % 50);
