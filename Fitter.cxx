@@ -22,6 +22,7 @@ Fitter::Fitter():
   fMaxMinuitCalls(20000),
   fStepSize(0.1),
   fUseEstimatedLambdaParams(kTRUE),
+  fUseMINOS(kFALSE),
   fDisplayResidualComponents(kFALSE),
   fOutputString(""),
   fFitCalls(0),
@@ -103,6 +104,11 @@ void Fitter::DoFitting()
   Timer();
   
   fMinuit->mnexcm("SHOw CORrelations", arglist, 1, errFlag);
+
+  if(fUseMINOS) {
+    fMinuit->mnexcm("MINOS", arglist, 1, errFlag);
+    fMinuit->mnexcm("SHOw CORrelations", arglist, 1, errFlag);
+  }
 
   cout<<"Finalchi2:\t"<<fChisquare<<endl
       <<"Fit bins:\t"<<fFitBins<<endl

@@ -42,6 +42,7 @@ class Fitter{
   void SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par);
   void SetStartingStepSize(Double_t step) {fStepSize = step;};
   void SetupConstraint(Int_t param, vector<Int_t> systems);
+  void SetUseMINOS(Bool_t shouldUse) {fUseMINOS = shouldUse;};
 
  private:
   Int_t GetConstrainedParamIndex(const Int_t currentSys, const Int_t currentPar);
@@ -70,6 +71,7 @@ class Fitter{
   Int_t fMaxMinuitCalls;
   Double_t fStepSize;
   Bool_t fUseEstimatedLambdaParams;
+  Bool_t fUseMINOS;
   Bool_t fDisplayResidualComponents;
   TString fOutputString; // Optional suffix for saved object names
 

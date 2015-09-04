@@ -93,19 +93,19 @@ void UserSetupSystems(Fitter *fitter)
   vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+5);
   // Prepare the lednicky eqn info (lambda parameters, transform matrix locations, whether or not particles are identical)
   vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE);
-  fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "CombinedLLAA10-30KstarMomCorrected";
   simpleName = "LLAA1030";
   initParams[0] = radiiParams[1];
-  fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "CombinedLLAA30-50KstarMomCorrected";
   simpleName = "LLAA3050";
   initParams[0] = radiiParams[2];
-  fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
   ////////////////// Setting up Lambda-Lambda ////////////////////
@@ -162,19 +162,19 @@ void UserSetupSystems(Fitter *fitter)
   Bool_t fixParamsArrLA[5] = {kFALSE, kFALSE, kFALSE, kFALSE, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 5);
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE);
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 10-30
   histName = "LamALam10-30centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA1030";
   initParamsLA[0] = radiiParams[1];
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 30-50
   histName = "LamALam30-50centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA3050";
   initParamsLA[0] = radiiParams[2];
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  fitter->CreatePairSystem(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   //************* Add more systems as needed ******************
 
 }
@@ -257,10 +257,20 @@ void UserSetConstraints(Fitter *myFitter)
 
 void UserSetFitOptions(Fitter *myFitter)
 {
-  myFitter->SetHighFitBin(40);
-  myFitter->SetStartingStepSize(5.);
-  myFitter->SetDisplayResidualComponents(kTRUE);
+  // Set the upper bin of the fit range
+   myFitter->SetHighFitBin(40);
+  // How big should the initial starting value fit uncertainty be?
+  // This is a catchall for *all* parameter step sizes.
+   myFitter->SetStartingStepSize(5.);
+  // Output extra plots showing all residual correlation components?
+   myFitter->SetDisplayResidualComponents(kTRUE);
 
+   // Use MINOS to find error bars?
+   myFitter->SetUseMINOS(kTRUE);
+   
+  // optional suffix for saved plots and objects
+  TString outString = "";
+  myFitter->SetOutputString(outString); 
 }
 
 
