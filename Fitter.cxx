@@ -23,6 +23,7 @@ Fitter::Fitter():
   fStepSize(0.1),
   fUseEstimatedLambdaParams(kTRUE),
   fDisplayResidualComponents(kFALSE),
+  fOutputString(""),
   fFitCalls(0),
   fChisquare(0.),
   fMinuitVerbosity(0)
@@ -217,14 +218,18 @@ void Fitter::SaveOutputPlots()
     TH1D *cf = fPairSystems[iSys]->GetCF();
     cf->SetAxisRange(0.7,1.05,"Y");
     cf->SetAxisRange(0.,1.,"X");
-    cf->Write(cf->GetName(), TObject::kOverwrite);
+    TString cfName = cf->GetName();
+    // cfName += fOutputString;
+    cf->Write(cfName, TObject::kOverwrite);
     TGraph *g = fPairSystems[iSys]->GetCombinedTGraph();
-    g->Write(g->GetName(), TObject::kOverwrite);
+    TString gName = g->GetName();
+    gName += fOutputString;
+    g->Write(gName, TObject::kOverwrite);
     TCanvas c1("c1","c1");
     cf->DrawCopy();
     g->Draw("same");
     TString plotName = "Plot";
-    plotName += g->GetName();
+    plotName += gName;
     c1.SaveAs(plotName + ".pdf");
     c1.SaveAs(plotName + ".png");
     cout<<"Saved file "<<plotName<<endl;
@@ -243,6 +248,7 @@ void Fitter::SaveResidualComponentPlot(Int_t sys)
   }
   TString plotName = "Plot";
   plotName += components->GetName();
+  plotName += fOutputString;
   components->SaveAs(plotName + ".pdf");
   components->SaveAs(plotName + ".png");
   cout<<"Saved file "<<plotName<<endl;

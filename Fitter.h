@@ -38,6 +38,7 @@ class Fitter{
   void SetHighFitBin(Int_t bin);
   void SetLowFitBin(Int_t bin);
   void SetMinuitVerbosity(Int_t verbosity);
+  void SetOutputString(TString outStr) {fOutputString = outStr;};
   void SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par);
   void SetStartingStepSize(Double_t step) {fStepSize = step;};
   void SetupConstraint(Int_t param, vector<Int_t> systems);
@@ -70,6 +71,8 @@ class Fitter{
   Double_t fStepSize;
   Bool_t fUseEstimatedLambdaParams;
   Bool_t fDisplayResidualComponents;
+  TString fOutputString; // Optional suffix for saved object names
+
 
   // PairSystem information
   vector<PairSystem*> fPairSystems;
