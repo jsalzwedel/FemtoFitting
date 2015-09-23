@@ -25,7 +25,7 @@ Double_t PairSystem::CalculateFitChisquare()
   
   // Update the fit parameters and get the full Lednicky Eqn graph
   TGraph *combinedGraph = GetCombinedTGraph();
-
+  assert(combinedGraph);
   //Calculate the total chisquare difference over the fit range.  
   Double_t chi2 = 0.;
 
