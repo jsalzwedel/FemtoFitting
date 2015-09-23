@@ -47,6 +47,8 @@ class PairSystem{
   vector<Double_t> fLambdaParameters; // Lambda parameters associated with the L&L eqn objects
   TH1D *fCF; // Correlation function data for the pair type
   //... fit range (Double? Bin integer?)
+  vector<TH1D*> fNumHists; // Collection of numerator histograms for likelihood fitting
+  vector<TH1D*> fDenHists; // Collection of denominator histograms for likelihood fitting
   Double_t fNorm; // Normalization parameter for combined Lednicky graph
   Bool_t fUseEstimatedLambdaParams;
   Int_t fNBins; // Number of kstar bins in correlation function

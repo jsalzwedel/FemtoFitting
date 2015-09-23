@@ -32,11 +32,29 @@ Double_t PairSystem::CalculateFitChisquare()
   // Find the difference between the fit and the data.  Note that
   // TGraph bins start counting at 0, while histograms bins start
   // counting at 1 (the 0 bin is underflow)
-  for(Int_t iBin = fLowFitBin; iBin < fHighFitBin; iBin++)
-  {
-    Double_t diff = combinedGraph->GetY()[iBin] - fCF->GetBinContent(iBin+1);
-    Double_t err = fCF->GetBinError(iBin+1);
-    chi2 += pow(diff,2)/pow(err,2);
+  if(fLogLikelihood) {
+    // Use loglikelihood fitting of numerators and denominators
+    for(Int_t iHist = 0; iHist < fNHists; iHist++) {
+      for(Int_t iBin = fLowFitBin; iBin < fHighFitBin; iBin++) {
+	Double_t numCount = fNumHists[iHist]->GetBinContent(iBin+1);
+	Double_t denCount = fDenHists[iHist]->GetBinContent(iBin+1);
+	Double_t cfVal = combinedGraph->GetY()[iBin];
+
+	Double_t log1st = log(cfVal * (numCount+denCount) /
+			      numCount * (cfVal +1));
+	Double_t log2nd = log((numCount + denCount) /
+			      denCount * (cfVal +1));
+	chi2 += -2 * (numCount * log1st + denCount * log2nd);
+      }
+    }
+  } else {
+    // Do regular chisquare minimization on the correlation function
+    for(Int_t iBin = fLowFitBin; iBin < fHighFitBin; iBin++)
+    {
+      Double_t diff = combinedGraph->GetY()[iBin] - fCF->GetBinContent(iBin+1);
+      Double_t err = fCF->GetBinError(iBin+1);
+      chi2 += pow(diff,2)/pow(err,2);
+    }
   }
   delete combinedGraph;
   return chi2;
