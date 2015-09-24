@@ -93,19 +93,19 @@ void UserSetupSystems(Fitter *fitter)
   vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+5);
   // Prepare the lednicky eqn info (lambda parameters, transform matrix locations, whether or not particles are identical)
   vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE);
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "CombinedLLAA10-30KstarMomCorrected";
   simpleName = "LLAA1030";
   initParams[0] = radiiParams[1];
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "CombinedLLAA30-50KstarMomCorrected";
   simpleName = "LLAA3050";
   initParams[0] = radiiParams[2];
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
   ////////////////// Setting up Lambda-Lambda ////////////////////
@@ -114,19 +114,19 @@ void UserSetupSystems(Fitter *fitter)
   histName = "LamLam0-10";
   simpleName = "LL010";
   initParams[0] = radiiParams[0];
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLL010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "LamLam10-30";
   simpleName = "LL1030";
   initParams[0] = radiiParams[1];
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "LamLam30-50";
   simpleName = "LL3050";
   initParams[0] = radiiParams[2];
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kLL3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
   ////////////////// Setting up Antilambda-Antilambda ////////////////////
@@ -135,19 +135,19 @@ void UserSetupSystems(Fitter *fitter)
   histName = "ALamALam0-10";
   simpleName = "AA010";
   initParams[0] = radiiParams[0];
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "ALamALam10-30";
   simpleName = "AA1030";
   initParams[0] = radiiParams[1];
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "ALamALam30-50";
   simpleName = "AA3050";
   initParams[0] = radiiParams[2];
-  // fitter->CreatePairSystem(simpleName, fileName, histName, kAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
 
@@ -162,19 +162,19 @@ void UserSetupSystems(Fitter *fitter)
   Bool_t fixParamsArrLA[5] = {kFALSE, kFALSE, kFALSE, kFALSE, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 5);
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE);
-  fitter->CreatePairSystem(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 10-30
   histName = "LamALam10-30centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA1030";
   initParamsLA[0] = radiiParams[1];
-  fitter->CreatePairSystem(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 30-50
   histName = "LamALam30-50centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA3050";
   initParamsLA[0] = radiiParams[2];
-  fitter->CreatePairSystem(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   //************* Add more systems as needed ******************
 
 }

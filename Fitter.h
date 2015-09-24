@@ -26,8 +26,8 @@ class Fitter{
  public:
   Fitter();
   virtual ~Fitter();
-  void AddPairAnalysisChisquareFit(TString simpleName, TString fileName, TString cfName, Int_t sysIndex, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
-  void AddPairAnalysisLogFit(TString simpleName, TString fileName, vector<TString> numNames, vector<TString> denNames, Int_t sysIndex, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
+  void AddPairAnalysisChisquareFit(TString simpleName, TString fileName, TString cfName, Int_t sysType, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
+  void AddPairAnalysisLogFit(TString simpleName, TString fileName, vector<TString> numNames, vector<TString> denNames, Int_t sysType, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
   void DoFitting();
   Int_t GetNMinuitParams() const {return fMinuitParNames.size();};
   Int_t GetNSystems() const {return fNSystems;};

@@ -3,14 +3,17 @@
 //**********************************************************
 
 #include "Fitter.h"
-#include <iostream>
 #include "TH1D.h"
 #include "TFile.h"
 #include "TStopwatch.h"
 #include "TMath.h"
-
-#include <assert.h>
 #include "TCanvas.h"
+
+#include <iostream>
+#include <assert.h>
+#include <cstdlib>
+
+
 
 using namespace std;
 
@@ -58,7 +61,7 @@ Fitter::~Fitter()
   if(fTimer) {delete fTimer; fTimer = NULL;}
 }
 
-void Fitter::AddPairAnalysisChisquareFit(TString simpleName, TString fileName, TString cfName, Int_t sysIndex, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
+void Fitter::AddPairAnalysisChisquareFit(TString simpleName, TString fileName, TString cfName, Int_t sysType, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
 {
   // Add a fit analysis that will do a chisquare fit of a
   // correlation function.
@@ -66,14 +69,14 @@ void Fitter::AddPairAnalysisChisquareFit(TString simpleName, TString fileName, T
     cerr<<"ERROR: Attempt to add chisquare analysis after a "
 	<<"log-likelihood fit analysis was already included."
 	<<endl;
-    std::exit();
+    std::exit(EXIT_FAILURE);
   }
   fUseChisquareFitting = kTRUE;
   CreatePairSystemChisquare(simpleName, fileName, cfName, sysType, ledInfo);
   PushBackParams(simpleName, initParams, minParams, maxParams, fixParams);
 }
 
-void Fitter::AddPairAnalysisLogFit(TString simpleName, TString fileName, vector<TString> numNames, vector<TString> denNames, Int_t sysIndex, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
+void Fitter::AddPairAnalysisLogFit(TString simpleName, TString fileName, vector<TString> numNames, vector<TString> denNames, Int_t sysType, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
 {
   // Add a fit analysis that will do a log-likelihood fit
   // directly to numerator and denominator distributions
@@ -81,7 +84,7 @@ void Fitter::AddPairAnalysisLogFit(TString simpleName, TString fileName, vector<
     cerr<<"ERROR: Attempt to add log-likelihood fit analysis after "
 	<<"a chisquare fit analysis was already included."
 	<<endl;
-    std::exit();
+    std::exit(EXIT_FAILURE);
   }
   fUseLogLikelihoodFitting = kTRUE;
   CreatePairSystemLog(simpleName, fileName, numNames, denNames, sysType, ledInfo);
@@ -89,7 +92,7 @@ void Fitter::AddPairAnalysisLogFit(TString simpleName, TString fileName, vector<
 }
 
 
-void Fitter::CreatePairSystemChisquare(TString simpleName, TString fileName, TString cfName, vector<TString> numNames, vector<TString> denNames, Int_t sysType, const vector<LednickyInfo> &ledInfo)
+void Fitter::CreatePairSystemChisquare(TString simpleName, TString fileName, TString cfName, Int_t sysType, const vector<LednickyInfo> &ledInfo)
 {
   // Create a pair system for doing a chisquare fit to a
   // correlation function.
@@ -101,7 +104,7 @@ void Fitter::CreatePairSystemChisquare(TString simpleName, TString fileName, TSt
   fPairSystems.push_back(system);
 }
 
-void Fitter::CreatePairSystemLog(TString simpleName, TString fileName, TString cfName, vector<TString> numNames, vector<TString> denNames, Int_t sysType, const vector<LednickyInfo> &ledInfo)
+void Fitter::CreatePairSystemLog(TString simpleName, TString fileName, vector<TString> numNames, vector<TString> denNames, Int_t sysType, const vector<LednickyInfo> &ledInfo)
 {
   // Create a pair system for a log-likelihood fit
   // of numerator and denominator distributions
@@ -111,8 +114,8 @@ void Fitter::CreatePairSystemLog(TString simpleName, TString fileName, TString c
   vector<TH1D*> numHists;
   vector<TH1D*> denHists;
   for(UInt_t i = 0; i < numNames.size(); i++) {
-    TH1D *num = (TH1D*) inFile.Get(numHists[i]);
-    TH1D *den = (TH1D*) inFile.Get(denHists[i]);
+    TH1D *num = (TH1D*) inFile.Get(numNames[i]);
+    TH1D *den = (TH1D*) inFile.Get(denNames[i]);
     assert(num && den);
     num->SetDirectory(0);
     den->SetDirectory(0);
@@ -263,7 +266,7 @@ Bool_t Fitter::IsParameterConstrained(const Int_t currentSys, const Int_t curren
   return kFALSE;
 }
 
-void Fitter:PushBackParams(TString simpleName, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
+void Fitter::PushBackParams(TString simpleName, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
 {
   // Add all the parameters to the fitter
   fSystemNames.push_back(simpleName);
