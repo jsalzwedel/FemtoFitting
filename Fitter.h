@@ -26,7 +26,8 @@ class Fitter{
  public:
   Fitter();
   virtual ~Fitter();
-  void CreatePairSystem(TString simpleName, TString fileName, TString histName, Int_t sysIndex,  const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
+  void AddPairAnalysisChisquareFit(TString simpleName, TString fileName, TString cfName, Int_t sysIndex, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
+  void AddPairAnalysisLogFit(TString simpleName, TString fileName, vector<TString> numNames, vector<TString> denNames, Int_t sysIndex, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
   void DoFitting();
   Int_t GetNMinuitParams() const {return fMinuitParNames.size();};
   Int_t GetNSystems() const {return fNSystems;};
@@ -45,10 +46,13 @@ class Fitter{
   void SetUseMINOS(Bool_t shouldUse) {fUseMINOS = shouldUse;};
 
  private:
+  void CreatePairSystemChisquare(TString simpleName, TString fileName, TString cfName, Int_t sysType, const vector<LednickyInfo> &ledInfo);
+  void CreatePairSystemLog(TString simpleName, TString fileName, vector<TString> numNames, vector<TString> denNames, Int_t sysType, const vector<LednickyInfo> &ledInfo);
   Int_t GetConstrainedParamIndex(const Int_t currentSys, const Int_t currentPar);
   Double_t GetChisquarePerNDF();
   Double_t GetPvalue();
   Bool_t IsParameterConstrained(const Int_t sys, const Int_t par);
+  void PushBackParams(TString simpleName, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
   void SetupInitialParameters();
   void SaveResidualComponentPlot(Int_t sysIndex);
   void Timer();
@@ -73,6 +77,8 @@ class Fitter{
   Bool_t fUseEstimatedLambdaParams;
   Bool_t fUseMINOS;
   Bool_t fDisplayResidualComponents;
+  Bool_t fUseChisquareFitting;
+  Bool_t fUseLogLikelihoodFitting;
   TString fOutputString; // Optional suffix for saved object names
 
 

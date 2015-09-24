@@ -24,6 +24,8 @@ Fitter::Fitter():
   fUseEstimatedLambdaParams(kTRUE),
   fUseMINOS(kFALSE),
   fDisplayResidualComponents(kFALSE),
+  fUseChisquareFitting(kFALSE),
+  fUseLogLikelihoodFitting(kFALSE),
   fOutputString(""),
   fFitCalls(0),
   fChisquare(0.),
@@ -56,27 +58,73 @@ Fitter::~Fitter()
   if(fTimer) {delete fTimer; fTimer = NULL;}
 }
 
-
-
-void Fitter::CreatePairSystem(TString simpleName, TString fileName, TString histName, Int_t sysType, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
+void Fitter::AddPairAnalysisChisquareFit(TString simpleName, TString fileName, TString cfName, Int_t sysIndex, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
 {
+  // Add a fit analysis that will do a chisquare fit of a
+  // correlation function.
+  if(fUseLogLikelihoodFitting) {
+    cerr<<"ERROR: Attempt to add chisquare analysis after a "
+	<<"log-likelihood fit analysis was already included."
+	<<endl;
+    std::exit();
+  }
+  fUseChisquareFitting = kTRUE;
+  CreatePairSystemChisquare(simpleName, fileName, cfName, sysType, ledInfo);
+  PushBackParams(simpleName, initParams, minParams, maxParams, fixParams);
+}
+
+void Fitter::AddPairAnalysisLogFit(TString simpleName, TString fileName, vector<TString> numNames, vector<TString> denNames, Int_t sysIndex, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
+{
+  // Add a fit analysis that will do a log-likelihood fit
+  // directly to numerator and denominator distributions
+  if(fUseChisquareFitting) {
+    cerr<<"ERROR: Attempt to add log-likelihood fit analysis after "
+	<<"a chisquare fit analysis was already included."
+	<<endl;
+    std::exit();
+  }
+  fUseLogLikelihoodFitting = kTRUE;
+  CreatePairSystemLog(simpleName, fileName, numNames, denNames, sysType, ledInfo);
+  PushBackParams(simpleName, initParams, minParams, maxParams, fixParams);
+}
+
+
+void Fitter::CreatePairSystemChisquare(TString simpleName, TString fileName, TString cfName, vector<TString> numNames, vector<TString> denNames, Int_t sysType, const vector<LednickyInfo> &ledInfo)
+{
+  // Create a pair system for doing a chisquare fit to a
+  // correlation function.
   TFile inFile(fileName, "read");
-  TH1D *cf = (TH1D*) inFile.Get(histName);
+  TH1D *cf = (TH1D*) inFile.Get(cfName);
   assert(cf);
   cf->SetDirectory(0);
   PairSystem *system = new PairSystem(cf, ledInfo, simpleName, sysType);
   fPairSystems.push_back(system);
-  fSystemNames.push_back(simpleName);
-  fInitParams.push_back(initParams);
-  fMinParams.push_back(minParams);
-  fMaxParams.push_back(maxParams);
-  fFixParams.push_back(fixParams);
-  fNSystems++;
-  for(UInt_t i = 0; i < fixParams.size(); i++)
-  {
-    if(fixParams[i]) fFixedParams++;
+}
+
+void Fitter::CreatePairSystemLog(TString simpleName, TString fileName, TString cfName, vector<TString> numNames, vector<TString> denNames, Int_t sysType, const vector<LednickyInfo> &ledInfo)
+{
+  // Create a pair system for a log-likelihood fit
+  // of numerator and denominator distributions
+  TFile inFile(fileName, "read");
+  assert(numNames.size());
+  assert(numNames.size() == denNames.size());
+  vector<TH1D*> numHists;
+  vector<TH1D*> denHists;
+  for(UInt_t i = 0; i < numNames.size(); i++) {
+    TH1D *num = (TH1D*) inFile.Get(numHists[i]);
+    TH1D *den = (TH1D*) inFile.Get(denHists[i]);
+    assert(num && den);
+    num->SetDirectory(0);
+    den->SetDirectory(0);
+    numHists.push_back(num);
+    denHists.push_back(den);
   }
 }
+
+
+
+
+
 
 void Fitter::DoFitting()
 {
@@ -213,6 +261,21 @@ Bool_t Fitter::IsParameterConstrained(const Int_t currentSys, const Int_t curren
     } 
   }
   return kFALSE;
+}
+
+void Fitter:PushBackParams(TString simpleName, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
+{
+  // Add all the parameters to the fitter
+  fSystemNames.push_back(simpleName);
+  fInitParams.push_back(initParams);
+  fMinParams.push_back(minParams);
+  fMaxParams.push_back(maxParams);
+  fFixParams.push_back(fixParams);
+  fNSystems++;
+  for(UInt_t i = 0; i < fixParams.size(); i++)
+  {
+    if(fixParams[i]) fFixedParams++;
+  }
 }
 
 void Fitter::SaveOutputPlots()
