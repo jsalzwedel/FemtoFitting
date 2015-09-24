@@ -23,6 +23,7 @@ class LednickyEqn;
 class PairSystem{
  public:
   PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName, Int_t sysType);
+  PairSystem(vector<TH1D*> numHists, vector<TH1D*> denHists, const vector<LednickyInfo> &ledInfo, TString pairTypeName, Int_t sysType);
   ~PairSystem();
   Double_t CalculateFitChisquare();
   TH1D*    GetCF() {return fCF;};
@@ -42,20 +43,21 @@ class PairSystem{
   /* void CreateNewLednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix); */
   /* void ReadInLambdaParams(); */
   TString fPairTypeName; // e.g. "LambdaLambda" or "LambdaAntilambda"
-  TString fCentralityName; // e.g. "0-10"
+  /* TString fCentralityName; // e.g. "0-10" */
+  Int_t fSystemType; // Index of the system (based on enum in Main.cxx)
   vector<LednickyEqn*> fLednickyEqns; // List of primary and secondary L&L eqn objects
   vector<Double_t> fLambdaParameters; // Lambda parameters associated with the L&L eqn objects
   TH1D *fCF; // Correlation function data for the pair type
-  //... fit range (Double? Bin integer?)
   vector<TH1D*> fNumHists; // Collection of numerator histograms for likelihood fitting
   vector<TH1D*> fDenHists; // Collection of denominator histograms for likelihood fitting
+  UInt_t fNHists; // Number of num-den hist pairs that are being fit
   Double_t fNorm; // Normalization parameter for combined Lednicky graph
   Bool_t fUseEstimatedLambdaParams;
+  Bool_t fUseLogLikelihood;
   Int_t fNBins; // Number of kstar bins in correlation function
   Double_t fBinWidth; // Width of each kstar bin
   Int_t fLowFitBin; // Lowest bin that will be fit
   Int_t fHighFitBin; // Highest bin that will be fit
-  Int_t fSystemType; // Index of the system (based on enum in Main.cxx)
 
 };
 

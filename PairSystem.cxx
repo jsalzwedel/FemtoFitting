@@ -32,9 +32,9 @@ Double_t PairSystem::CalculateFitChisquare()
   // Find the difference between the fit and the data.  Note that
   // TGraph bins start counting at 0, while histograms bins start
   // counting at 1 (the 0 bin is underflow)
-  if(fLogLikelihood) {
+  if(fUseLogLikelihood) {
     // Use loglikelihood fitting of numerators and denominators
-    for(Int_t iHist = 0; iHist < fNHists; iHist++) {
+    for(UInt_t iHist = 0; iHist < fNHists; iHist++) {
       for(Int_t iBin = fLowFitBin; iBin < fHighFitBin; iBin++) {
 	Double_t numCount = fNumHists[iHist]->GetBinContent(iBin+1);
 	Double_t denCount = fDenHists[iHist]->GetBinContent(iBin+1);
@@ -177,16 +177,55 @@ void PairSystem::SetLednickyParameters(vector<Double_t> pars)
 }
 
 PairSystem::PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName, Int_t sysType):
+fPairTypeName(pairTypeName),
+fSystemType(sysType),
+fCF(cfData),
+fNHists(0),
+fNorm(1.),
+fUseLogLikelihood(kFALSE),
 fLowFitBin(0),
-fHighFitBin(50),
-fSystemType(sysType)
+fHighFitBin(50)
 {
+  // Constructor for use with chisquare fitting
   assert(cfData);
-  fCF = cfData;
   fNBins = cfData->GetNbinsX();
   fBinWidth = cfData->GetBinWidth(1);
-  fNorm = 1.;
-  fPairTypeName = pairTypeName;
+  // Create a LednickyEqn from each LednickyInfo
+  for(UInt_t iSys = 0; iSys < ledInfo.size(); iSys++)
+  {
+    fLambdaParameters.push_back(ledInfo[iSys].GetLambdaParam());
+    LednickyEqn *lednicky = new LednickyEqn(ledInfo[iSys], fNBins, fBinWidth);
+    fLednickyEqns.push_back(lednicky);
+  }
+}
+
+PairSystem::PairSystem(vector<TH1D*> numHists, vector<TH1D*> denHists, const vector<LednickyInfo> &ledInfo, TString pairTypeName, Int_t sysType):
+fPairTypeName(pairTypeName),
+fSystemType(sysType),
+fCF(NULL),
+fNumHists(numHists),
+fDenHists(denHists),
+fNorm(1.),
+fUseLogLikelihood(kTRUE),
+fLowFitBin(0),
+fHighFitBin(50)
+{
+  // Constructor for log-likelihood fitting using numerator and
+  // denominator distributions
+  fNHists = fNumHists.size();
+  assert(fDenHists.size() == fNHists);
+  assert(fNumHists[0]);
+  fNBins = fNumHists[0]->GetNbinsX();
+  fBinWidth = fNumHists[0]->GetBinWidth(1);
+  for(UInt_t i = 0; i < fNHists; i++) {
+    assert(fNumHists[i]);
+    assert(fDenHists[i]);
+    assert(fNumHists[i]->GetNbinsX() == fNBins);
+    assert(fDenHists[i]->GetNbinsX() == fNBins);
+    assert(fNumHists[i]->GetBinWidth(1) == fBinWidth);
+    assert(fDenHists[i]->GetBinWidth(1) == fBinWidth);
+  }
+  fCF = NULL; // Not using the correlation function in this mode
   
   // Create a LednickyEqn from each LednickyInfo
   for(UInt_t iSys = 0; iSys < ledInfo.size(); iSys++)
@@ -199,16 +238,30 @@ fSystemType(sysType)
 
 
 
+
 PairSystem::~PairSystem()
 {
   if(fCF){
     delete fCF;
     fCF = NULL;
   }
-  for(UInt_t i = 0; i < fLednickyEqns.size(); i++)
-  {
+  for(UInt_t i = 0; i < fLednickyEqns.size(); i++) {
     if(!fLednickyEqns[i]) continue;
     delete fLednickyEqns[i];
     fLednickyEqns[i] = NULL;
   }
+  for(UInt_t i = 0; i < fNumHists.size(); i++) {
+    if(fNumHists[i]) {
+      delete fNumHists[i];
+      fNumHists[i] = NULL;
+    }
+  }
+  fNumHists.clear();
+  for(UInt_t i = 0; i < fDenHists.size(); i++) {
+    if(fDenHists[i]) {
+      delete fDenHists[i];
+      fDenHists[i] = NULL;
+    }
+  }
+  fDenHists.clear();
 }
