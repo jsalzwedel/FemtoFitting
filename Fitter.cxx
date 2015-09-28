@@ -122,6 +122,8 @@ void Fitter::CreatePairSystemLog(TString simpleName, TString fileName, vector<TS
     numHists.push_back(num);
     denHists.push_back(den);
   }
+  PairSystem *system = new PairSystem(numHists, denHists, ledInfo, simpleName, sysType);
+  fPairSystems.push_back(system);
 }
 
 
