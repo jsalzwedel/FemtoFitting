@@ -69,7 +69,9 @@ TGraph* PairSystem::GetCombinedTGraph()
   // Set up the graph's dimensions
   TGraph *combinedLednicky = fLednickyEqns[0]->GetLednickyGraph();
 
-  TString graphName = fCF->GetName();
+  TString graphName;
+  if(fCF) graphName = fCF->GetName();
+  else graphName = fPairTypeName;
   graphName += "Fit";
   combinedLednicky->SetName(graphName);
   
