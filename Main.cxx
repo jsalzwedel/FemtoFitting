@@ -162,7 +162,7 @@ void UserSetupSystems(Fitter *fitter)
   Bool_t fixParamsArrLA[5] = {kFALSE, kFALSE, kFALSE, kFALSE, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 5);
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE);
-  fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 10-30
   histName = "LamALam10-30centrality_varBin5BothFieldsKstarMomCorrected";
@@ -176,6 +176,20 @@ void UserSetupSystems(Fitter *fitter)
   initParamsLA[0] = radiiParams[2];
   // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   //************* Add more systems as needed ******************
+
+
+
+
+  // Log-likelihood fitting.  Do not use in conjunction with
+  // chisquare fitting!
+
+  TString fileNumDen = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/NumDen1D.root";
+  vector<TString> numNames;
+  numNames.push_back("mm12/fSignalLamLam20");
+  vector<TString> denNames;
+  denNames.push_back("mm12/fBkgLamLam20");
+  fitter->AddPairAnalysisLogFit("LA05", fileNumDen, numNames, denNames, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  
 
 }
 
@@ -266,7 +280,7 @@ void UserSetFitOptions(Fitter *myFitter)
    myFitter->SetDisplayResidualComponents(kTRUE);
 
    // Use MINOS to find error bars?
-   myFitter->SetUseMINOS(kTRUE);
+   myFitter->SetUseMINOS(kFALSE);
    
   // optional suffix for saved plots and objects
   TString outString = "";
@@ -304,7 +318,7 @@ int main(int argc, char **argv)
   myFitter->InitializeMinuitParameters(myMinuit);
   // myFitter->CreateMinuit();
   myFitter->DoFitting();
-  myFitter->SaveOutputPlots();
+  // myFitter->SaveOutputPlots();
 
   delete myMinuit;
   return 0;
