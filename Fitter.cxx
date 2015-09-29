@@ -21,6 +21,9 @@ using namespace std;
 Fitter::Fitter():
   fNParams(5),
   fFixedParams(0),
+  fFitBins(40),
+  fHighFitBin(40),
+  fLowFitBin(0),
   fNSystems(0),
   fMaxMinuitCalls(20000),
   fStepSize(0.1),
@@ -290,18 +293,23 @@ void Fitter::SaveOutputPlots()
   for(Int_t iSys = 0; iSys < fNSystems; iSys++)
   {
     TH1D *cf = fPairSystems[iSys]->GetCF();
-    cf->SetAxisRange(0.7,1.05,"Y");
-    cf->SetAxisRange(0.,1.,"X");
-    TString cfName = cf->GetName();
-    // cfName += fOutputString;
-    cf->Write(cfName, TObject::kOverwrite);
+    if(cf) {
+      cf->SetAxisRange(0.7,1.05,"Y");
+      cf->SetAxisRange(0.,1.,"X");
+      TString cfName = cf->GetName();
+      // cfName += fOutputString;
+      cf->Write(cfName, TObject::kOverwrite);
+    }
     TGraph *g = fPairSystems[iSys]->GetCombinedTGraph();
     TString gName = g->GetName();
     gName += fOutputString;
     g->Write(gName, TObject::kOverwrite);
     TCanvas c1("c1","c1");
-    cf->DrawCopy();
-    g->Draw("same");
+    if(cf) {
+      cf->DrawCopy();
+      g->Draw("same");
+    }
+    else g->Draw();
     TString plotName = "Plot";
     plotName += gName;
     c1.SaveAs(plotName + ".pdf");

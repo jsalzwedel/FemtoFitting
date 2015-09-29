@@ -37,14 +37,22 @@ Double_t PairSystem::CalculateFitChisquare()
     for(UInt_t iHist = 0; iHist < fNHists; iHist++) {
       for(Int_t iBin = fLowFitBin; iBin < fHighFitBin; iBin++) {
 	Double_t numCount = fNumHists[iHist]->GetBinContent(iBin+1);
+	if(numCount == 0) continue;
 	Double_t denCount = fDenHists[iHist]->GetBinContent(iBin+1);
+	if(denCount == 0) continue;
 	Double_t cfVal = combinedGraph->GetY()[iBin];
 
 	Double_t log1st = log(cfVal * (numCount+denCount) /
-			      numCount * (cfVal +1));
+			      (numCount * (cfVal +1)));
 	Double_t log2nd = log((numCount + denCount) /
-			      denCount * (cfVal +1));
-	chi2 += -2 * (numCount * log1st + denCount * log2nd);
+			      (denCount * (cfVal +1)));
+	chi2 = chi2 + -2 * (numCount * log1st + denCount * log2nd);
+	// cout<<"Bin:\t"<<iBin<<"\t\tCF:\t"<<cfVal<<endl;
+	// cout<<"Bin:\t"<<iBin<<"\tlog1st:\t"<<log1st
+	//     <<"\t\tlog2nd:\t"<<log2nd
+	//     <<"\t\tChi2:\t"<<chi2
+	//     <<"\tNum:\t"<<numCount
+	//     <<"\tDen:\t"<<denCount<<endl;
       }
     }
   } else {
