@@ -51,7 +51,7 @@ class PairSystem{
   vector<TH1D*> fNumHists; // Collection of numerator histograms for likelihood fitting
   vector<TH1D*> fDenHists; // Collection of denominator histograms for likelihood fitting
   UInt_t fNHists; // Number of num-den hist pairs that are being fit
-  Double_t fNorm; // Normalization parameter for combined Lednicky graph
+  vector<Double_t> fNorms; // Normalization parameters for combined Lednicky graph.  Each CF or Num/Den pair has a norm parameter.
   Bool_t fUseEstimatedLambdaParams;
   Bool_t fUseLogLikelihood;
   Int_t fNBins; // Number of kstar bins in correlation function

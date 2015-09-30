@@ -41,6 +41,7 @@ Double_t PairSystem::CalculateFitChisquare()
 	Double_t denCount = fDenHists[iHist]->GetBinContent(iBin+1);
 	if(denCount == 0) continue;
 	Double_t cfVal = combinedGraph->GetY()[iBin];
+	cfVal /= fNorms[iHist];
 
 	Double_t log1st = log(cfVal * (numCount+denCount) /
 			      (numCount * (cfVal +1)));
@@ -59,7 +60,9 @@ Double_t PairSystem::CalculateFitChisquare()
     // Do regular chisquare minimization on the correlation function
     for(Int_t iBin = fLowFitBin; iBin < fHighFitBin; iBin++)
     {
-      Double_t diff = combinedGraph->GetY()[iBin] - fCF->GetBinContent(iBin+1);
+      Double_t cfVal = combinedGraph->GetY()[iBin];
+      cfVal /= fNorms[0];
+      Double_t diff = cfVal - fCF->GetBinContent(iBin+1);
       Double_t err = fCF->GetBinError(iBin+1);
       chi2 += pow(diff,2)/pow(err,2);
     }
@@ -83,9 +86,9 @@ TGraph* PairSystem::GetCombinedTGraph()
   graphName += "Fit";
   combinedLednicky->SetName(graphName);
   
-  // Initialize the y-values to zero
+  // Initialize the y-values to a unity baseline
   for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++){
-    combinedLednicky->GetY()[iBin] = 0.0;
+    combinedLednicky->GetY()[iBin] = 1.;
   }
 
 
@@ -104,13 +107,6 @@ TGraph* PairSystem::GetCombinedTGraph()
       combinedLednicky->GetY()[iBin] += partialBinContent;
     }
     delete ledEqn;
-  }
-
-  for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++)
-  {
-    combinedLednicky->GetY()[iBin] += 1.;
-    combinedLednicky->GetY()[iBin] /= fNorm;
-
   }
   return combinedLednicky;
 }
@@ -183,7 +179,12 @@ void PairSystem::SetLednickyParameters(vector<Double_t> pars)
   }
   // Normalization parameter should be stored in PairSystem, not
   // passed on to Lednicky Eqn
-  fNorm = pars[4]; 
+  if(!fUseLogLikelihood) fNorms[0] = pars[4];
+  else {
+    for(UInt_t iHists = 0; iHists < fNHists; iHists++) {
+      fNorms[iHists] = pars[iHists + 4];
+    }
+  }
 }
 
 PairSystem::PairSystem(TH1D *cfData, const vector<LednickyInfo> &ledInfo, TString pairTypeName, Int_t sysType):
@@ -191,7 +192,7 @@ fPairTypeName(pairTypeName),
 fSystemType(sysType),
 fCF(cfData),
 fNHists(0),
-fNorm(1.),
+// fNorm(1.),
 fUseLogLikelihood(kFALSE),
 fLowFitBin(0),
 fHighFitBin(50)
@@ -200,6 +201,7 @@ fHighFitBin(50)
   assert(cfData);
   fNBins = cfData->GetNbinsX();
   fBinWidth = cfData->GetBinWidth(1);
+  fNorms.resize(1, 1.);
   // Create a LednickyEqn from each LednickyInfo
   for(UInt_t iSys = 0; iSys < ledInfo.size(); iSys++)
   {
@@ -215,7 +217,7 @@ fSystemType(sysType),
 fCF(NULL),
 fNumHists(numHists),
 fDenHists(denHists),
-fNorm(1.),
+// fNorm(1.),
 fUseLogLikelihood(kTRUE),
 fLowFitBin(0),
 fHighFitBin(50)
@@ -227,6 +229,7 @@ fHighFitBin(50)
   assert(fNumHists[0]);
   fNBins = fNumHists[0]->GetNbinsX();
   fBinWidth = fNumHists[0]->GetBinWidth(1);
+  fNorms.resize(fNHists, 1.);
   for(UInt_t i = 0; i < fNHists; i++) {
     assert(fNumHists[i]);
     assert(fDenHists[i]);

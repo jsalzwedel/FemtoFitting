@@ -19,7 +19,7 @@ using namespace std;
 
 
 Fitter::Fitter():
-  fNParams(5),
+  fNParamsTotal(0),
   fFixedParams(0),
   fFitBins(40),
   fHighFitBin(40),
@@ -76,7 +76,8 @@ void Fitter::AddPairAnalysisChisquareFit(TString simpleName, TString fileName, T
   }
   fUseChisquareFitting = kTRUE;
   CreatePairSystemChisquare(simpleName, fileName, cfName, sysType, ledInfo);
-  PushBackParams(simpleName, initParams, minParams, maxParams, fixParams);
+  UInt_t numberOfNormParams = 1;
+  PushBackParams(simpleName, initParams, minParams, maxParams, fixParams, numberOfNormParams);
 }
 
 void Fitter::AddPairAnalysisLogFit(TString simpleName, TString fileName, vector<TString> numNames, vector<TString> denNames, Int_t sysType, const vector<LednickyInfo> &ledInfo, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
@@ -91,7 +92,8 @@ void Fitter::AddPairAnalysisLogFit(TString simpleName, TString fileName, vector<
   }
   fUseLogLikelihoodFitting = kTRUE;
   CreatePairSystemLog(simpleName, fileName, numNames, denNames, sysType, ledInfo);
-  PushBackParams(simpleName, initParams, minParams, maxParams, fixParams);
+  UInt_t numberOfNormParams = numNames.size();
+  PushBackParams(simpleName, initParams, minParams, maxParams, fixParams, numberOfNormParams);
 }
 
 
@@ -204,7 +206,7 @@ Int_t Fitter::GetConstrainedParamIndex(const Int_t currentSys, const Int_t curre
 	// Get the type of the first system in the constraint
 	const Int_t sysTypePrior = consSystems[0];
 	// Now find the index of the system with that type.
-	Int_t sysIndexPrior = 100;
+	Int_t sysIndexPrior = -1;
 	for(Int_t iPairSys = 0; iPairSys < fNSystems; iPairSys++)
 	{
 	  if(sysTypePrior == fPairSystems[iPairSys]->GetSystemType())
@@ -212,10 +214,15 @@ Int_t Fitter::GetConstrainedParamIndex(const Int_t currentSys, const Int_t curre
 	    sysIndexPrior = iPairSys;
 	  }
 	}
-	assert(sysIndexPrior != 100);
-	// Return the absolute index of the first parameter in the 
-	// constraint
-        Int_t absoluteIndex = sysIndexPrior * fNParams + parIndex;
+	assert(sysIndexPrior != -1);
+	
+	// Return the Minuit index of the parameter.
+	Int_t absoluteIndex = 0;
+	for(Int_t iSysInner = 0; iSysInner < sysIndexPrior; iSysInner++) {
+	  absoluteIndex += fNParamsPerSystem[iSysInner];
+	}
+	
+        absoluteIndex += parIndex;
 	return absoluteIndex;
       }
     } 
@@ -272,14 +279,27 @@ Bool_t Fitter::IsParameterConstrained(const Int_t currentSys, const Int_t curren
   return kFALSE;
 }
 
-void Fitter::PushBackParams(TString simpleName, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams)
+void Fitter::PushBackParams(TString simpleName, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams, UInt_t nNormParams)
 {
   // Add all the parameters to the fitter
+
+  // If we need extra normalization parameters (for log fitting),
+  // add them here. Add extra copies of the supplied norm param.
+  for(UInt_t i = 1; i < nNormParams; i++) {
+    initParams.push_back(initParams[4]);
+    minParams.push_back(minParams[4]);
+    maxParams.push_back(maxParams[4]);
+    fixParams.push_back(fixParams[4]);
+  }
+  // Add these parameters to the fitter's list
   fSystemNames.push_back(simpleName);
   fInitParams.push_back(initParams);
   fMinParams.push_back(minParams);
   fMaxParams.push_back(maxParams);
   fFixParams.push_back(fixParams);
+  Int_t nParams = initParams.size();
+  fNParamsPerSystem.push_back(nParams);
+  fNParamsTotal += nParams;
   fNSystems++;
   for(UInt_t i = 0; i < fixParams.size(); i++)
   {
@@ -386,13 +406,16 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *p
   // We'll copy par into the parameters vector, and insert 
   // any constrained parameters into their appropriate
   // positions
-  vector<Double_t> parameters(fNSystems * fNParams);
+  vector<Double_t> parameters(fNParamsTotal);
   Int_t constrainedParams = 0;
+  Int_t currentParamIndex = -1; //First param will increment to 0
   for(Int_t iSys = 0; iSys < fNSystems; iSys++)
   {
-    for(Int_t iPar = 0; iPar < fNParams; iPar++) 
+    Int_t nParams = fNParamsPerSystem[iSys];
+    for(Int_t iPar = 0; iPar < nParams; iPar++) 
     {
-      Int_t thisParamIndex = iSys * fNParams + iPar;
+      currentParamIndex++;
+      // Int_t thisParamIndex = iSys * fNParams + iPar;
       // If the parameter is constrained, minuit won't have a value
       // for it.  We'll need to copy the value from the 
       // corresponding constrained parameter.
@@ -400,12 +423,12 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *p
 	Int_t priorIndex = GetConstrainedParamIndex(iSys, iPar);
 	// cout<<"ThisIndex:\t"<<thisParamIndex<<".\t"<<parameters[thisParamIndex]<<endl;
 	// cout<<"PriorIndex:\t"<<priorIndex<<".\t"<<parameters[priorIndex]<<endl;
-	assert(thisParamIndex > priorIndex);
-	parameters[thisParamIndex] = parameters[priorIndex];
+	assert(currentParamIndex > priorIndex);
+	parameters[currentParamIndex] = parameters[priorIndex];
 	constrainedParams++;
   	continue;
       }
-      parameters[thisParamIndex] = par[thisParamIndex - constrainedParams];
+      parameters[currentParamIndex] = par[currentParamIndex - constrainedParams];
     }
   }
 
@@ -413,14 +436,17 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *p
   // each PairSystem. Then pass the vector to the system and 
   // get chisquare
   totalChisquare = 0;
+  Int_t nCopiedParams = 0;
   for(Int_t iSys = 0; iSys < fNSystems; iSys++)
   {
-    
-    vector<Double_t> pairSystemPars(&parameters[iSys * fNParams],
-				    &parameters[(iSys +1) * fNParams]);
+    Int_t nParams = fNParamsPerSystem[iSys];
+    vector<Double_t> pairSystemPars(&parameters[nCopiedParams],
+				    &parameters[nCopiedParams + nParams]);
+    nCopiedParams += nParams;
     fPairSystems[iSys]->SetLednickyParameters(pairSystemPars);
     totalChisquare += fPairSystems[iSys]->CalculateFitChisquare();
   }
+  assert(nCopiedParams == fNParamsTotal);
   // cout<<"SetParametersAndFitEnd:\t"<<endl;
   // Timer();
   fChisquare = totalChisquare;
@@ -433,7 +459,7 @@ void Fitter::SetupInitialParameters()
 
   for(Int_t iSys = 0; iSys < fNSystems; iSys++)
   {
-    for(Int_t iPar = 0; iPar < fNParams; iPar++)
+    for(Int_t iPar = 0; iPar < fNParamsPerSystem[iSys]; iPar++)
     {
       // Check to see if this parameter has been constrained 
       // to be the same as the parameter from an earlier system
@@ -443,7 +469,14 @@ void Fitter::SetupInitialParameters()
 	continue;
       }
       // New parameter.  Now set it up.
-      TString parName = fParamNames[iPar] + fSystemNames[iSys];
+      TString parName = "";
+      if(iPar > 3) {
+	parName += "Norm";
+	Int_t normIndex = iPar - 3;
+	parName += normIndex;
+	parName += fSystemNames[iSys];
+      }
+      else parName = fParamNames[iPar] + fSystemNames[iSys];
       fMinuitParNames.push_back(parName);
       fMinuitParInitial.push_back(fInitParams[iSys][iPar]);
       fMinuitParMinimum.push_back(fMinParams[iSys][iPar]);

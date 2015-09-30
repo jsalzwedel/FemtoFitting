@@ -31,8 +31,8 @@ class Fitter{
   void DoFitting();
   Int_t GetNMinuitParams() const {return fMinuitParNames.size();};
   Int_t GetNSystems() const {return fNSystems;};
-  Int_t GetNParams() const {return fNParams;};
-  Int_t GetTotalParams() const {return fNSystems * fNParams;};
+  /* Int_t GetNParams() const {return fNParams;}; */
+  Int_t GetTotalParams() const {return fNParamsTotal;};
   void InitializeMinuitParameters(TMinuit *minuit);
   void SaveOutputPlots();
   void SetDisplayResidualComponents(Bool_t shouldDraw) {fDisplayResidualComponents = shouldDraw;};
@@ -52,7 +52,7 @@ class Fitter{
   Double_t GetChisquarePerNDF();
   Double_t GetPvalue();
   Bool_t IsParameterConstrained(const Int_t sys, const Int_t par);
-  void PushBackParams(TString simpleName, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams);
+  void PushBackParams(TString simpleName, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams, UInt_t nNormParams);
   void SetupInitialParameters();
   void SaveResidualComponentPlot(Int_t sysIndex);
   void Timer();
@@ -65,7 +65,8 @@ class Fitter{
   vector<Bool_t>   fMinuitParIsFixed;
 
   vector<ParameterConstraint*> fParamConstraints;
-  Double_t fNParams;
+  vector<Double_t> fNParamsPerSystem;
+  Int_t fNParamsTotal;
   Int_t fFixedParams;
   Int_t fFitBins;
   Int_t fHighFitBin;
