@@ -127,6 +127,7 @@ void Fitter::CreatePairSystemLog(TString simpleName, TString fileName, vector<TS
   }
   PairSystem *system = new PairSystem(numHists, denHists, ledInfo, simpleName, sysType);
   fPairSystems.push_back(system);
+  cout<<"Added pair system with "<<numNames.size()<<" num and den pairs"<<endl;
 }
 
 

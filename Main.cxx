@@ -185,10 +185,25 @@ void UserSetupSystems(Fitter *fitter)
 
   TString fileNumDen = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/NumDen1D.root";
   vector<TString> numNames;
-  numNames.push_back("mm12/fSignalLamLam20");
+  numNames.push_back("mm12/fSignalLamALam20");
+  numNames.push_back("mm12/fSignalLamALam19");
+  numNames.push_back("mm34/fSignalLamALam20");
+  numNames.push_back("mm34/fSignalLamALam19");
+  numNames.push_back("pp1/fSignalLamALam20");
+  numNames.push_back("pp1/fSignalLamALam19");
+  numNames.push_back("pp2/fSignalLamALam20");
+  numNames.push_back("pp2/fSignalLamALam19");
+  
   vector<TString> denNames;
-  denNames.push_back("mm12/fBkgLamLam20");
-  fitter->AddPairAnalysisLogFit("LA05", fileNumDen, numNames, denNames, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  denNames.push_back("mm12/fBkgLamALam20");
+  denNames.push_back("mm12/fBkgLamALam19");
+  denNames.push_back("mm34/fBkgLamALam20");
+  denNames.push_back("mm34/fBkgLamALam19");
+  denNames.push_back("pp1/fBkgLamALam20");
+  denNames.push_back("pp1/fBkgLamALam19");
+  denNames.push_back("pp2/fBkgLamALam20");
+  denNames.push_back("pp2/fBkgLamALam19");
+  fitter->AddPairAnalysisLogFit("LA010", fileNumDen, numNames, denNames, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   
 
 }
@@ -211,21 +226,18 @@ void UserSetConstraints(Fitter *myFitter)
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030, kLLAA3050};
   vector<Int_t> systemsLLAA(systemsArrLLAA, systemsArrLLAA + 3);
   myFitter->SetupConstraint(kF0Real, systemsLLAA);
-  // myFitter->SetupConstraint(kF0Imag, systemsLLAA);
   myFitter->SetupConstraint(kD0, systemsLLAA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda
   Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
   vector<Int_t> systemsLL(systemsArrLL, systemsArrLL + 3);
   // myFitter->SetupConstraint(kF0Real, systemsLL);
-  // myFitter->SetupConstraint(kF0Imag, systemsLL);
   // myFitter->SetupConstraint(kD0, systemsLL);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda
   Int_t systemsArrAA[3] = {kAA010, kAA1030, kAA3050};
   vector<Int_t> systemsAA(systemsArrAA, systemsArrAA + 3);
   // myFitter->SetupConstraint(kF0Real, systemsAA);
-  // myFitter->SetupConstraint(kF0Imag, systemsAA);
   // myFitter->SetupConstraint(kD0, systemsAA);
 
 
@@ -234,7 +246,6 @@ void UserSetConstraints(Fitter *myFitter)
 				kAA010, kAA1030,kAA3050};
   vector<Int_t> systemsLLandAA(systemsArrLLandAA, systemsArrLLandAA + 6);
   // myFitter->SetupConstraint(kF0Real, systemsLLandAA);
-  // myFitter->SetupConstraint(kF0Imag, systemsLLandAA);
   // myFitter->SetupConstraint(kD0, systemsLLandAA);
 
   // Constrain Averaged LLAA with LA
@@ -242,7 +253,6 @@ void UserSetConstraints(Fitter *myFitter)
 			     kLA010, kLA1030, kLA3050};
   vector<Int_t> systemsLLAALA(systemsArrLLAALA, systemsArrLLAALA + 6);
   // myFitter->SetupConstraint(kF0Real, systemsLLAALA);
-  // myFitter->SetupConstraint(kF0Imag, systemsLLAALA);
   // myFitter->SetupConstraint(kD0, systemsLLAALA);
 
 
@@ -318,7 +328,7 @@ int main(int argc, char **argv)
   myFitter->InitializeMinuitParameters(myMinuit);
   // myFitter->CreateMinuit();
   myFitter->DoFitting();
-  // myFitter->SaveOutputPlots();
+  myFitter->SaveOutputPlots();
 
   delete myMinuit;
   return 0;
