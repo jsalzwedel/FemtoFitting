@@ -157,7 +157,7 @@ void UserSetupSystems(Fitter *fitter)
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsLamALamKstarMomCorrected.root";
   histName = "LamALam0-10centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA010";
-  Double_t initParamsArrLA[5] = {radiiParams[0], -1., 1., 3., 1.}; 
+  Double_t initParamsArrLA[5] = {radiiParams[0], -1., 1., 3., 10.}; 
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + 5);
   Bool_t fixParamsArrLA[5] = {kFALSE, kFALSE, kFALSE, kFALSE, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 5);
@@ -167,13 +167,13 @@ void UserSetupSystems(Fitter *fitter)
   // 10-30
   histName = "LamALam10-30centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA1030";
-  initParamsLA[0] = radiiParams[1];
+  // initParamsLA[0] = radiiParams[1];
   // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 30-50
   histName = "LamALam30-50centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA3050";
-  initParamsLA[0] = radiiParams[2];
+  // initParamsLA[0] = radiiParams[2];
   // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   //************* Add more systems as needed ******************
 
@@ -184,26 +184,57 @@ void UserSetupSystems(Fitter *fitter)
   // chisquare fitting!
 
   TString fileNumDen = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/NumDen1D.root";
-  vector<TString> numNames;
-  numNames.push_back("mm12/fSignalLamALam20");
-  numNames.push_back("mm12/fSignalLamALam19");
-  numNames.push_back("mm34/fSignalLamALam20");
-  numNames.push_back("mm34/fSignalLamALam19");
-  numNames.push_back("pp1/fSignalLamALam20");
-  numNames.push_back("pp1/fSignalLamALam19");
-  numNames.push_back("pp2/fSignalLamALam20");
-  numNames.push_back("pp2/fSignalLamALam19");
+  vector<TString> numNamesLA010;
+  // numNamesLA010.push_back("mm12/fSignalLamALam20");
+  // numNamesLA010.push_back("mm12/fSignalLamALam19");
+  // numNamesLA010.push_back("mm34/fSignalLamALam20");
+  // numNamesLA010.push_back("mm34/fSignalLamALam19");
+  // numNamesLA010.push_back("pp1/fSignalLamALam20"); 
+  // numNamesLA010.push_back("pp1/fSignalLamALam19");
+  // numNamesLA010.push_back("pp2/fSignalLamALam20");
+  // numNamesLA010.push_back("pp2/fSignalLamALam19");
+  numNamesLA010.push_back("mm/fSignalLamALam20");
+  numNamesLA010.push_back("mm/fSignalLamALam19");
+  numNamesLA010.push_back("pp/fSignalLamALam20");
+  numNamesLA010.push_back("pp/fSignalLamALam19");
   
-  vector<TString> denNames;
-  denNames.push_back("mm12/fBkgLamALam20");
-  denNames.push_back("mm12/fBkgLamALam19");
-  denNames.push_back("mm34/fBkgLamALam20");
-  denNames.push_back("mm34/fBkgLamALam19");
-  denNames.push_back("pp1/fBkgLamALam20");
-  denNames.push_back("pp1/fBkgLamALam19");
-  denNames.push_back("pp2/fBkgLamALam20");
-  denNames.push_back("pp2/fBkgLamALam19");
-  fitter->AddPairAnalysisLogFit("LA010", fileNumDen, numNames, denNames, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  vector<TString> denNamesLA010;
+  // denNamesLA010.push_back("mm12/fBkgLamALam20");
+  // denNamesLA010.push_back("mm12/fBkgLamALam19");
+  // denNamesLA010.push_back("mm34/fBkgLamALam20");
+  // denNamesLA010.push_back("mm34/fBkgLamALam19");
+  // denNamesLA010.push_back("pp1/fBkgLamALam20");
+  // denNamesLA010.push_back("pp1/fBkgLamALam19");
+  // denNamesLA010.push_back("pp2/fBkgLamALam20");
+  // denNamesLA010.push_back("pp2/fBkgLamALam19");
+  denNamesLA010.push_back("mm/fBkgLamALam20");
+  denNamesLA010.push_back("mm/fBkgLamALam19");
+  denNamesLA010.push_back("pp/fBkgLamALam20");
+  denNamesLA010.push_back("pp/fBkgLamALam19");
+  
+  fitter->AddPairAnalysisLogFit("LA010", fileNumDen, numNamesLA010, denNamesLA010, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+
+  vector<TString> numNamesLA1030;
+  numNamesLA1030.push_back("mm/fSignalLamALam18");
+  numNamesLA1030.push_back("mm/fSignalLamALam17");
+  numNamesLA1030.push_back("mm/fSignalLamALam16");
+  numNamesLA1030.push_back("mm/fSignalLamALam15");
+  numNamesLA1030.push_back("pp/fSignalLamALam18");
+  numNamesLA1030.push_back("pp/fSignalLamALam17");
+  numNamesLA1030.push_back("pp/fSignalLamALam16");
+  numNamesLA1030.push_back("pp/fSignalLamALam15");
+  
+  vector<TString> denNamesLA1030;
+  denNamesLA1030.push_back("mm/fBkgLamALam18");
+  denNamesLA1030.push_back("mm/fBkgLamALam17");
+  denNamesLA1030.push_back("mm/fBkgLamALam16");
+  denNamesLA1030.push_back("mm/fBkgLamALam15");
+  denNamesLA1030.push_back("pp/fBkgLamALam18");
+  denNamesLA1030.push_back("pp/fBkgLamALam17");
+  denNamesLA1030.push_back("pp/fBkgLamALam16");
+  denNamesLA1030.push_back("pp/fBkgLamALam15");
+  initParamsLA[0] = radiiParams[1];
+  fitter->AddPairAnalysisLogFit("LA1030", fileNumDen, numNamesLA1030, denNamesLA1030, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   
 
 }
@@ -225,8 +256,8 @@ void UserSetConstraints(Fitter *myFitter)
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030, kLLAA3050};
   vector<Int_t> systemsLLAA(systemsArrLLAA, systemsArrLLAA + 3);
-  myFitter->SetupConstraint(kF0Real, systemsLLAA);
-  myFitter->SetupConstraint(kD0, systemsLLAA);
+  // myFitter->SetupConstraint(kF0Real, systemsLLAA);
+  // myFitter->SetupConstraint(kD0, systemsLLAA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda
   Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
