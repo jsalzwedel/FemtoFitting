@@ -143,6 +143,8 @@ void Fitter::DoFitting()
   assert(fMinuit); // fMinuit needs to have been created by now
   Timer();
   // Run the fit procedure
+
+  
   Double_t arglist[5] = {0,0,0,0,0}; //Arguments that can be passed with Minuit commands
   Int_t errFlag = 0;
   arglist[0] = 1;
@@ -169,6 +171,8 @@ void Fitter::DoFitting()
     fMinuit->mnexcm("SHOw CORrelations", arglist, 1, errFlag);
   }
 
+
+  
   cout<<"Finalchi2:\t"<<fChisquare<<endl
       <<"Fit bins:\t"<<fFitBins<<endl
       <<"Actual Minuit Pars:\t"<<fMinuitParNames.size()<<endl

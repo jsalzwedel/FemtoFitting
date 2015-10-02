@@ -43,11 +43,11 @@ Double_t PairSystem::CalculateFitChisquare()
 	Double_t cfVal = combinedGraph->GetY()[iBin];
 	cfVal /= fNorms[iHist];
 
-	Double_t log1st = log(cfVal * (numCount+denCount) /
-			      (numCount * (cfVal +1)));
+	Double_t log1st = log(cfVal * (numCount + denCount) /
+			      (numCount * (cfVal + 1)));
 	Double_t log2nd = log((numCount + denCount) /
-			      (denCount * (cfVal +1)));
-	chi2 = chi2 - 2. * (numCount * log1st + denCount * log2nd);
+			      (denCount * (cfVal + 1)));
+	chi2 -= 2. * (numCount * log1st + denCount * log2nd);
 	// cout<<"Bin:\t"<<iBin<<"\t\tCF:\t"<<cfVal<<endl;
 	// cout<<"Bin:\t"<<iBin<<"\tlog1st:\t"<<log1st
 	//     <<"\t\tlog2nd:\t"<<log2nd
