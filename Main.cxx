@@ -81,7 +81,7 @@ void UserSetupSystems(Fitter *fitter)
   TString histName = "CombinedLLAA0-10KstarMomCorrected";
   TString simpleName = "LLAA010";
   // Make initial parameters: Radius, ReF0, ImF0, D0, Normalization 
-  Double_t radiiParams[3] = {2.95, 2.67, 2.02};
+  Double_t radiiParams[3] = {4., 2.67, 2.02};
   Double_t initParamsArr[5] = {radiiParams[0], -.63, 0., 1.36, 1.}; 
   vector<Double_t> initParams(initParamsArr, initParamsArr+5);
   Double_t minParamsArr[5] = {0., 0., 0., 0., 0.};
@@ -197,6 +197,8 @@ void UserSetupSystems(Fitter *fitter)
   numNamesLA010.push_back("mm/fSignalLamALam19");
   numNamesLA010.push_back("pp/fSignalLamALam20");
   numNamesLA010.push_back("pp/fSignalLamALam19");
+  // numNamesLA010.push_back("All/fSignalLamALam20");
+  // numNamesLA010.push_back("All/fSignalLamALam19");
   
   vector<TString> denNamesLA010;
   // denNamesLA010.push_back("mm12/fBkgLamALam20");
@@ -211,30 +213,33 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLA010.push_back("mm/fBkgLamALam19");
   denNamesLA010.push_back("pp/fBkgLamALam20");
   denNamesLA010.push_back("pp/fBkgLamALam19");
+  // denNamesLA010.push_back("All/fBkgLamALam20");
+  // denNamesLA010.push_back("All/fBkgLamALam19");
+  
   
   fitter->AddPairAnalysisLogFit("LA010", fileNumDen, numNamesLA010, denNamesLA010, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
-  vector<TString> numNamesLA1030;
-  numNamesLA1030.push_back("mm/fSignalLamALam18");
-  numNamesLA1030.push_back("mm/fSignalLamALam17");
-  numNamesLA1030.push_back("mm/fSignalLamALam16");
-  numNamesLA1030.push_back("mm/fSignalLamALam15");
-  numNamesLA1030.push_back("pp/fSignalLamALam18");
-  numNamesLA1030.push_back("pp/fSignalLamALam17");
-  numNamesLA1030.push_back("pp/fSignalLamALam16");
-  numNamesLA1030.push_back("pp/fSignalLamALam15");
+  // vector<TString> numNamesLA1030;
+  // numNamesLA1030.push_back("mm/fSignalLamALam18");
+  // numNamesLA1030.push_back("mm/fSignalLamALam17");
+  // numNamesLA1030.push_back("mm/fSignalLamALam16");
+  // numNamesLA1030.push_back("mm/fSignalLamALam15");
+  // numNamesLA1030.push_back("pp/fSignalLamALam18");
+  // numNamesLA1030.push_back("pp/fSignalLamALam17");
+  // numNamesLA1030.push_back("pp/fSignalLamALam16");
+  // numNamesLA1030.push_back("pp/fSignalLamALam15");
   
-  vector<TString> denNamesLA1030;
-  denNamesLA1030.push_back("mm/fBkgLamALam18");
-  denNamesLA1030.push_back("mm/fBkgLamALam17");
-  denNamesLA1030.push_back("mm/fBkgLamALam16");
-  denNamesLA1030.push_back("mm/fBkgLamALam15");
-  denNamesLA1030.push_back("pp/fBkgLamALam18");
-  denNamesLA1030.push_back("pp/fBkgLamALam17");
-  denNamesLA1030.push_back("pp/fBkgLamALam16");
-  denNamesLA1030.push_back("pp/fBkgLamALam15");
-  initParamsLA[0] = radiiParams[1];
-  fitter->AddPairAnalysisLogFit("LA1030", fileNumDen, numNamesLA1030, denNamesLA1030, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  // vector<TString> denNamesLA1030;
+  // denNamesLA1030.push_back("mm/fBkgLamALam18");
+  // denNamesLA1030.push_back("mm/fBkgLamALam17");
+  // denNamesLA1030.push_back("mm/fBkgLamALam16");
+  // denNamesLA1030.push_back("mm/fBkgLamALam15");
+  // denNamesLA1030.push_back("pp/fBkgLamALam18");
+  // denNamesLA1030.push_back("pp/fBkgLamALam17");
+  // denNamesLA1030.push_back("pp/fBkgLamALam16");
+  // denNamesLA1030.push_back("pp/fBkgLamALam15");
+  // initParamsLA[0] = radiiParams[1];
+  // fitter->AddPairAnalysisLogFit("LA1030", fileNumDen, numNamesLA1030, denNamesLA1030, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   
 
 }
@@ -313,10 +318,12 @@ void UserSetConstraints(Fitter *myFitter)
 void UserSetFitOptions(Fitter *myFitter)
 {
   // Set the upper bin of the fit range
-   myFitter->SetHighFitBin(40);
+   myFitter->SetHighFitBin(200);
+   
   // How big should the initial starting value fit uncertainty be?
   // This is a catchall for *all* parameter step sizes.
-   myFitter->SetStartingStepSize(5.);
+   myFitter->SetStartingStepSize(.1);
+   
   // Output extra plots showing all residual correlation components?
    myFitter->SetDisplayResidualComponents(kTRUE);
 
