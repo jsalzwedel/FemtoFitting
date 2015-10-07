@@ -356,8 +356,8 @@ void Fitter::SaveResidualComponentPlot(Int_t sys)
   TString plotName = "Plot";
   plotName += components->GetName();
   plotName += fOutputString;
-  components->SaveAs(plotName + ".pdf");
-  components->SaveAs(plotName + ".png");
+  components->SaveAs(plotName + "Residuals.pdf");
+  components->SaveAs(plotName + "Residuals.png");
   cout<<"Saved file "<<plotName<<endl;
   delete components; components = NULL;
 }
