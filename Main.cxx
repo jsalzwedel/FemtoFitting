@@ -82,7 +82,7 @@ void UserSetupSystems(Fitter *fitter)
   TString simpleName = "LLAA010";
   // Make initial parameters: Radius, ReF0, ImF0, D0, Normalization 
   Double_t radiiParams[3] = {4., 2.67, 2.02};
-  Double_t initParamsArr[5] = {radiiParams[0], -.63, 0., 1.36, 1.}; 
+  Double_t initParamsArr[5] = {radiiParams[0], -.63, 0., 1.36, 10.}; 
   vector<Double_t> initParams(initParamsArr, initParamsArr+5);
   Double_t minParamsArr[5] = {0., 0., 0., 0., 0.};
   vector<Double_t> minParams(minParamsArr, minParamsArr+5);
@@ -193,12 +193,12 @@ void UserSetupSystems(Fitter *fitter)
   // numNamesLA010.push_back("pp1/fSignalLamALam19");
   // numNamesLA010.push_back("pp2/fSignalLamALam20");
   // numNamesLA010.push_back("pp2/fSignalLamALam19");
-  numNamesLA010.push_back("mm/fSignalLamALam20");
-  numNamesLA010.push_back("mm/fSignalLamALam19");
-  numNamesLA010.push_back("pp/fSignalLamALam20");
-  numNamesLA010.push_back("pp/fSignalLamALam19");
-  // numNamesLA010.push_back("All/fSignalLamALam20");
-  // numNamesLA010.push_back("All/fSignalLamALam19");
+  // numNamesLA010.push_back("mm/fSignalLamALam20");
+  // numNamesLA010.push_back("mm/fSignalLamALam19");
+  // numNamesLA010.push_back("pp/fSignalLamALam20");
+  // numNamesLA010.push_back("pp/fSignalLamALam19");
+  numNamesLA010.push_back("All/fSignalLamALam20");
+  numNamesLA010.push_back("All/fSignalLamALam19");
   
   vector<TString> denNamesLA010;
   // denNamesLA010.push_back("mm12/fBkgLamALam20");
@@ -209,15 +209,15 @@ void UserSetupSystems(Fitter *fitter)
   // denNamesLA010.push_back("pp1/fBkgLamALam19");
   // denNamesLA010.push_back("pp2/fBkgLamALam20");
   // denNamesLA010.push_back("pp2/fBkgLamALam19");
-  denNamesLA010.push_back("mm/fBkgLamALam20");
-  denNamesLA010.push_back("mm/fBkgLamALam19");
-  denNamesLA010.push_back("pp/fBkgLamALam20");
-  denNamesLA010.push_back("pp/fBkgLamALam19");
-  // denNamesLA010.push_back("All/fBkgLamALam20");
-  // denNamesLA010.push_back("All/fBkgLamALam19");
+  // denNamesLA010.push_back("mm/fBkgLamALam20");
+  // denNamesLA010.push_back("mm/fBkgLamALam19");
+  // denNamesLA010.push_back("pp/fBkgLamALam20");
+  // denNamesLA010.push_back("pp/fBkgLamALam19");
+  denNamesLA010.push_back("All/fBkgLamALam20");
+  denNamesLA010.push_back("All/fBkgLamALam19");
   
   
-  fitter->AddPairAnalysisLogFit("LA010", fileNumDen, numNamesLA010, denNamesLA010, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  // fitter->AddPairAnalysisLogFit("LA010", fileNumDen, numNamesLA010, denNamesLA010, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // vector<TString> numNamesLA1030;
   // numNamesLA1030.push_back("mm/fSignalLamALam18");
@@ -242,6 +242,107 @@ void UserSetupSystems(Fitter *fitter)
   // fitter->AddPairAnalysisLogFit("LA1030", fileNumDen, numNamesLA1030, denNamesLA1030, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  vector<TString> numNamesLLAA010;
+  // numNamesLLAA010.push_back("mm12/fSignalLamLam20");
+  // numNamesLLAA010.push_back("mm12/fSignalLamLam19");
+  // numNamesLLAA010.push_back("mm34/fSignalLamLam20");
+  // numNamesLLAA010.push_back("mm34/fSignalLamLam19");
+  // numNamesLLAA010.push_back("pp1/fSignalLamLam20"); 
+  // numNamesLLAA010.push_back("pp1/fSignalLamLam19");
+  // numNamesLLAA010.push_back("pp2/fSignalLamLam20");
+  // numNamesLLAA010.push_back("pp2/fSignalLamLam19");
+  numNamesLLAA010.push_back("mm/fSignalLamLam20");
+  numNamesLLAA010.push_back("mm/fSignalLamLam19");
+  numNamesLLAA010.push_back("pp/fSignalLamLam20");
+  numNamesLLAA010.push_back("pp/fSignalLamLam19");
+  numNamesLLAA010.push_back("mm/fSignalALamALam20");
+  numNamesLLAA010.push_back("mm/fSignalALamALam19");
+  numNamesLLAA010.push_back("pp/fSignalALamALam20");
+  numNamesLLAA010.push_back("pp/fSignalALamALam19");
+  // numNamesLLAA010.push_back("All/fSignalLamLam20");
+  // numNamesLLAA010.push_back("All/fSignalLamLam19");
+  
+  vector<TString> denNamesLLAA010;
+  // denNamesLLAA010.push_back("mm12/fBkgLamLam20");
+  // denNamesLLAA010.push_back("mm12/fBkgLamLam19");
+  // denNamesLLAA010.push_back("mm34/fBkgLamLam20");
+  // denNamesLLAA010.push_back("mm34/fBkgLamLam19");
+  // denNamesLLAA010.push_back("pp1/fBkgLamLam20");
+  // denNamesLLAA010.push_back("pp1/fBkgLamLam19");
+  // denNamesLLAA010.push_back("pp2/fBkgLamLam20");
+  // denNamesLLAA010.push_back("pp2/fBkgLamLam19");
+  denNamesLLAA010.push_back("mm/fBkgLamLam20");
+  denNamesLLAA010.push_back("mm/fBkgLamLam19");
+  denNamesLLAA010.push_back("pp/fBkgLamLam20");
+  denNamesLLAA010.push_back("pp/fBkgLamLam19");
+  denNamesLLAA010.push_back("mm/fBkgALamALam20");
+  denNamesLLAA010.push_back("mm/fBkgALamALam19");
+  denNamesLLAA010.push_back("pp/fBkgALamALam20");
+  denNamesLLAA010.push_back("pp/fBkgALamALam19");
+  // denNamesLLAA010.push_back("All/fBkgLamLam20");
+  // denNamesLLAA010.push_back("All/fBkgLamLam19");
+  
+  initParams[0] = radiiParams[0];
+  // fitter->AddPairAnalysisLogFit("LLAA010", fileNumDen, numNamesLLAA010, denNamesLLAA010, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+
+  vector<TString> numNamesLLAA1030;
+  numNamesLLAA1030.push_back("mm/fSignalLamLam18");
+  numNamesLLAA1030.push_back("mm/fSignalLamLam17");
+  numNamesLLAA1030.push_back("mm/fSignalLamLam16");
+  numNamesLLAA1030.push_back("mm/fSignalLamLam15");
+  numNamesLLAA1030.push_back("pp/fSignalLamLam18");
+  numNamesLLAA1030.push_back("pp/fSignalLamLam17");
+  numNamesLLAA1030.push_back("pp/fSignalLamLam16");
+  numNamesLLAA1030.push_back("pp/fSignalLamLam15");
+  numNamesLLAA1030.push_back("mm/fSignalALamALam17");
+  numNamesLLAA1030.push_back("mm/fSignalALamALam16");
+  numNamesLLAA1030.push_back("mm/fSignalALamALam15");
+  numNamesLLAA1030.push_back("pp/fSignalALamALam18");
+  numNamesLLAA1030.push_back("pp/fSignalALamALam17");
+  numNamesLLAA1030.push_back("pp/fSignalALamALam16");
+  numNamesLLAA1030.push_back("pp/fSignalALamALam15");
+  
+  vector<TString> denNamesLLAA1030;
+  denNamesLLAA1030.push_back("mm/fBkgLamLam18");
+  denNamesLLAA1030.push_back("mm/fBkgLamLam17");
+  denNamesLLAA1030.push_back("mm/fBkgLamLam16");
+  denNamesLLAA1030.push_back("mm/fBkgLamLam15");
+  denNamesLLAA1030.push_back("pp/fBkgLamLam18");
+  denNamesLLAA1030.push_back("pp/fBkgLamLam17");
+  denNamesLLAA1030.push_back("pp/fBkgLamLam16");
+  denNamesLLAA1030.push_back("pp/fBkgLamLam15");
+  denNamesLLAA1030.push_back("mm/fBkgALamALam17");
+  denNamesLLAA1030.push_back("mm/fBkgALamALam16");
+  denNamesLLAA1030.push_back("mm/fBkgALamALam15");
+  denNamesLLAA1030.push_back("pp/fBkgALamALam18");
+  denNamesLLAA1030.push_back("pp/fBkgALamALam17");
+  denNamesLLAA1030.push_back("pp/fBkgALamALam16");
+  denNamesLLAA1030.push_back("pp/fBkgALamALam15");
+  initParams[0] = radiiParams[1];
+  fitter->AddPairAnalysisLogFit("LL1030", fileNumDen, numNamesLLAA1030, denNamesLLAA1030, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
+
+
+
+
+  
 }
 
 void UserSetConstraints(Fitter *myFitter)
@@ -254,9 +355,9 @@ void UserSetConstraints(Fitter *myFitter)
   // Share real f0, imaginary f0, and d0 among partical-antiparticle
   Int_t systemsArrLA[3] = {kLA010, kLA1030, kLA3050};
   vector<Int_t> systemsLA(systemsArrLA, systemsArrLA + 3);
-  myFitter->SetupConstraint(kF0Real, systemsLA);
-  myFitter->SetupConstraint(kF0Imag, systemsLA);
-  myFitter->SetupConstraint(kD0, systemsLA);
+  // myFitter->SetupConstraint(kF0Real, systemsLA);
+  // myFitter->SetupConstraint(kF0Imag, systemsLA);
+  // myFitter->SetupConstraint(kD0, systemsLA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030, kLLAA3050};
