@@ -339,6 +339,7 @@ void Fitter::SaveOutputPlots()
     plotName += gName;
     c1.SaveAs(plotName + ".pdf");
     c1.SaveAs(plotName + ".png");
+    c1.SaveAs(plotName + ".eps");
     cout<<"Saved file "<<plotName<<endl;
     if(fDisplayResidualComponents) SaveResidualComponentPlot(iSys);
   }
@@ -353,11 +354,18 @@ void Fitter::SaveResidualComponentPlot(Int_t sys)
     cout<<"No Residual Components plot found\n";
     return;
   }
+
+  TH1D *cf = fPairSystems[sys]->GetCF();
+  TGraph *g = fPairSystems[sys]->GetCombinedTGraph();
+  if(cf) cf->DrawCopy("same");
+  if(g) g->Draw("same");
+  
   TString plotName = "Plot";
   plotName += components->GetName();
   plotName += fOutputString;
   components->SaveAs(plotName + "Residuals.pdf");
   components->SaveAs(plotName + "Residuals.png");
+  components->SaveAs(plotName + "Residuals.eps");
   cout<<"Saved file "<<plotName<<endl;
   delete components; components = NULL;
 }

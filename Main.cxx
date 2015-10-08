@@ -82,7 +82,7 @@ void UserSetupSystems(Fitter *fitter)
   TString simpleName = "LLAA010";
   // Make initial parameters: Radius, ReF0, ImF0, D0, Normalization 
   Double_t radiiParams[3] = {4., 2.67, 2.02};
-  Double_t initParamsArr[5] = {radiiParams[0], -.63, 0., 1.36, 10.}; 
+  Double_t initParamsArr[5] = {radiiParams[0], -.63, 0., 1.36, 1.}; 
   vector<Double_t> initParams(initParamsArr, initParamsArr+5);
   Double_t minParamsArr[5] = {0., 0., 0., 0., 0.};
   vector<Double_t> minParams(minParamsArr, minParamsArr+5);
@@ -93,7 +93,7 @@ void UserSetupSystems(Fitter *fitter)
   vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+5);
   // Prepare the lednicky eqn info (lambda parameters, transform matrix locations, whether or not particles are identical)
   vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE);
-  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "CombinedLLAA10-30KstarMomCorrected";
@@ -157,7 +157,7 @@ void UserSetupSystems(Fitter *fitter)
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsLamALamKstarMomCorrected.root";
   histName = "LamALam0-10centrality_varBin5BothFieldsKstarMomCorrected";
   simpleName = "LA010";
-  Double_t initParamsArrLA[5] = {radiiParams[0], -1., 1., 3., 10.}; 
+  Double_t initParamsArrLA[5] = {radiiParams[0], -1., 1., 3., 1.}; 
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + 5);
   Bool_t fixParamsArrLA[5] = {kFALSE, kFALSE, kFALSE, kFALSE, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 5);
@@ -337,7 +337,7 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLLAA1030.push_back("pp/fBkgALamALam16");
   denNamesLLAA1030.push_back("pp/fBkgALamALam15");
   initParams[0] = radiiParams[1];
-  fitter->AddPairAnalysisLogFit("LL1030", fileNumDen, numNamesLLAA1030, denNamesLLAA1030, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->AddPairAnalysisLogFit("LL1030", fileNumDen, numNamesLLAA1030, denNamesLLAA1030, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
 
@@ -419,7 +419,7 @@ void UserSetConstraints(Fitter *myFitter)
 void UserSetFitOptions(Fitter *myFitter)
 {
   // Set the upper bin of the fit range
-   myFitter->SetHighFitBin(200);
+   myFitter->SetHighFitBin(50);
    
   // How big should the initial starting value fit uncertainty be?
   // This is a catchall for *all* parameter step sizes.
