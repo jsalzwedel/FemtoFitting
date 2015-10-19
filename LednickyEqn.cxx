@@ -10,9 +10,11 @@
 #include "TMath.h"
 #include "TF1.h"
 #include "LednickyEqn.h"
+#include "LednickyInfo.h"
 #include "Faddeeva.hh"
 #include <iostream>
-#include "LednickyInfo.h"
+#include <complex>
+#include <assert.h>
 
 
 using namespace std;
@@ -62,40 +64,28 @@ TGraph* LednickyEqn::GetBaseLednickyGraph()
   // Arrays to store X and Y values of correlation function
   Double_t *kstar = new Double_t[fNBins];
   Double_t *cf    = new Double_t[fNBins];
+  const complex<double> I(0.0, 1.0);
 
   for(Int_t iBin = 0; iBin < fNBins; iBin++)
   {
     // Calculate the value of the correlation function at each bin
 
     // Use the center of the bin
-    kstar[iBin] = fBinWidth * (1.*iBin + 0.5); 
+    kstar[iBin] = fBinWidth * (1.*iBin + 0.5);
 
-    // Calculate the denominator of the scattering amplitude
-    Double_t scatterAmpDen = 0;
-    scatterAmpDen += pow((1. + fF0Imag*kstar[iBin]/HbarC()),2)
-                   + pow((fF0Real * kstar[iBin] / HbarC()),2);
-    scatterAmpDen += pow(kstar[iBin]/HbarC(),4) * pow(fD0,2) 
-                   * (pow(fF0Real,2) + pow(fF0Imag,2)) / 4.;
-                  
-    scatterAmpDen += fF0Real * fD0 * pow(kstar[iBin] / HbarC(), 2);
-    
-    // Calculate the real and imaginary parts of the scattering
-    // amplitude numerator
-    Double_t scatterAmpRe = fF0Real
-      + 0.5 * fD0 * pow(kstar[iBin]/HbarC(),2) * (pow(fF0Real,2) + pow(fF0Imag,2));
-    scatterAmpRe /= scatterAmpDen;
-    Double_t scatterAmpIm = fF0Imag 
-      + (pow(fF0Real,2) + pow(fF0Imag,2)) * kstar[iBin] / HbarC();
-    scatterAmpIm /= scatterAmpDen;
-    Double_t scatterAmpMagSqr = (pow(scatterAmpRe,2) + pow(scatterAmpIm,2));
-    
-    // Finally, calculate the cf value
-    cf[iBin] = 0.5 * (scatterAmpMagSqr/pow(fRadius,2)) 
+    // Get the scattering amplitude
+    const complex<double> f0(fF0Real, fF0Imag);
+    complex<double> scatterAmp;
+    scatterAmp = pow( 1./f0
+		      + 0.5 * fD0 * pow(kstar[iBin]/HbarC(), 2)
+		      - I * kstar[iBin]/HbarC(), -1);    
+    // Now calculate the correlation function value
+    cf[iBin] = 0.5 * norm(scatterAmp)/pow(fRadius,2) 
       * (1. - fD0/(2. * sqrt(TMath::Pi()) * fRadius));
-    cf[iBin] += 2. * scatterAmpRe 
+    cf[iBin] += 2. * scatterAmp.real()
       * GetLednickyF1(2. * kstar[iBin] * fRadius / HbarC())
       / (sqrt(TMath::Pi())*fRadius);
-    cf[iBin] -= scatterAmpIm 
+    cf[iBin] -= scatterAmp.imag() 
       * GetLednickyF2(2. * kstar[iBin] * fRadius / HbarC())
       / fRadius;
     if(fIsIdentical) {
@@ -139,15 +129,14 @@ TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
   // relative momentum space of the primary correlations.
 
   if(!fTransformMatrix) return base;
-
   TGraph *transformedGraph = (TGraph*) base->Clone("transformedGraph");
-
+  assert(transformedGraph);
   //If not the same number of bins as transform matrix, rebin it...
   // if(...) ... divide nbinsTransform by nBins graph, take modulus...
   // RebinTransformMatrix(fTransformMatrix);
-
   const Int_t nBins = transformedGraph->GetN();
-  
+  const Int_t nBinsTransform = fTransformMatrix->GetNbinsX();
+  assert(nBins == nBinsTransform);
   // DaughterBins are in the relative momentum space of the 
   // primary correlations
   for(Int_t daughterBin = 0; daughterBin < nBins; daughterBin++)
