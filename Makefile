@@ -7,7 +7,7 @@ CFLAGS = $(shell root-config --cflags) -Wall -O3
 
 all: runMe
 
-runMe: LednickyEqn.o Faddeeva.o LednickyInfo.o ParameterConstraint.o PairSystem.o Fitter.o Main.cxx
+runMe: LednickyEqn.o Faddeeva.o LednickyInfo.o ParameterConstraint.o PairSystem.o Fitter.o Main.cxx Faddeeva.cc LednickyEqn.cxx LednickyInfo.cxx ParameterConstraint.cxx PairSystem.cxx Fitter.cxx
 	g++ Main.cxx Faddeeva.o LednickyEqn.o LednickyInfo.o ParameterConstraint.o PairSystem.o Fitter.o -o runMe $(LIBS) $(CFLAGS) 
 
 Faddeeva.o: Faddeeva.cc
