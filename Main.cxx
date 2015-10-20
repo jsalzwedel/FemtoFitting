@@ -40,30 +40,44 @@ vector<LednickyInfo> PrepareLednickyInfo(Bool_t isIdentical)
   // Create LednickyInfo for each primary and residual correlation
   vector<LednickyInfo> ledInfo;
 
-  // Args: TString name, Double_t lambdaParamter, TH2D *transformMatrix, Bool_t isIdenticalPair
-  LednickyInfo infoLL("LambdaLambda", 0.25, NULL, isIdentical); 
+  // Masses for use with sqrt(s) scaling of scattering amplitude
+  Double_t mLambda = 1.1157;
+  Double_t mSigma = 1.1193;
+  Double_t mXi0 = 1.3149;
+  Double_t mXiC = 1.3217;
+
+  // Remove scaling for particle-antiparticle components
+  // Easiest way is just to set the other masses to lambda mass
+  if(!isIdentical) {
+    mSigma = mLambda;
+    mXi0 = mLambda;
+    mXiC = mLambda;
+  }
+
+  // Args: TString name, Double_t lambdaParamter, TH2D *transformMatrix, Bool_t isIdenticalPair, Double_t baseMass1, Double_t baseMass2, Double_t actualMass1, Double_t actualMass2
+  LednickyInfo infoLL("LambdaLambda", 0.25, NULL, isIdentical, mLambda, mLambda, mLambda, mLambda); 
   ledInfo.push_back(infoLL);
   
   TString fileNameMatrix = "~/Analysis/lambda/AliAnalysisLambda/Fitting/FemtoFitting/PreparedTransformMatrices.root";
-  LednickyInfo infoLS("LambdaSigma", 0.194, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaLambda"), kFALSE);
+  LednickyInfo infoLS("LambdaSigma", 0.194, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaLambda"), kFALSE, mLambda, mLambda, mLambda, mSigma);
   ledInfo.push_back(infoLS);
 
-  LednickyInfo infoLX0("LambdaXi0", 0.130, GetTransformMatrix(fileNameMatrix, "TransformMatrixXi0Lambda"), kFALSE);
+  LednickyInfo infoLX0("LambdaXi0", 0.130, GetTransformMatrix(fileNameMatrix, "TransformMatrixXi0Lambda"), kFALSE, mLambda, mLambda, mLambda, mXi0);
   ledInfo.push_back(infoLX0);
 
-  LednickyInfo infoLXC("LambdaXiC", 0.117, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCLambda"), kFALSE);
+  LednickyInfo infoLXC("LambdaXiC", 0.117, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCLambda"), kFALSE, mLambda, mLambda, mLambda, mXiC);
   ledInfo.push_back(infoLXC);
 
-  LednickyInfo infoSS("SigmaSigma", 0.034, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaSigma"), isIdentical);
+  LednickyInfo infoSS("SigmaSigma", 0.034, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaSigma"), isIdentical, mLambda, mLambda, mSigma, mSigma);
   ledInfo.push_back(infoSS);
 
-  LednickyInfo infoSX0("SigmaXi0", 0.049, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXi0"), kFALSE);
+  LednickyInfo infoSX0("SigmaXi0", 0.049, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXi0"), kFALSE, mLambda, mLambda, mSigma, mXi0);
   ledInfo.push_back(infoSX0);
 
-  LednickyInfo infoSXC("SigmaXiC", 0.043, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXiC"), kFALSE);
+  LednickyInfo infoSXC("SigmaXiC", 0.043, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXiC"), kFALSE, mLambda, mLambda, mSigma, mXiC);
   ledInfo.push_back(infoSXC);
 
-  LednickyInfo infoX0XC("Xi0XiC", 0.029, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCXi0"), kFALSE);
+  LednickyInfo infoX0XC("Xi0XiC", 0.029, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCXi0"), kFALSE, mLambda, mLambda, mXi0, mXiC);
   ledInfo.push_back(infoX0XC);
 
   return ledInfo;
@@ -82,7 +96,7 @@ void UserSetupSystems(Fitter *fitter)
   TString simpleName = "LLAA010";
   // Make initial parameters: Radius, ReF0, ImF0, D0, Normalization 
   Double_t radiiParams[3] = {4., 2.67, 2.02};
-  Double_t initParamsArr[5] = {radiiParams[0], -.63, 0., 1.36, 10.}; 
+  Double_t initParamsArr[5] = {radiiParams[0], -.63, 0., 1.36, 1.}; 
   vector<Double_t> initParams(initParamsArr, initParamsArr+5);
   Double_t minParamsArr[5] = {0., 0., 0., 0., 0.};
   vector<Double_t> minParams(minParamsArr, minParamsArr+5);
@@ -93,7 +107,7 @@ void UserSetupSystems(Fitter *fitter)
   vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+5);
   // Prepare the lednicky eqn info (lambda parameters, transform matrix locations, whether or not particles are identical)
   vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE);
-  // fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "CombinedLLAA10-30KstarMomCorrected";
@@ -188,7 +202,7 @@ void UserSetupSystems(Fitter *fitter)
 
   TString fileNumDen = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/NumDen1D.root";
   vector<TString> numNamesLA010;
-  // numNamesLA010.push_back("mm12/fSignalLamALam20");
+  numNamesLA010.push_back("mm12/fSignalLamALam20");
   // numNamesLA010.push_back("mm12/fSignalLamALam19");
   // numNamesLA010.push_back("mm34/fSignalLamALam20");
   // numNamesLA010.push_back("mm34/fSignalLamALam19");
@@ -196,15 +210,15 @@ void UserSetupSystems(Fitter *fitter)
   // numNamesLA010.push_back("pp1/fSignalLamALam19");
   // numNamesLA010.push_back("pp2/fSignalLamALam20");
   // numNamesLA010.push_back("pp2/fSignalLamALam19");
-  numNamesLA010.push_back("mm/fSignalLamALam20");
-  numNamesLA010.push_back("mm/fSignalLamALam19");
-  numNamesLA010.push_back("pp/fSignalLamALam20");
-  numNamesLA010.push_back("pp/fSignalLamALam19");
+  // numNamesLA010.push_back("mm/fSignalLamALam20");
+  // numNamesLA010.push_back("mm/fSignalLamALam19");
+  // numNamesLA010.push_back("pp/fSignalLamALam20");
+  // numNamesLA010.push_back("pp/fSignalLamALam19");
   // numNamesLA010.push_back("All/fSignalLamALam20");
   // numNamesLA010.push_back("All/fSignalLamALam19");
   
   vector<TString> denNamesLA010;
-  // denNamesLA010.push_back("mm12/fBkgLamALam20");
+  denNamesLA010.push_back("mm12/fBkgLamALam20");
   // denNamesLA010.push_back("mm12/fBkgLamALam19");
   // denNamesLA010.push_back("mm34/fBkgLamALam20");
   // denNamesLA010.push_back("mm34/fBkgLamALam19");
@@ -212,10 +226,10 @@ void UserSetupSystems(Fitter *fitter)
   // denNamesLA010.push_back("pp1/fBkgLamALam19");
   // denNamesLA010.push_back("pp2/fBkgLamALam20");
   // denNamesLA010.push_back("pp2/fBkgLamALam19");
-  denNamesLA010.push_back("mm/fBkgLamALam20");
-  denNamesLA010.push_back("mm/fBkgLamALam19");
-  denNamesLA010.push_back("pp/fBkgLamALam20");
-  denNamesLA010.push_back("pp/fBkgLamALam19");
+  // denNamesLA010.push_back("mm/fBkgLamALam20");
+  // denNamesLA010.push_back("mm/fBkgLamALam19");
+  // denNamesLA010.push_back("pp/fBkgLamALam20");
+  // denNamesLA010.push_back("pp/fBkgLamALam19");
   // denNamesLA010.push_back("All/fBkgLamALam20");
   // denNamesLA010.push_back("All/fBkgLamALam19");
   
@@ -304,7 +318,7 @@ void UserSetupSystems(Fitter *fitter)
   // denNamesLLAA010.push_back("All/fBkgLamLam19");
   
   initParams[0] = radiiParams[0];
-  fitter->AddPairAnalysisLogFit("LLAA010", fileNumDen, numNamesLLAA010, denNamesLLAA010, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->AddPairAnalysisLogFit("LLAA010", fileNumDen, numNamesLLAA010, denNamesLLAA010, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   vector<TString> numNamesLLAA1030;
   numNamesLLAA1030.push_back("mm/fSignalLamLam18");
@@ -402,7 +416,7 @@ void UserSetConstraints(Fitter *myFitter)
   systems010.push_back(kLA010);
   // systems010.push_back(kLL010);
   // systems010.push_back(kAA010);
-  myFitter->SetupConstraint(kRad, systems010);
+  // myFitter->SetupConstraint(kRad, systems010);
 
   vector<Int_t> systems1030;
   systems1030.push_back(kLLAA1030);
