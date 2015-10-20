@@ -45,6 +45,10 @@ LednickyEqn::LednickyEqn(const LednickyInfo &info, Int_t nBins, Double_t binWidt
   fRadius = 0.;
   fNBins = nBins;
   fBinWidth = binWidth;
+  fBaseMass1 = info.GetBaseMass1();
+  fBaseMass2 = info.GetBaseMass2();
+  fActualMass1 = info.GetActualMass1();
+  fActualMass2 = info.GetActualMass2();
 }
 
 LednickyEqn::~LednickyEqn()
@@ -72,6 +76,17 @@ TGraph* LednickyEqn::GetBaseLednickyGraph()
 
     // Use the center of the bin
     kstar[iBin] = fBinWidth * (1.*iBin + 0.5);
+
+    // For use with sqrt(s) scaling of scattering amplitude
+    Double_t s = pow( pow( pow(fActualMass1, 2) + pow(kstar[iBin],2), 0.5)
+		    + pow( pow(fActualMass2, 2) + pow(kstar[iBin],2), 0.5), 2); //mandelstam s
+    
+    // We can account for the scaling with a modified kstar value.
+    Double_t kstarPrime;
+    kstarPrime = pow( (s*s + pow(fBaseMass1, 4) + pow(fBaseMass2, 4)
+		      -2.*s*(pow(fBaseMass1, 2) + pow(fBaseMass2, 2))
+		      -2.*pow(fBaseMass1, 2)*pow(fBaseMass2, 2) )
+		      / (4.*s), 0.5);
 
     // Get the scattering amplitude
     const complex<double> f0(fF0Real, fF0Imag);

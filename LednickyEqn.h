@@ -35,6 +35,10 @@ class LednickyEqn{
   Bool_t   fIsIdentical; // Are these pairs identical particles?
   Int_t    fNBins;  // Number of kstar bins in correlation function
   Double_t fBinWidth; // Width of each kstar bin
+  Double_t fBaseMass1; // Mass of base particle for use with scatter-amp scaling
+  Double_t fBaseMass2; // Mass of base particle for use with scatter-amp scaling
+  Double_t fActualMass1; // Mass of particle for scaled interaction
+  Double_t fActualMass2; // Mass of particle for scaled interaction
   TH2D*    fTransformMatrix; // Transform matrix for residual correlations.  Will be null for primary correlation
 
   Double_t GetLednickyF1(Double_t z); // Calculate the F1 function
