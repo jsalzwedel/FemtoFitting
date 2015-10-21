@@ -92,8 +92,8 @@ TGraph* LednickyEqn::GetBaseLednickyGraph()
     const complex<double> f0(fF0Real, fF0Imag);
     complex<double> scatterAmp;
     scatterAmp = pow( 1./f0
-		      + 0.5 * fD0 * pow(kstar[iBin]/HbarC(), 2)
-		      - I * kstar[iBin]/HbarC(), -1);    
+		      + 0.5 * fD0 * pow(kstarPrime/HbarC(), 2)
+		      - I * kstarPrime/HbarC(), -1);    
     // Now calculate the correlation function value
     cf[iBin] = 0.5 * norm(scatterAmp)/pow(fRadius,2) 
       * (1. - fD0/(2. * sqrt(TMath::Pi()) * fRadius));
