@@ -35,49 +35,42 @@ TH2D *GetTransformMatrix(TString rootFileName, TString histName)
   return h;
 }
 
-vector<LednickyInfo> PrepareLednickyInfo(Bool_t isIdentical)
+vector<LednickyInfo> PrepareLednickyInfo(Bool_t isIdentical, Bool_t useRootSScaling)
 {
   // Create LednickyInfo for each primary and residual correlation
   vector<LednickyInfo> ledInfo;
 
-  // Masses for use with sqrt(s) scaling of scattering amplitude
+  // Masses for use with sqrt(s) scaling of scattering amplitude.
+  // If not using sqrt(s) scaling of interactions, can optionally set these to 0
   Double_t mLambda = 1.1157;
   Double_t mSigma = 1.1193;
   Double_t mXi0 = 1.3149;
   Double_t mXiC = 1.3217;
 
-  // Remove scaling for particle-antiparticle components
-  // Easiest way is just to set the other masses to lambda mass
-  if(!isIdentical) {
-    mSigma = mLambda;
-    mXi0 = mLambda;
-    mXiC = mLambda;
-  }
-
-  // Args: TString name, Double_t lambdaParamter, TH2D *transformMatrix, Bool_t isIdenticalPair, Double_t baseMass1, Double_t baseMass2, Double_t actualMass1, Double_t actualMass2
-  LednickyInfo infoLL("LambdaLambda", 0.25, NULL, isIdentical, mLambda, mLambda, mLambda, mLambda); 
+  // Args: TString name, Double_t lambdaParamter, TH2D *transformMatrix, Bool_t isIdenticalPair, Bool_t useRootSScaling, Double_t baseMass1, Double_t baseMass2, Double_t actualMass1, Double_t actualMass2
+  LednickyInfo infoLL("LambdaLambda", 0.25, NULL, isIdentical, useRootSScaling, mLambda, mLambda, mLambda, mLambda); 
   ledInfo.push_back(infoLL);
   
   TString fileNameMatrix = "~/Analysis/lambda/AliAnalysisLambda/Fitting/FemtoFitting/PreparedTransformMatrices.root";
-  LednickyInfo infoLS("LambdaSigma", 0.194, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaLambda"), kFALSE, mLambda, mLambda, mLambda, mSigma);
+  LednickyInfo infoLS("LambdaSigma", 0.194, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaLambda"), kFALSE, useRootSScaling, mLambda, mLambda, mLambda, mSigma);
   ledInfo.push_back(infoLS);
 
-  LednickyInfo infoLX0("LambdaXi0", 0.130, GetTransformMatrix(fileNameMatrix, "TransformMatrixXi0Lambda"), kFALSE, mLambda, mLambda, mLambda, mXi0);
+  LednickyInfo infoLX0("LambdaXi0", 0.130, GetTransformMatrix(fileNameMatrix, "TransformMatrixXi0Lambda"), kFALSE, useRootSScaling, mLambda, mLambda, mLambda, mXi0);
   ledInfo.push_back(infoLX0);
 
-  LednickyInfo infoLXC("LambdaXiC", 0.117, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCLambda"), kFALSE, mLambda, mLambda, mLambda, mXiC);
+  LednickyInfo infoLXC("LambdaXiC", 0.117, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCLambda"), kFALSE, useRootSScaling, mLambda, mLambda, mLambda, mXiC);
   ledInfo.push_back(infoLXC);
 
-  LednickyInfo infoSS("SigmaSigma", 0.034, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaSigma"), isIdentical, mLambda, mLambda, mSigma, mSigma);
+  LednickyInfo infoSS("SigmaSigma", 0.034, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaSigma"), isIdentical, useRootSScaling, mLambda, mLambda, mSigma, mSigma);
   ledInfo.push_back(infoSS);
 
-  LednickyInfo infoSX0("SigmaXi0", 0.049, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXi0"), kFALSE, mLambda, mLambda, mSigma, mXi0);
+  LednickyInfo infoSX0("SigmaXi0", 0.049, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXi0"), kFALSE, useRootSScaling, mLambda, mLambda, mSigma, mXi0);
   ledInfo.push_back(infoSX0);
 
-  LednickyInfo infoSXC("SigmaXiC", 0.043, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXiC"), kFALSE, mLambda, mLambda, mSigma, mXiC);
+  LednickyInfo infoSXC("SigmaXiC", 0.043, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXiC"), kFALSE, useRootSScaling, mLambda, mLambda, mSigma, mXiC);
   ledInfo.push_back(infoSXC);
 
-  LednickyInfo infoX0XC("Xi0XiC", 0.029, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCXi0"), kFALSE, mLambda, mLambda, mXi0, mXiC);
+  LednickyInfo infoX0XC("Xi0XiC", 0.029, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCXi0"), kFALSE, useRootSScaling, mLambda, mLambda, mXi0, mXiC);
   ledInfo.push_back(infoX0XC);
 
   return ledInfo;
@@ -87,19 +80,22 @@ void UserSetupSystems(Fitter *fitter)
 {
   // Add systems to the analysis. The user should modify this 
   // function to suit their fitting needs
-
-  Bool_t useLLAA010Chi2  = kTRUE;
-  Bool_t useLLAA1030Chi2 = kFALSE;
-  Bool_t useLLAA3050Chi2 = kFALSE;
-  Bool_t useLL010Chi2    = kFALSE;
-  Bool_t useLL1030Chi2   = kFALSE;
-  Bool_t useLL3050Chi2   = kFALSE;
-  Bool_t useAA010Chi2    = kFALSE;
-  Bool_t useAA1030Chi2   = kFALSE;
-  Bool_t useAA3050Chi2   = kFALSE;
-  Bool_t useLA010Chi2    = kFALSE;
-  Bool_t useLA1030Chi2   = kFALSE;
-  Bool_t useLA3050Chi2   = kFALSE;
+  Bool_t useLLAA010Chi2 = kFALSE, useLLAA1030Chi2 = kFALSE, useLLAA3050Chi2 = kFALSE,
+         useLL010Chi2 = kFALSE, useLL1030Chi2 = kFALSE, useLL3050Chi2 = kFALSE,
+         useAA010Chi2 = kFALSE, useAA1030Chi2 = kFALSE, useAA3050Chi2 = kFALSE,
+         useLA010Chi2 = kFALSE, useLA1030Chi2 = kFALSE, useLA3050Chi2 = kFALSE;
+  useLLAA010Chi2  = kTRUE;
+  useLLAA1030Chi2 = kTRUE;
+  useLLAA3050Chi2 = kTRUE;
+  // useLL010Chi2    = kTRUE;
+  // useLL1030Chi2   = kTRUE;
+  // useLL3050Chi2   = kTRUE;
+  // useAA010Chi2    = kTRUE;
+  // useAA1030Chi2   = kTRUE;
+  // useAA3050Chi2   = kTRUE;
+  // useLA010Chi2    = kTRUE;
+  // useLA1030Chi2   = kTRUE;
+  // useLA3050Chi2   = kTRUE;
   /////////// Setting up Lambda-Lambda + Antilambda-Antilambda //////////////////
   // 0-10%
   TString fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root";
@@ -116,8 +112,9 @@ void UserSetupSystems(Fitter *fitter)
   // Determine which parameters should be fixed in the fitter.
   Bool_t fixParamsArr[5] = {kFALSE, kFALSE, kTRUE, kFALSE, kFALSE};
   vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+5);
+  Bool_t useRootSScalingLL = kTRUE;
   // Prepare the lednicky eqn info (lambda parameters, transform matrix locations, whether or not particles are identical)
-  vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE);
+  vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE, useRootSScalingLL);
   if(useLLAA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
@@ -179,17 +176,18 @@ void UserSetupSystems(Fitter *fitter)
 
   ////////////////// Setting up Lambda-Antilambda ////////////////////
   // 0-10%
-  // fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsLamALamKstarMomCorrected.root";
-  // histName = "LamALam0-10centrality_varBin5BothFieldsKstarMomCorrected";
-  fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/OneTimeUseTestCF.root";
-  histName = "mm12CF20";
+  fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsLamALamKstarMomCorrected.root";
+  histName = "LamALam0-10centrality_varBin5BothFieldsKstarMomCorrected";
+  // fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/OneTimeUseTestCF.root";
+  // histName = "mm12CF20";
 
   simpleName = "LA010";
-  Double_t initParamsArrLA[5] = {radiiParams[0], -1., 1., 3., 10.}; 
+  Double_t initParamsArrLA[5] = {radiiParams[0], -1., 1., 3., 1.}; 
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + 5);
   Bool_t fixParamsArrLA[5] = {kFALSE, kFALSE, kFALSE, kFALSE, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 5);
-  vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE);
+  Bool_t useRootSScalingLA = kFALSE;
+  vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE, useRootSScalingLA);
   if(useLA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 10-30
@@ -390,8 +388,8 @@ void UserSetConstraints(Fitter *myFitter)
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030, kLLAA3050};
   vector<Int_t> systemsLLAA(systemsArrLLAA, systemsArrLLAA + 3);
-  // myFitter->SetupConstraint(kF0Real, systemsLLAA);
-  // myFitter->SetupConstraint(kD0, systemsLLAA);
+  myFitter->SetupConstraint(kF0Real, systemsLLAA);
+  myFitter->SetupConstraint(kD0, systemsLLAA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda
   Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
