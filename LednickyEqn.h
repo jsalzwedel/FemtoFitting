@@ -33,6 +33,7 @@ class LednickyEqn{
   Double_t fD0;     // Effective range of interaction
   Double_t fRadius; // Homogeneity radius
   Bool_t   fIsIdentical; // Are these pairs identical particles?
+  Bool_t   fUseRootSScaling; // Should scatter amp scale by sqrt s
   Int_t    fNBins;  // Number of kstar bins in correlation function
   Double_t fBinWidth; // Width of each kstar bin
   Double_t fBaseMass1; // Mass of base particle for use with scatter-amp scaling
@@ -46,7 +47,6 @@ class LednickyEqn{
   TGraph *GetBaseLednickyGraph(); //Calculate Lednicky in parent k* frame
   TGraph *TransformLednickyGraph(TGraph *base);
   Double_t HbarC() const {return 0.197327;};
-  /* void LednickyEqn::RebinTransformMatrix(TH2D* matrix); */
   
 
 };

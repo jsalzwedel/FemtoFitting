@@ -19,24 +19,11 @@
 
 using namespace std;
 
-// LednickyEqn::LednickyEqn(TString name, Bool_t isIdentical, TH2D *transformMatrix, Int_t nBins, Double_t binWidth)
-// {
-//   fName = name;
-//   fIsIdentical = isIdentical;
-//   //If transform matrix is null, this is a primary correlation
-//   fTransformMatrix = transformMatrix;
-//   fF0Real = 0.;
-//   fF0Imag = 0.;
-//   fD0 = 0.;
-//   fRadius = 0.;
-//   fNBins = nBins;
-//   fBinWidth = binWidth;
-// }
-
 LednickyEqn::LednickyEqn(const LednickyInfo &info, Int_t nBins, Double_t binWidth)
 {
   fName = info.GetSystemName();
   fIsIdentical = info.GetIsIdenticalPair();
+  fUseRootSScaling = info.GetUseRootSScaling();
   //If transform matrix is null, this is a primary correlation
   fTransformMatrix = info.GetTransformMatrix();
   fF0Real = 0.;
@@ -49,6 +36,13 @@ LednickyEqn::LednickyEqn(const LednickyInfo &info, Int_t nBins, Double_t binWidt
   fBaseMass2 = info.GetBaseMass2();
   fActualMass1 = info.GetActualMass1();
   fActualMass2 = info.GetActualMass2();
+
+  if(fUseRootSScaling) {
+    assert(fBaseMass1 > 0);
+    assert(fBaseMass2 > 0);
+    assert(fActualMass1 > 0);
+    assert(fActualMass2 > 0);
+  }
 }
 
 LednickyEqn::~LednickyEqn()
@@ -77,17 +71,19 @@ TGraph* LednickyEqn::GetBaseLednickyGraph()
     // Use the center of the bin
     kstar[iBin] = fBinWidth * (1.*iBin + 0.5);
 
-    // For use with sqrt(s) scaling of scattering amplitude
-    Double_t s = pow( pow( pow(fActualMass1, 2) + pow(kstar[iBin],2), 0.5)
-		    + pow( pow(fActualMass2, 2) + pow(kstar[iBin],2), 0.5), 2); //mandelstam s
-    
-    // We can account for the scaling with a modified kstar value.
+    // We might use sqrt(s) scaling of the scattering amplitude.
+    // If so, we do this, we account for the scaling with a
+    // modified kstar value.
     Double_t kstarPrime;
-    kstarPrime = pow( (s*s + pow(fBaseMass1, 4) + pow(fBaseMass2, 4)
-		      -2.*s*(pow(fBaseMass1, 2) + pow(fBaseMass2, 2))
-		      -2.*pow(fBaseMass1, 2)*pow(fBaseMass2, 2) )
-		      / (4.*s), 0.5);
-
+    if(fUseRootSScaling) {
+      Double_t s = pow( pow( pow(fActualMass1, 2) + pow(kstar[iBin],2), 0.5)
+			+ pow( pow(fActualMass2, 2) + pow(kstar[iBin],2), 0.5), 2); //mandelstam s
+      kstarPrime = pow( (s*s + pow(fBaseMass1, 4) + pow(fBaseMass2, 4)
+			- 2.*s*(pow(fBaseMass1, 2) + pow(fBaseMass2, 2))
+			- 2.*pow(fBaseMass1, 2)*pow(fBaseMass2, 2) )
+			/ (4.*s), 0.5);
+    }
+    else kstarPrime = kstar[iBin];
     // Get the scattering amplitude
     const complex<double> f0(fF0Real, fF0Imag);
     complex<double> scatterAmp;
@@ -131,6 +127,7 @@ TGraph *LednickyEqn::GetLednickyGraph()
 void LednickyEqn::SetParameters(const vector<Double_t> pars)
 {
   // Set all the fit parameters
+  // Normalization is taken care of by PairSystem class
   fRadius = pars[0]; 
   fF0Real = pars[1];
   fF0Imag = pars[2];
@@ -146,9 +143,7 @@ TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
   if(!fTransformMatrix) return base;
   TGraph *transformedGraph = (TGraph*) base->Clone("transformedGraph");
   assert(transformedGraph);
-  //If not the same number of bins as transform matrix, rebin it...
-  // if(...) ... divide nbinsTransform by nBins graph, take modulus...
-  // RebinTransformMatrix(fTransformMatrix);
+
   const Int_t nBins = transformedGraph->GetN();
   const Int_t nBinsTransform = fTransformMatrix->GetNbinsX();
   assert(nBins == nBinsTransform);
@@ -186,10 +181,3 @@ Double_t LednickyEqn::GetLednickyF2(Double_t z)
   TF1 lednickyF2("lednickyf2","(1-exp(-x*x))/(x)");
   return lednickyF2.Eval(z);
 }
-
-// void LednickyEqn::RebinTransformMatrix(TH2D* matrix)
-// {
-//   // Very inelegant way of rebinning...
-//   matrix->RebinX(4);
-//   matrix->RebinY(4);
-// }
