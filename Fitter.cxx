@@ -249,8 +249,6 @@ Double_t Fitter::GetPvalue()
 
 void Fitter::InitializeMinuitParameters(TMinuit *minuit)
 {
-
-  SetupInitialParameters();
   // Define the fit parameters
   fMinuit = minuit;
   Double_t startingStepSize = fStepSize;
@@ -464,7 +462,7 @@ void Fitter::SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *p
   fChisquare = totalChisquare;
 }
 
-void Fitter::SetupInitialParameters()
+void Fitter::SetupInitialParameterVectors()
 {
   // Get all the parameters put into arrays to be passed to Minuit.
   // Exclude constrained parameters from the list.

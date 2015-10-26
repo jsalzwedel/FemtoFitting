@@ -43,6 +43,7 @@ class Fitter{
   void SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par);
   void SetStartingStepSize(Double_t step) {fStepSize = step;};
   void SetupConstraint(Int_t param, vector<Int_t> systems);
+  void SetupInitialParameterVectors();
   void SetUseMINOS(Bool_t shouldUse) {fUseMINOS = shouldUse;};
 
  private:
@@ -53,7 +54,6 @@ class Fitter{
   Double_t GetPvalue();
   Bool_t IsParameterConstrained(const Int_t sys, const Int_t par);
   void PushBackParams(TString simpleName, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams, UInt_t nNormParams);
-  void SetupInitialParameters();
   void SaveResidualComponentPlot(Int_t sysIndex);
   void Timer();
 
