@@ -155,8 +155,6 @@ void Fitter::DoFitting()
   arglist[0] = fMinuitVerbosity;
   fMinuit->mnexcm("SET PRINT", arglist, 1, errFlag);
 
-  // Maybe have all output results go to a file?
-
   Timer();
   // Run Migrad with a specified max number of calls
   arglist[0] = fMaxMinuitCalls;
@@ -181,7 +179,6 @@ void Fitter::DoFitting()
       <<"Chi2/ndf:\t"<<GetChisquarePerNDF()<<endl
       <<"Pvalue:\t"<<GetPvalue()<<endl;
 
-  // If outputting to file, return output to terminal now
 }
 
 
@@ -340,7 +337,13 @@ void Fitter::SaveOutputPlots()
     c1.SaveAs(plotName + ".eps");
     cout<<"Saved file "<<plotName<<endl;
     if(fDisplayResidualComponents) SaveResidualComponentPlot(iSys);
+    if(fOutputLednickyHist) {
+      TH1D *ledHist = fPairSystems[iSys]->GetLednickyHist();
+      ledHist->Write(ledHist->GetName(), TObject::kOverwrite);
+    }
   }
+
+  
 }
 
 void Fitter::SaveResidualComponentPlot(Int_t sys)
@@ -496,15 +499,17 @@ void Fitter::SetupInitialParameterVectors()
   } // end system loop
 }
 
-void Fitter::Timer()
-{
-  if(!fTimer) return;
-  fTimer->Print();
-  fTimer->Continue();
-}
 
 void Fitter::SetupConstraint(Int_t param, vector<Int_t> systems)
 {
   ParameterConstraint *constraint = new ParameterConstraint(param, systems, fPairSystems);
   fParamConstraints.push_back(constraint);
+}
+
+
+void Fitter::Timer()
+{
+  if(!fTimer) return;
+  fTimer->Print();
+  fTimer->Continue();
 }

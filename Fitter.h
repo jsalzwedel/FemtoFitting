@@ -41,6 +41,7 @@ class Fitter{
   void SetMinuitVerbosity(Int_t verbosity);
   void SetOutputString(TString outStr) {fOutputString = outStr;};
   void SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par);
+  void SetOutputLednickyHists(Bool_t shouldOutput) {fOutputLednickyHist = shouldOutput;};
   void SetStartingStepSize(Double_t step) {fStepSize = step;};
   void SetupConstraint(Int_t param, vector<Int_t> systems);
   void SetupInitialParameterVectors();
@@ -80,6 +81,7 @@ class Fitter{
   Bool_t fDisplayResidualComponents;
   Bool_t fUseChisquareFitting;
   Bool_t fUseLogLikelihoodFitting;
+  Bool_t fOutputLednickyHist;
   TString fOutputString; // Optional suffix for saved object names
 
 
