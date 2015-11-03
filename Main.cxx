@@ -93,9 +93,12 @@ void UserSetupSystems(Fitter *fitter)
   // useAA010Chi2    = kTRUE;
   // useAA1030Chi2   = kTRUE;
   // useAA3050Chi2   = kTRUE;
-  // useLA010Chi2    = kTRUE;
-  // useLA1030Chi2   = kTRUE;
-  // useLA3050Chi2   = kTRUE;
+  useLA010Chi2    = kTRUE;
+  useLA1030Chi2   = kTRUE;
+  useLA3050Chi2   = kTRUE;
+  Bool_t useRootSScalingLL = kFALSE;
+  Bool_t useRootSScalingLA = kFALSE;
+  
   /////////// Setting up Lambda-Lambda + Antilambda-Antilambda //////////////////
   // 0-10%
   TString fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/cfsCombinedLLAAMomCorrected.root";
@@ -112,7 +115,6 @@ void UserSetupSystems(Fitter *fitter)
   // Determine which parameters should be fixed in the fitter.
   Bool_t fixParamsArr[5] = {kFALSE, kFALSE, kTRUE, kFALSE, kFALSE};
   vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+5);
-  Bool_t useRootSScalingLL = kTRUE;
   // Prepare the lednicky eqn info (lambda parameters, transform matrix locations, whether or not particles are identical)
   vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE, useRootSScalingLL);
   if(useLLAA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
@@ -186,7 +188,7 @@ void UserSetupSystems(Fitter *fitter)
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + 5);
   Bool_t fixParamsArrLA[5] = {kFALSE, kFALSE, kFALSE, kFALSE, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 5);
-  Bool_t useRootSScalingLA = kTRUE;
+
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE, useRootSScalingLA);
   if(useLA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
@@ -243,7 +245,7 @@ void UserSetupSystems(Fitter *fitter)
 
   initParamsLA[4] = 10.; // Normalization factor accounts for ~1/10 ratio of num vs den pairs
   initParamsLA[0] = radiiParams[0];
-  fitter->AddPairAnalysisLogFit("LA010", fileNumDen, numNamesLA010, denNamesLA010, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  // fitter->AddPairAnalysisLogFit("LA010", fileNumDen, numNamesLA010, denNamesLA010, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   vector<TString> numNamesLA1030;
   numNamesLA1030.push_back("mm/fSignalLamALam18");
@@ -265,10 +267,30 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLA1030.push_back("pp/fBkgLamALam16");
   denNamesLA1030.push_back("pp/fBkgLamALam15");
   initParamsLA[0] = radiiParams[1];
-  fitter->AddPairAnalysisLogFit("LA1030", fileNumDen, numNamesLA1030, denNamesLA1030, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  // fitter->AddPairAnalysisLogFit("LA1030", fileNumDen, numNamesLA1030, denNamesLA1030, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   
 
-
+  vector<TString> numNamesLA3050;
+  numNamesLA3050.push_back("mm/fSignalLamALam14");
+  numNamesLA3050.push_back("mm/fSignalLamALam13");
+  numNamesLA3050.push_back("mm/fSignalLamALam12");
+  numNamesLA3050.push_back("mm/fSignalLamALam11");
+  numNamesLA3050.push_back("pp/fSignalLamALam14");
+  numNamesLA3050.push_back("pp/fSignalLamALam13");
+  numNamesLA3050.push_back("pp/fSignalLamALam12");
+  numNamesLA3050.push_back("pp/fSignalLamALam11");
+  
+  vector<TString> denNamesLA3050;
+  denNamesLA3050.push_back("mm/fBkgLamALam14");
+  denNamesLA3050.push_back("mm/fBkgLamALam13");
+  denNamesLA3050.push_back("mm/fBkgLamALam12");
+  denNamesLA3050.push_back("mm/fBkgLamALam11");
+  denNamesLA3050.push_back("pp/fBkgLamALam14");
+  denNamesLA3050.push_back("pp/fBkgLamALam13");
+  denNamesLA3050.push_back("pp/fBkgLamALam12");
+  denNamesLA3050.push_back("pp/fBkgLamALam11");
+  initParamsLA[0] = radiiParams[2];
+  // fitter->AddPairAnalysisLogFit("LA3050", fileNumDen, numNamesLA3050, denNamesLA3050, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
 
 
@@ -326,7 +348,7 @@ void UserSetupSystems(Fitter *fitter)
   // denNamesLLAA010.push_back("All/fBkgLamLam19");
   initParams[4] = 10.; // Normalization factor accounts for ~1/10 ratio of num vs den pairs
   initParams[0] = radiiParams[0];
-  fitter->AddPairAnalysisLogFit("LLAA010", fileNumDen, numNamesLLAA010, denNamesLLAA010, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->AddPairAnalysisLogFit("LLAA010", fileNumDen, numNamesLLAA010, denNamesLLAA010, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   vector<TString> numNamesLLAA1030;
   numNamesLLAA1030.push_back("mm/fSignalLamLam18");
@@ -337,6 +359,7 @@ void UserSetupSystems(Fitter *fitter)
   numNamesLLAA1030.push_back("pp/fSignalLamLam17");
   numNamesLLAA1030.push_back("pp/fSignalLamLam16");
   numNamesLLAA1030.push_back("pp/fSignalLamLam15");
+  numNamesLLAA1030.push_back("mm/fSignalALamALam18");
   numNamesLLAA1030.push_back("mm/fSignalALamALam17");
   numNamesLLAA1030.push_back("mm/fSignalALamALam16");
   numNamesLLAA1030.push_back("mm/fSignalALamALam15");
@@ -354,6 +377,7 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLLAA1030.push_back("pp/fBkgLamLam17");
   denNamesLLAA1030.push_back("pp/fBkgLamLam16");
   denNamesLLAA1030.push_back("pp/fBkgLamLam15");
+  denNamesLLAA1030.push_back("mm/fBkgALamALam18");
   denNamesLLAA1030.push_back("mm/fBkgALamALam17");
   denNamesLLAA1030.push_back("mm/fBkgALamALam16");
   denNamesLLAA1030.push_back("mm/fBkgALamALam15");
@@ -362,10 +386,50 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLLAA1030.push_back("pp/fBkgALamALam16");
   denNamesLLAA1030.push_back("pp/fBkgALamALam15");
   initParams[0] = radiiParams[1];
-  fitter->AddPairAnalysisLogFit("LLAA1030", fileNumDen, numNamesLLAA1030, denNamesLLAA1030, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  // fitter->AddPairAnalysisLogFit("LLAA1030", fileNumDen, numNamesLLAA1030, denNamesLLAA1030, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
 
+
+  vector<TString> numNamesLLAA3050;
+  numNamesLLAA3050.push_back("mm/fSignalLamLam14");
+  numNamesLLAA3050.push_back("mm/fSignalLamLam13");
+  numNamesLLAA3050.push_back("mm/fSignalLamLam12");
+  numNamesLLAA3050.push_back("mm/fSignalLamLam11");
+  numNamesLLAA3050.push_back("pp/fSignalLamLam14");
+  numNamesLLAA3050.push_back("pp/fSignalLamLam13");
+  numNamesLLAA3050.push_back("pp/fSignalLamLam12");
+  numNamesLLAA3050.push_back("pp/fSignalLamLam11");
+  numNamesLLAA3050.push_back("mm/fSignalALamALam14");
+  numNamesLLAA3050.push_back("mm/fSignalALamALam13");
+  numNamesLLAA3050.push_back("mm/fSignalALamALam12");
+  numNamesLLAA3050.push_back("mm/fSignalALamALam11");
+  numNamesLLAA3050.push_back("pp/fSignalALamALam14");
+  numNamesLLAA3050.push_back("pp/fSignalALamALam13");
+  numNamesLLAA3050.push_back("pp/fSignalALamALam12");
+  numNamesLLAA3050.push_back("pp/fSignalALamALam11");
+  
+  vector<TString> denNamesLLAA3050;
+  denNamesLLAA3050.push_back("mm/fBkgLamLam14");
+  denNamesLLAA3050.push_back("mm/fBkgLamLam13");
+  denNamesLLAA3050.push_back("mm/fBkgLamLam12");
+  denNamesLLAA3050.push_back("mm/fBkgLamLam11");
+  denNamesLLAA3050.push_back("pp/fBkgLamLam14");
+  denNamesLLAA3050.push_back("pp/fBkgLamLam13");
+  denNamesLLAA3050.push_back("pp/fBkgLamLam12");
+  denNamesLLAA3050.push_back("pp/fBkgLamLam11");
+  denNamesLLAA3050.push_back("mm/fBkgALamALam14");
+  denNamesLLAA3050.push_back("mm/fBkgALamALam13");
+  denNamesLLAA3050.push_back("mm/fBkgALamALam12");
+  denNamesLLAA3050.push_back("mm/fBkgALamALam11");
+  denNamesLLAA3050.push_back("pp/fBkgALamALam14");
+  denNamesLLAA3050.push_back("pp/fBkgALamALam13");
+  denNamesLLAA3050.push_back("pp/fBkgALamALam12");
+  denNamesLLAA3050.push_back("pp/fBkgALamALam11");
+  initParams[0] = radiiParams[2];
+  // fitter->AddPairAnalysisLogFit("LLAA3050", fileNumDen, numNamesLLAA3050, denNamesLLAA3050, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
+
+  
 
   
 }
@@ -387,8 +451,8 @@ void UserSetConstraints(Fitter *myFitter)
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030, kLLAA3050};
   vector<Int_t> systemsLLAA(systemsArrLLAA, systemsArrLLAA + 3);
-  myFitter->SetupConstraint(kF0Real, systemsLLAA);
-  myFitter->SetupConstraint(kD0, systemsLLAA);
+  // myFitter->SetupConstraint(kF0Real, systemsLLAA);
+  // myFitter->SetupConstraint(kD0, systemsLLAA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda
   Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
@@ -424,21 +488,21 @@ void UserSetConstraints(Fitter *myFitter)
   systems010.push_back(kLA010);
   // systems010.push_back(kLL010);
   // systems010.push_back(kAA010);
-  myFitter->SetupConstraint(kRad, systems010);
+  // myFitter->SetupConstraint(kRad, systems010);
 
   vector<Int_t> systems1030;
   systems1030.push_back(kLLAA1030);
   systems1030.push_back(kLA1030);
   // systems1030.push_back(kLL1030);
   // systems1030.push_back(kAA1030);
-  myFitter->SetupConstraint(kRad, systems1030);
+  // myFitter->SetupConstraint(kRad, systems1030);
 
   vector<Int_t> systems3050;
   systems3050.push_back(kLLAA3050);
   systems3050.push_back(kLA3050);
   // systems3050.push_back(kLL3050);
   // systems3050.push_back(kAA3050);
-  myFitter->SetupConstraint(kRad, systems3050);
+  // myFitter->SetupConstraint(kRad, systems3050);
 }
 
 void UserSetFitOptions(Fitter *myFitter)
@@ -449,16 +513,21 @@ void UserSetFitOptions(Fitter *myFitter)
   // How big should the initial starting value fit uncertainty be?
   // This is a catchall for *all* parameter step sizes.
    myFitter->SetStartingStepSize(.1);
-   
-  // Output extra plots showing all residual correlation components?
-   myFitter->SetDisplayResidualComponents(kTRUE);
+
 
    // Use MINOS to find error bars?
    myFitter->SetUseMINOS(kFALSE);
    
   // optional suffix for saved plots and objects
   TString outString = "";
-  myFitter->SetOutputString(outString); 
+  myFitter->SetOutputString(outString);
+
+  // Output extra plots showing all residual correlation components?
+  myFitter->SetDisplayResidualComponents(kTRUE);
+  
+  // Output extra histograms of lednicky Eqns?
+  myFitter->SetOutputLednickyHists(kTRUE);
+  
 }
 
 
