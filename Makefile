@@ -1,7 +1,7 @@
 # LednickyEqn makefile
 
 LIBS   = $(shell root-config --libs) -lMinuit
-CFLAGS = $(shell root-config --cflags) -Wall -O3
+CFLAGS = $(shell root-config --cflags) -Wall -O2
 #IFLAGS = -I$(ROOTSYS)/include
 #.PHONY: clean
 
