@@ -111,6 +111,33 @@ TGraph* PairSystem::GetCombinedTGraph()
   return combinedLednicky;
 }
 
+TH1D* PairSystem::GetLednickyHist()
+{
+  // Turn the combined lednicky TGraph into a histogram
+  TGraph *g = GetCombinedTGraph();
+  assert(g->GetN() == fNBins);
+
+  //
+  Double_t minValue = 0.;
+  Double_t maxValue = fNBins * fBinWidth;
+  TString histName = g->GetName();
+  histName+= "LedHist";
+  cout<<"Making a lednicky hist with name:\t"<<histName<<endl;
+  TH1D *hist = new TH1D(histName, histName, fNBins, minValue, maxValue);
+
+  //For each point in the TGraph, add it to the histogram
+  //No bin should be added to more than once
+  Double_t *xVals = g->GetX();
+  Double_t *yVals = g->GetY();
+  for(Int_t iBin = 0; iBin < fNBins; iBin++)
+  {
+    Int_t binNumber = hist->FindBin(xVals[iBin]);
+    assert(binNumber == iBin +1);
+    hist->SetBinContent(binNumber, yVals[iBin]);
+  }
+  return hist;
+}
+
 TCanvas* PairSystem::GetResidualComponentCanvas()
 {
   // Create a canvas with all the primary and residual

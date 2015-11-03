@@ -28,6 +28,7 @@ class PairSystem{
   Double_t CalculateFitChisquare();
   TH1D*    GetCF() {return fCF;};
   TGraph*  GetCombinedTGraph();
+  TH1D*    GetLednickyHist();
   TCanvas* GetResidualComponentCanvas();
   Int_t    GetSystemType() const {return fSystemType;};
   void SetCFData(TH2D* correlationFunction);
