@@ -310,8 +310,16 @@ void Fitter::SaveOutputPlots()
 {
   // Save output plots for each fit
   TFile outFile("FitResults.root","update");
+  TDirectory *dirLedHists = outFile.GetDirectory("LednickyHists");
+  if(fOutputLednickyHist) {
+    if(!dirLedHists) {
+      outFile.mkdir("LednickyHists");
+      dirLedHists = outFile.GetDirectory("LednickyHists");
+    }
+  }
   for(Int_t iSys = 0; iSys < fNSystems; iSys++)
   {
+    outFile.cd();
     TH1D *cf = fPairSystems[iSys]->GetCF();
     if(cf) {
       cf->SetAxisRange(0.7,1.05,"Y");
@@ -338,6 +346,7 @@ void Fitter::SaveOutputPlots()
     cout<<"Saved file "<<plotName<<endl;
     if(fDisplayResidualComponents) SaveResidualComponentPlot(iSys);
     if(fOutputLednickyHist) {
+      dirLedHists->cd();
       TH1D *ledHist = fPairSystems[iSys]->GetLednickyHist();
       ledHist->Write(ledHist->GetName(), TObject::kOverwrite);
     }
