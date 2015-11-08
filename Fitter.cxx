@@ -348,7 +348,8 @@ void Fitter::SaveOutputPlots()
     if(fOutputLednickyHist) {
       dirLedHists->cd();
       TH1D *ledHist = fPairSystems[iSys]->GetLednickyHist();
-      ledHist->Write(ledHist->GetName(), TObject::kOverwrite);
+      // TString ledHistName = ledHist->GetName();
+      ledHist->Write(ledHist->GetName()+fOutputString, TObject::kOverwrite);
     }
   }
 
