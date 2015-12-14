@@ -102,7 +102,7 @@ void UserSetupSystems(Fitter *fitter)
   /////////// Setting up Lambda-Lambda + Antilambda-Antilambda //////////////////
   // 0-10%
   TString fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
-  TString histName = "CFLLAA010";
+  TString histName = "Merged/CFLLAA010";
   TString simpleName = "LLAA010";
   // Make initial parameters: Radius, ReF0, ImF0, D0, Normalization 
   Double_t radiiParams[3] = {4., 2.67, 2.02};
@@ -120,13 +120,13 @@ void UserSetupSystems(Fitter *fitter)
   if(useLLAA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
-  histName = "CFLLAA1030";
+  histName = "Merged/CFLLAA1030";
   simpleName = "LLAA1030";
   initParams[0] = radiiParams[1];
   if(useLLAA1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
-  histName = "CFLLAA3050";
+  histName = "Merged/CFLLAA3050";
   simpleName = "LLAA3050";
   initParams[0] = radiiParams[2];
   if(useLLAA3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
@@ -135,19 +135,19 @@ void UserSetupSystems(Fitter *fitter)
   ////////////////// Setting up Lambda-Lambda ////////////////////
   // 0-10%
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
-  histName = "CFLamLam010";
+  histName = "Merged/CFLamLam010";
   simpleName = "LL010";
   initParams[0] = radiiParams[0];
   if(useLL010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
-  histName = "CFLamLam1030";
+  histName = "Merged/CFLamLam1030";
   simpleName = "LL1030";
   initParams[0] = radiiParams[1];
   if(useLL1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
-  histName = "CFLamLam3050";
+  histName = "Merged/CFLamLam3050";
   simpleName = "LL3050";
   initParams[0] = radiiParams[2];
   if(useLL3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
@@ -156,19 +156,19 @@ void UserSetupSystems(Fitter *fitter)
   ////////////////// Setting up Antilambda-Antilambda ////////////////////
   // 0-10%
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
-  histName = "CFALamALam010";
+  histName = "Merged/CFALamALam010";
   simpleName = "AA010";
   initParams[0] = radiiParams[0];
   if(useAA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
-  histName = "CFALamALam1030";
+  histName = "Merged/CFALamALam1030";
   simpleName = "AA1030";
   initParams[0] = radiiParams[1];
   if(useAA1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
-  histName = "CFALamALam3050";
+  histName = "Merged/CFALamALam3050";
   simpleName = "AA3050";
   initParams[0] = radiiParams[2];
   if(useAA3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
@@ -179,7 +179,7 @@ void UserSetupSystems(Fitter *fitter)
   ////////////////// Setting up Lambda-Antilambda ////////////////////
   // 0-10%
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
-  histName = "CFLamALam010";
+  histName = "Merged/CFLamALam010";
   // fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/OneTimeUseTestCF.root";
   // histName = "mm12CF20";
 
@@ -193,13 +193,13 @@ void UserSetupSystems(Fitter *fitter)
   if(useLA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 10-30
-  histName = "CFLamALam1030";
+  histName = "Merged/CFLamALam1030";
   simpleName = "LA1030";
   initParamsLA[0] = radiiParams[1];
   if(useLA1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 30-50
-  histName = "CFLamALam3050";
+  histName = "Merged/CFLamALam3050";
   simpleName = "LA3050";
   initParamsLA[0] = radiiParams[2];
   if(useLA3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
