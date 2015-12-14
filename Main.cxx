@@ -87,12 +87,12 @@ void UserSetupSystems(Fitter *fitter)
   // useLLAA010Chi2  = kTRUE;
   // useLLAA1030Chi2 = kTRUE;
   // useLLAA3050Chi2 = kTRUE;
-  // useLL010Chi2    = kTRUE;
-  // useLL1030Chi2   = kTRUE;
-  // useLL3050Chi2   = kTRUE;
-  // useAA010Chi2    = kTRUE;
-  // useAA1030Chi2   = kTRUE;
-  // useAA3050Chi2   = kTRUE;
+  useLL010Chi2    = kTRUE;
+  useLL1030Chi2   = kTRUE;
+  useLL3050Chi2   = kTRUE;
+  useAA010Chi2    = kTRUE;
+  useAA1030Chi2   = kTRUE;
+  useAA3050Chi2   = kTRUE;
   useLA010Chi2    = kTRUE;
   useLA1030Chi2   = kTRUE;
   useLA3050Chi2   = kTRUE;
@@ -210,85 +210,125 @@ void UserSetupSystems(Fitter *fitter)
 
   // Log-likelihood fitting.  Do not use in conjunction with
   // chisquare fitting!
-  TString fileNumDen = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/NumDen1D.root";
+  TString fileNumDen = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
   vector<TString> numNamesLA010;
-  numNamesLA010.push_back("mm12/fSignalLamALam20");
-  numNamesLA010.push_back("mm12/fSignalLamALam19");
-  numNamesLA010.push_back("mm34/fSignalLamALam20");
-  numNamesLA010.push_back("mm34/fSignalLamALam19");
-  numNamesLA010.push_back("pp1/fSignalLamALam20"); 
-  numNamesLA010.push_back("pp1/fSignalLamALam19");
-  numNamesLA010.push_back("pp2/fSignalLamALam20");
-  numNamesLA010.push_back("pp2/fSignalLamALam19");
-  // numNamesLA010.push_back("mm/fSignalLamALam20");
-  // numNamesLA010.push_back("mm/fSignalLamALam19");
-  // numNamesLA010.push_back("pp/fSignalLamALam20");
-  // numNamesLA010.push_back("pp/fSignalLamALam19");
-  // numNamesLA010.push_back("All/fSignalLamALam20");
-  // numNamesLA010.push_back("All/fSignalLamALam19");
+  numNamesLA010.push_back("mm1/Num/NumLamALam05");
+  numNamesLA010.push_back("mm1/Num/NumLamALam510");
+  numNamesLA010.push_back("mm2/Num/NumLamALam05");
+  numNamesLA010.push_back("mm2/Num/NumLamALam510");
+  numNamesLA010.push_back("mm3/Num/NumLamALam05");
+  numNamesLA010.push_back("mm3/Num/NumLamALam510");
+  numNamesLA010.push_back("pp1/Num/NumLamALam05");
+  numNamesLA010.push_back("pp1/Num/NumLamALam510");
+  numNamesLA010.push_back("pp2/Num/NumLamALam05");
+  numNamesLA010.push_back("pp2/Num/NumLamALam510");
   
   vector<TString> denNamesLA010;
-  denNamesLA010.push_back("mm12/fBkgLamALam20");
-  denNamesLA010.push_back("mm12/fBkgLamALam19");
-  denNamesLA010.push_back("mm34/fBkgLamALam20");
-  denNamesLA010.push_back("mm34/fBkgLamALam19");
-  denNamesLA010.push_back("pp1/fBkgLamALam20");
-  denNamesLA010.push_back("pp1/fBkgLamALam19");
-  denNamesLA010.push_back("pp2/fBkgLamALam20");
-  denNamesLA010.push_back("pp2/fBkgLamALam19");
-  // denNamesLA010.push_back("mm/fBkgLamALam20");
-  // denNamesLA010.push_back("mm/fBkgLamALam19");
-  // denNamesLA010.push_back("pp/fBkgLamALam20");
-  // denNamesLA010.push_back("pp/fBkgLamALam19");
-  // denNamesLA010.push_back("All/fBkgLamALam20");
-  // denNamesLA010.push_back("All/fBkgLamALam19");
-
+  denNamesLA010.push_back("mm1/Den/DenLamALam05");
+  denNamesLA010.push_back("mm1/Den/DenLamALam510");
+  denNamesLA010.push_back("mm2/Den/DenLamALam05");
+  denNamesLA010.push_back("mm2/Den/DenLamALam510");
+  denNamesLA010.push_back("mm3/Den/DenLamALam05");
+  denNamesLA010.push_back("mm3/Den/DenLamALam510");
+  denNamesLA010.push_back("pp1/Den/DenLamALam05");
+  denNamesLA010.push_back("pp1/Den/DenLamALam510");
+  denNamesLA010.push_back("pp2/Den/DenLamALam05");
+  denNamesLA010.push_back("pp2/Den/DenLamALam510");
+  
   initParamsLA[4] = 10.; // Normalization factor accounts for ~1/10 ratio of num vs den pairs
   initParamsLA[0] = radiiParams[0];
   // fitter->AddPairAnalysisLogFit("LA010", fileNumDen, numNamesLA010, denNamesLA010, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
+  
   vector<TString> numNamesLA1030;
-  numNamesLA1030.push_back("mm/fSignalLamALam18");
-  numNamesLA1030.push_back("mm/fSignalLamALam17");
-  numNamesLA1030.push_back("mm/fSignalLamALam16");
-  numNamesLA1030.push_back("mm/fSignalLamALam15");
-  numNamesLA1030.push_back("pp/fSignalLamALam18");
-  numNamesLA1030.push_back("pp/fSignalLamALam17");
-  numNamesLA1030.push_back("pp/fSignalLamALam16");
-  numNamesLA1030.push_back("pp/fSignalLamALam15");
+  numNamesLA1030.push_back("mm1/Num/NumLamALam1015");
+  numNamesLA1030.push_back("mm1/Num/NumLamALam1520");
+  numNamesLA1030.push_back("mm1/Num/NumLamALam2025");
+  numNamesLA1030.push_back("mm1/Num/NumLamALam2530");
+  numNamesLA1030.push_back("mm2/Num/NumLamALam1015");
+  numNamesLA1030.push_back("mm2/Num/NumLamALam1520");
+  numNamesLA1030.push_back("mm2/Num/NumLamALam2025");
+  numNamesLA1030.push_back("mm2/Num/NumLamALam2530");
+  numNamesLA1030.push_back("mm3/Num/NumLamALam1015");
+  numNamesLA1030.push_back("mm3/Num/NumLamALam1520");
+  numNamesLA1030.push_back("mm3/Num/NumLamALam2025");
+  numNamesLA1030.push_back("mm3/Num/NumLamALam2530");
+  numNamesLA1030.push_back("pp1/Num/NumLamALam1015");
+  numNamesLA1030.push_back("pp1/Num/NumLamALam1520");
+  numNamesLA1030.push_back("pp1/Num/NumLamALam2025");
+  numNamesLA1030.push_back("pp1/Num/NumLamALam2530");
+  numNamesLA1030.push_back("pp2/Num/NumLamALam1015");
+  numNamesLA1030.push_back("pp2/Num/NumLamALam1520");
+  numNamesLA1030.push_back("pp2/Num/NumLamALam2025");
+  numNamesLA1030.push_back("pp2/Num/NumLamALam2530");
   
   vector<TString> denNamesLA1030;
-  denNamesLA1030.push_back("mm/fBkgLamALam18");
-  denNamesLA1030.push_back("mm/fBkgLamALam17");
-  denNamesLA1030.push_back("mm/fBkgLamALam16");
-  denNamesLA1030.push_back("mm/fBkgLamALam15");
-  denNamesLA1030.push_back("pp/fBkgLamALam18");
-  denNamesLA1030.push_back("pp/fBkgLamALam17");
-  denNamesLA1030.push_back("pp/fBkgLamALam16");
-  denNamesLA1030.push_back("pp/fBkgLamALam15");
+  denNamesLA1030.push_back("mm1/Den/DenLamALam1015");
+  denNamesLA1030.push_back("mm1/Den/DenLamALam1520");
+  denNamesLA1030.push_back("mm1/Den/DenLamALam2025");
+  denNamesLA1030.push_back("mm1/Den/DenLamALam2530");
+  denNamesLA1030.push_back("mm2/Den/DenLamALam1015");
+  denNamesLA1030.push_back("mm2/Den/DenLamALam1520");
+  denNamesLA1030.push_back("mm2/Den/DenLamALam2025");
+  denNamesLA1030.push_back("mm2/Den/DenLamALam2530");
+  denNamesLA1030.push_back("mm3/Den/DenLamALam1015");
+  denNamesLA1030.push_back("mm3/Den/DenLamALam1520");
+  denNamesLA1030.push_back("mm3/Den/DenLamALam2025");
+  denNamesLA1030.push_back("mm3/Den/DenLamALam2530");
+  denNamesLA1030.push_back("pp1/Den/DenLamALam1015");
+  denNamesLA1030.push_back("pp1/Den/DenLamALam1520");
+  denNamesLA1030.push_back("pp1/Den/DenLamALam2025");
+  denNamesLA1030.push_back("pp1/Den/DenLamALam2530");
+  denNamesLA1030.push_back("pp2/Den/DenLamALam1015");
+  denNamesLA1030.push_back("pp2/Den/DenLamALam1520");
+  denNamesLA1030.push_back("pp2/Den/DenLamALam2025");
+  denNamesLA1030.push_back("pp2/Den/DenLamALam2530");
   initParamsLA[0] = radiiParams[1];
   // fitter->AddPairAnalysisLogFit("LA1030", fileNumDen, numNamesLA1030, denNamesLA1030, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   
-
   vector<TString> numNamesLA3050;
-  numNamesLA3050.push_back("mm/fSignalLamALam14");
-  numNamesLA3050.push_back("mm/fSignalLamALam13");
-  numNamesLA3050.push_back("mm/fSignalLamALam12");
-  numNamesLA3050.push_back("mm/fSignalLamALam11");
-  numNamesLA3050.push_back("pp/fSignalLamALam14");
-  numNamesLA3050.push_back("pp/fSignalLamALam13");
-  numNamesLA3050.push_back("pp/fSignalLamALam12");
-  numNamesLA3050.push_back("pp/fSignalLamALam11");
+  numNamesLA3050.push_back("mm1/Num/NumLamALam3035");
+  numNamesLA3050.push_back("mm1/Num/NumLamALam3540");
+  numNamesLA3050.push_back("mm1/Num/NumLamALam4045");
+  numNamesLA3050.push_back("mm1/Num/NumLamALam4550");
+  numNamesLA3050.push_back("mm2/Num/NumLamALam3035");
+  numNamesLA3050.push_back("mm2/Num/NumLamALam3540");
+  numNamesLA3050.push_back("mm2/Num/NumLamALam4045");
+  numNamesLA3050.push_back("mm2/Num/NumLamALam4550");
+  numNamesLA3050.push_back("mm3/Num/NumLamALam3035");
+  numNamesLA3050.push_back("mm3/Num/NumLamALam3540");
+  numNamesLA3050.push_back("mm3/Num/NumLamALam4045");
+  numNamesLA3050.push_back("mm3/Num/NumLamALam4550");
+  numNamesLA3050.push_back("pp1/Num/NumLamALam3035");
+  numNamesLA3050.push_back("pp1/Num/NumLamALam3540");
+  numNamesLA3050.push_back("pp1/Num/NumLamALam4045");
+  numNamesLA3050.push_back("pp1/Num/NumLamALam4550");
+  numNamesLA3050.push_back("pp2/Num/NumLamALam3035");
+  numNamesLA3050.push_back("pp2/Num/NumLamALam3540");
+  numNamesLA3050.push_back("pp2/Num/NumLamALam4045");
+  numNamesLA3050.push_back("pp2/Num/NumLamALam4550");
   
   vector<TString> denNamesLA3050;
-  denNamesLA3050.push_back("mm/fBkgLamALam14");
-  denNamesLA3050.push_back("mm/fBkgLamALam13");
-  denNamesLA3050.push_back("mm/fBkgLamALam12");
-  denNamesLA3050.push_back("mm/fBkgLamALam11");
-  denNamesLA3050.push_back("pp/fBkgLamALam14");
-  denNamesLA3050.push_back("pp/fBkgLamALam13");
-  denNamesLA3050.push_back("pp/fBkgLamALam12");
-  denNamesLA3050.push_back("pp/fBkgLamALam11");
+  denNamesLA3050.push_back("mm1/Den/DenLamALam3035");
+  denNamesLA3050.push_back("mm1/Den/DenLamALam3540");
+  denNamesLA3050.push_back("mm1/Den/DenLamALam4045");
+  denNamesLA3050.push_back("mm1/Den/DenLamALam4550");
+  denNamesLA3050.push_back("mm2/Den/DenLamALam3035");
+  denNamesLA3050.push_back("mm2/Den/DenLamALam3540");
+  denNamesLA3050.push_back("mm2/Den/DenLamALam4045");
+  denNamesLA3050.push_back("mm2/Den/DenLamALam4550");
+  denNamesLA3050.push_back("mm3/Den/DenLamALam3035");
+  denNamesLA3050.push_back("mm3/Den/DenLamALam3540");
+  denNamesLA3050.push_back("mm3/Den/DenLamALam4045");
+  denNamesLA3050.push_back("mm3/Den/DenLamALam4550");
+  denNamesLA3050.push_back("pp1/Den/DenLamALam3035");
+  denNamesLA3050.push_back("pp1/Den/DenLamALam3540");
+  denNamesLA3050.push_back("pp1/Den/DenLamALam4045");
+  denNamesLA3050.push_back("pp1/Den/DenLamALam4550");
+  denNamesLA3050.push_back("pp2/Den/DenLamALam3035");
+  denNamesLA3050.push_back("pp2/Den/DenLamALam3540");
+  denNamesLA3050.push_back("pp2/Den/DenLamALam4045");
+  denNamesLA3050.push_back("pp2/Den/DenLamALam4550");
   initParamsLA[0] = radiiParams[2];
   // fitter->AddPairAnalysisLogFit("LA3050", fileNumDen, numNamesLA3050, denNamesLA3050, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
@@ -308,83 +348,152 @@ void UserSetupSystems(Fitter *fitter)
 
 
   vector<TString> numNamesLLAA010;
-  // numNamesLLAA010.push_back("mm12/fSignalLamLam20");
-  // numNamesLLAA010.push_back("mm12/fSignalLamLam19");
-  // numNamesLLAA010.push_back("mm34/fSignalLamLam20");
-  // numNamesLLAA010.push_back("mm34/fSignalLamLam19");
-  // numNamesLLAA010.push_back("pp1/fSignalLamLam20"); 
-  // numNamesLLAA010.push_back("pp1/fSignalLamLam19");
-  // numNamesLLAA010.push_back("pp2/fSignalLamLam20");
-  // numNamesLLAA010.push_back("pp2/fSignalLamLam19");
-  numNamesLLAA010.push_back("mm/fSignalLamLam20");
-  numNamesLLAA010.push_back("mm/fSignalLamLam19");
-  numNamesLLAA010.push_back("pp/fSignalLamLam20");
-  numNamesLLAA010.push_back("pp/fSignalLamLam19");
-  numNamesLLAA010.push_back("mm/fSignalALamALam20");
-  numNamesLLAA010.push_back("mm/fSignalALamALam19");
-  numNamesLLAA010.push_back("pp/fSignalALamALam20");
-  numNamesLLAA010.push_back("pp/fSignalALamALam19");
-  // numNamesLLAA010.push_back("All/fSignalLamLam20");
-  // numNamesLLAA010.push_back("All/fSignalLamLam19");
-  
+  numNamesLLAA010.push_back("mm1/Num/NumLamLam05");
+  numNamesLLAA010.push_back("mm1/Num/NumLamLam510");
+  numNamesLLAA010.push_back("mm2/Num/NumLamLam05");
+  numNamesLLAA010.push_back("mm2/Num/NumLamLam510");
+  numNamesLLAA010.push_back("mm3/Num/NumLamLam05");
+  numNamesLLAA010.push_back("mm3/Num/NumLamLam510");
+  numNamesLLAA010.push_back("pp1/Num/NumLamLam05");
+  numNamesLLAA010.push_back("pp1/Num/NumLamLam510");
+  numNamesLLAA010.push_back("pp2/Num/NumLamLam05");
+  numNamesLLAA010.push_back("pp2/Num/NumLamLam510");
+
+  numNamesLLAA010.push_back("mm1/Num/NumALamALam05");
+  numNamesLLAA010.push_back("mm1/Num/NumALamALam510");
+  numNamesLLAA010.push_back("mm2/Num/NumALamALam05");
+  numNamesLLAA010.push_back("mm2/Num/NumALamALam510");
+  numNamesLLAA010.push_back("mm3/Num/NumALamALam05");
+  numNamesLLAA010.push_back("mm3/Num/NumALamALam510");
+  numNamesLLAA010.push_back("pp1/Num/NumALamALam05");
+  numNamesLLAA010.push_back("pp1/Num/NumALamALam510");
+  numNamesLLAA010.push_back("pp2/Num/NumALamALam05");
+  numNamesLLAA010.push_back("pp2/Num/NumALamALam510");
+
   vector<TString> denNamesLLAA010;
-  // denNamesLLAA010.push_back("mm12/fBkgLamLam20");
-  // denNamesLLAA010.push_back("mm12/fBkgLamLam19");
-  // denNamesLLAA010.push_back("mm34/fBkgLamLam20");
-  // denNamesLLAA010.push_back("mm34/fBkgLamLam19");
-  // denNamesLLAA010.push_back("pp1/fBkgLamLam20");
-  // denNamesLLAA010.push_back("pp1/fBkgLamLam19");
-  // denNamesLLAA010.push_back("pp2/fBkgLamLam20");
-  // denNamesLLAA010.push_back("pp2/fBkgLamLam19");
-  denNamesLLAA010.push_back("mm/fBkgLamLam20");
-  denNamesLLAA010.push_back("mm/fBkgLamLam19");
-  denNamesLLAA010.push_back("pp/fBkgLamLam20");
-  denNamesLLAA010.push_back("pp/fBkgLamLam19");
-  denNamesLLAA010.push_back("mm/fBkgALamALam20");
-  denNamesLLAA010.push_back("mm/fBkgALamALam19");
-  denNamesLLAA010.push_back("pp/fBkgALamALam20");
-  denNamesLLAA010.push_back("pp/fBkgALamALam19");
-  // denNamesLLAA010.push_back("All/fBkgLamLam20");
-  // denNamesLLAA010.push_back("All/fBkgLamLam19");
+  denNamesLLAA010.push_back("mm1/Den/DenLamLam05");
+  denNamesLLAA010.push_back("mm1/Den/DenLamLam510");
+  denNamesLLAA010.push_back("mm2/Den/DenLamLam05");
+  denNamesLLAA010.push_back("mm2/Den/DenLamLam510");
+  denNamesLLAA010.push_back("mm3/Den/DenLamLam05");
+  denNamesLLAA010.push_back("mm3/Den/DenLamLam510");
+  denNamesLLAA010.push_back("pp1/Den/DenLamLam05");
+  denNamesLLAA010.push_back("pp1/Den/DenLamLam510");
+  denNamesLLAA010.push_back("pp2/Den/DenLamLam05");
+  denNamesLLAA010.push_back("pp2/Den/DenLamLam510");
+
+  denNamesLLAA010.push_back("mm1/Den/DenALamALam05");
+  denNamesLLAA010.push_back("mm1/Den/DenALamALam510");
+  denNamesLLAA010.push_back("mm2/Den/DenALamALam05");
+  denNamesLLAA010.push_back("mm2/Den/DenALamALam510");
+  denNamesLLAA010.push_back("mm3/Den/DenALamALam05");
+  denNamesLLAA010.push_back("mm3/Den/DenALamALam510");
+  denNamesLLAA010.push_back("pp1/Den/DenALamALam05");
+  denNamesLLAA010.push_back("pp1/Den/DenALamALam510");
+  denNamesLLAA010.push_back("pp2/Den/DenALamALam05");
+  denNamesLLAA010.push_back("pp2/Den/DenALamALam510");
+
+
+
+
+
+  
   initParams[4] = 10.; // Normalization factor accounts for ~1/10 ratio of num vs den pairs
   initParams[0] = radiiParams[0];
   // fitter->AddPairAnalysisLogFit("LLAA010", fileNumDen, numNamesLLAA010, denNamesLLAA010, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
+
+
+
+  
   vector<TString> numNamesLLAA1030;
-  numNamesLLAA1030.push_back("mm/fSignalLamLam18");
-  numNamesLLAA1030.push_back("mm/fSignalLamLam17");
-  numNamesLLAA1030.push_back("mm/fSignalLamLam16");
-  numNamesLLAA1030.push_back("mm/fSignalLamLam15");
-  numNamesLLAA1030.push_back("pp/fSignalLamLam18");
-  numNamesLLAA1030.push_back("pp/fSignalLamLam17");
-  numNamesLLAA1030.push_back("pp/fSignalLamLam16");
-  numNamesLLAA1030.push_back("pp/fSignalLamLam15");
-  numNamesLLAA1030.push_back("mm/fSignalALamALam18");
-  numNamesLLAA1030.push_back("mm/fSignalALamALam17");
-  numNamesLLAA1030.push_back("mm/fSignalALamALam16");
-  numNamesLLAA1030.push_back("mm/fSignalALamALam15");
-  numNamesLLAA1030.push_back("pp/fSignalALamALam18");
-  numNamesLLAA1030.push_back("pp/fSignalALamALam17");
-  numNamesLLAA1030.push_back("pp/fSignalALamALam16");
-  numNamesLLAA1030.push_back("pp/fSignalALamALam15");
+  numNamesLLAA1030.push_back("mm1/Num/NumLamLam1015");
+  numNamesLLAA1030.push_back("mm1/Num/NumLamLam1520");
+  numNamesLLAA1030.push_back("mm1/Num/NumLamLam2025");
+  numNamesLLAA1030.push_back("mm1/Num/NumLamLam2530");
+  numNamesLLAA1030.push_back("mm2/Num/NumLamLam1015");
+  numNamesLLAA1030.push_back("mm2/Num/NumLamLam1520");
+  numNamesLLAA1030.push_back("mm2/Num/NumLamLam2025");
+  numNamesLLAA1030.push_back("mm2/Num/NumLamLam2530");
+  numNamesLLAA1030.push_back("mm3/Num/NumLamLam1015");
+  numNamesLLAA1030.push_back("mm3/Num/NumLamLam1520");
+  numNamesLLAA1030.push_back("mm3/Num/NumLamLam2025");
+  numNamesLLAA1030.push_back("mm3/Num/NumLamLam2530");
+  numNamesLLAA1030.push_back("pp1/Num/NumLamLam1015");
+  numNamesLLAA1030.push_back("pp1/Num/NumLamLam1520");
+  numNamesLLAA1030.push_back("pp1/Num/NumLamLam2025");
+  numNamesLLAA1030.push_back("pp1/Num/NumLamLam2530");
+  numNamesLLAA1030.push_back("pp2/Num/NumLamLam1015");
+  numNamesLLAA1030.push_back("pp2/Num/NumLamLam1520");
+  numNamesLLAA1030.push_back("pp2/Num/NumLamLam2025");
+  numNamesLLAA1030.push_back("pp2/Num/NumLamLam2530");
+  
+  numNamesLLAA1030.push_back("mm1/Num/NumALamALam1015");
+  numNamesLLAA1030.push_back("mm1/Num/NumALamALam1520");
+  numNamesLLAA1030.push_back("mm1/Num/NumALamALam2025");
+  numNamesLLAA1030.push_back("mm1/Num/NumALamALam2530");
+  numNamesLLAA1030.push_back("mm2/Num/NumALamALam1015");
+  numNamesLLAA1030.push_back("mm2/Num/NumALamALam1520");
+  numNamesLLAA1030.push_back("mm2/Num/NumALamALam2025");
+  numNamesLLAA1030.push_back("mm2/Num/NumALamALam2530");
+  numNamesLLAA1030.push_back("mm3/Num/NumALamALam1015");
+  numNamesLLAA1030.push_back("mm3/Num/NumALamALam1520");
+  numNamesLLAA1030.push_back("mm3/Num/NumALamALam2025");
+  numNamesLLAA1030.push_back("mm3/Num/NumALamALam2530");
+  numNamesLLAA1030.push_back("pp1/Num/NumALamALam1015");
+  numNamesLLAA1030.push_back("pp1/Num/NumALamALam1520");
+  numNamesLLAA1030.push_back("pp1/Num/NumALamALam2025");
+  numNamesLLAA1030.push_back("pp1/Num/NumALamALam2530");
+  numNamesLLAA1030.push_back("pp2/Num/NumALamALam1015");
+  numNamesLLAA1030.push_back("pp2/Num/NumALamALam1520");
+  numNamesLLAA1030.push_back("pp2/Num/NumALamALam2025");
+  numNamesLLAA1030.push_back("pp2/Num/NumALamALam2530");
   
   vector<TString> denNamesLLAA1030;
-  denNamesLLAA1030.push_back("mm/fBkgLamLam18");
-  denNamesLLAA1030.push_back("mm/fBkgLamLam17");
-  denNamesLLAA1030.push_back("mm/fBkgLamLam16");
-  denNamesLLAA1030.push_back("mm/fBkgLamLam15");
-  denNamesLLAA1030.push_back("pp/fBkgLamLam18");
-  denNamesLLAA1030.push_back("pp/fBkgLamLam17");
-  denNamesLLAA1030.push_back("pp/fBkgLamLam16");
-  denNamesLLAA1030.push_back("pp/fBkgLamLam15");
-  denNamesLLAA1030.push_back("mm/fBkgALamALam18");
-  denNamesLLAA1030.push_back("mm/fBkgALamALam17");
-  denNamesLLAA1030.push_back("mm/fBkgALamALam16");
-  denNamesLLAA1030.push_back("mm/fBkgALamALam15");
-  denNamesLLAA1030.push_back("pp/fBkgALamALam18");
-  denNamesLLAA1030.push_back("pp/fBkgALamALam17");
-  denNamesLLAA1030.push_back("pp/fBkgALamALam16");
-  denNamesLLAA1030.push_back("pp/fBkgALamALam15");
+  denNamesLLAA1030.push_back("mm1/Den/DenLamLam1015");
+  denNamesLLAA1030.push_back("mm1/Den/DenLamLam1520");
+  denNamesLLAA1030.push_back("mm1/Den/DenLamLam2025");
+  denNamesLLAA1030.push_back("mm1/Den/DenLamLam2530");
+  denNamesLLAA1030.push_back("mm2/Den/DenLamLam1015");
+  denNamesLLAA1030.push_back("mm2/Den/DenLamLam1520");
+  denNamesLLAA1030.push_back("mm2/Den/DenLamLam2025");
+  denNamesLLAA1030.push_back("mm2/Den/DenLamLam2530");
+  denNamesLLAA1030.push_back("mm3/Den/DenLamLam1015");
+  denNamesLLAA1030.push_back("mm3/Den/DenLamLam1520");
+  denNamesLLAA1030.push_back("mm3/Den/DenLamLam2025");
+  denNamesLLAA1030.push_back("mm3/Den/DenLamLam2530");
+  denNamesLLAA1030.push_back("pp1/Den/DenLamLam1015");
+  denNamesLLAA1030.push_back("pp1/Den/DenLamLam1520");
+  denNamesLLAA1030.push_back("pp1/Den/DenLamLam2025");
+  denNamesLLAA1030.push_back("pp1/Den/DenLamLam2530");
+  denNamesLLAA1030.push_back("pp2/Den/DenLamLam1015");
+  denNamesLLAA1030.push_back("pp2/Den/DenLamLam1520");
+  denNamesLLAA1030.push_back("pp2/Den/DenLamLam2025");
+  denNamesLLAA1030.push_back("pp2/Den/DenLamLam2530");
+
+  denNamesLLAA1030.push_back("mm1/Den/DenALamALam1015");
+  denNamesLLAA1030.push_back("mm1/Den/DenALamALam1520");
+  denNamesLLAA1030.push_back("mm1/Den/DenALamALam2025");
+  denNamesLLAA1030.push_back("mm1/Den/DenALamALam2530");
+  denNamesLLAA1030.push_back("mm2/Den/DenALamALam1015");
+  denNamesLLAA1030.push_back("mm2/Den/DenALamALam1520");
+  denNamesLLAA1030.push_back("mm2/Den/DenALamALam2025");
+  denNamesLLAA1030.push_back("mm2/Den/DenALamALam2530");
+  denNamesLLAA1030.push_back("mm3/Den/DenALamALam1015");
+  denNamesLLAA1030.push_back("mm3/Den/DenALamALam1520");
+  denNamesLLAA1030.push_back("mm3/Den/DenALamALam2025");
+  denNamesLLAA1030.push_back("mm3/Den/DenALamALam2530");
+  denNamesLLAA1030.push_back("pp1/Den/DenALamALam1015");
+  denNamesLLAA1030.push_back("pp1/Den/DenALamALam1520");
+  denNamesLLAA1030.push_back("pp1/Den/DenALamALam2025");
+  denNamesLLAA1030.push_back("pp1/Den/DenALamALam2530");
+  denNamesLLAA1030.push_back("pp2/Den/DenALamALam1015");
+  denNamesLLAA1030.push_back("pp2/Den/DenALamALam1520");
+  denNamesLLAA1030.push_back("pp2/Den/DenALamALam2025");
+  denNamesLLAA1030.push_back("pp2/Den/DenALamALam2530");
+
+
+  
   initParams[0] = radiiParams[1];
   // fitter->AddPairAnalysisLogFit("LLAA1030", fileNumDen, numNamesLLAA1030, denNamesLLAA1030, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
@@ -392,40 +501,95 @@ void UserSetupSystems(Fitter *fitter)
 
 
   vector<TString> numNamesLLAA3050;
-  numNamesLLAA3050.push_back("mm/fSignalLamLam14");
-  numNamesLLAA3050.push_back("mm/fSignalLamLam13");
-  numNamesLLAA3050.push_back("mm/fSignalLamLam12");
-  numNamesLLAA3050.push_back("mm/fSignalLamLam11");
-  numNamesLLAA3050.push_back("pp/fSignalLamLam14");
-  numNamesLLAA3050.push_back("pp/fSignalLamLam13");
-  numNamesLLAA3050.push_back("pp/fSignalLamLam12");
-  numNamesLLAA3050.push_back("pp/fSignalLamLam11");
-  numNamesLLAA3050.push_back("mm/fSignalALamALam14");
-  numNamesLLAA3050.push_back("mm/fSignalALamALam13");
-  numNamesLLAA3050.push_back("mm/fSignalALamALam12");
-  numNamesLLAA3050.push_back("mm/fSignalALamALam11");
-  numNamesLLAA3050.push_back("pp/fSignalALamALam14");
-  numNamesLLAA3050.push_back("pp/fSignalALamALam13");
-  numNamesLLAA3050.push_back("pp/fSignalALamALam12");
-  numNamesLLAA3050.push_back("pp/fSignalALamALam11");
+  numNamesLLAA3050.push_back("mm1/Num/NumLamLam3035");
+  numNamesLLAA3050.push_back("mm1/Num/NumLamLam3540");
+  numNamesLLAA3050.push_back("mm1/Num/NumLamLam4045");
+  numNamesLLAA3050.push_back("mm1/Num/NumLamLam4550");
+  numNamesLLAA3050.push_back("mm2/Num/NumLamLam3035");
+  numNamesLLAA3050.push_back("mm2/Num/NumLamLam3540");
+  numNamesLLAA3050.push_back("mm2/Num/NumLamLam4045");
+  numNamesLLAA3050.push_back("mm2/Num/NumLamLam4550");
+  numNamesLLAA3050.push_back("mm3/Num/NumLamLam3035");
+  numNamesLLAA3050.push_back("mm3/Num/NumLamLam3540");
+  numNamesLLAA3050.push_back("mm3/Num/NumLamLam4045");
+  numNamesLLAA3050.push_back("mm3/Num/NumLamLam4550");
+  numNamesLLAA3050.push_back("pp1/Num/NumLamLam3035");
+  numNamesLLAA3050.push_back("pp1/Num/NumLamLam3540");
+  numNamesLLAA3050.push_back("pp1/Num/NumLamLam4045");
+  numNamesLLAA3050.push_back("pp1/Num/NumLamLam4550");
+  numNamesLLAA3050.push_back("pp2/Num/NumLamLam3035");
+  numNamesLLAA3050.push_back("pp2/Num/NumLamLam3540");
+  numNamesLLAA3050.push_back("pp2/Num/NumLamLam4045");
+  numNamesLLAA3050.push_back("pp2/Num/NumLamLam4550");
+  
+  numNamesLLAA3050.push_back("mm1/Num/NumALamALam3035");
+  numNamesLLAA3050.push_back("mm1/Num/NumALamALam3540");
+  numNamesLLAA3050.push_back("mm1/Num/NumALamALam4045");
+  numNamesLLAA3050.push_back("mm1/Num/NumALamALam4550");
+  numNamesLLAA3050.push_back("mm2/Num/NumALamALam3035");
+  numNamesLLAA3050.push_back("mm2/Num/NumALamALam3540");
+  numNamesLLAA3050.push_back("mm2/Num/NumALamALam4045");
+  numNamesLLAA3050.push_back("mm2/Num/NumALamALam4550");
+  numNamesLLAA3050.push_back("mm3/Num/NumALamALam3035");
+  numNamesLLAA3050.push_back("mm3/Num/NumALamALam3540");
+  numNamesLLAA3050.push_back("mm3/Num/NumALamALam4045");
+  numNamesLLAA3050.push_back("mm3/Num/NumALamALam4550");
+  numNamesLLAA3050.push_back("pp1/Num/NumALamALam3035");
+  numNamesLLAA3050.push_back("pp1/Num/NumALamALam3540");
+  numNamesLLAA3050.push_back("pp1/Num/NumALamALam4045");
+  numNamesLLAA3050.push_back("pp1/Num/NumALamALam4550");
+  numNamesLLAA3050.push_back("pp2/Num/NumALamALam3035");
+  numNamesLLAA3050.push_back("pp2/Num/NumALamALam3540");
+  numNamesLLAA3050.push_back("pp2/Num/NumALamALam4045");
+  numNamesLLAA3050.push_back("pp2/Num/NumALamALam4550");
   
   vector<TString> denNamesLLAA3050;
-  denNamesLLAA3050.push_back("mm/fBkgLamLam14");
-  denNamesLLAA3050.push_back("mm/fBkgLamLam13");
-  denNamesLLAA3050.push_back("mm/fBkgLamLam12");
-  denNamesLLAA3050.push_back("mm/fBkgLamLam11");
-  denNamesLLAA3050.push_back("pp/fBkgLamLam14");
-  denNamesLLAA3050.push_back("pp/fBkgLamLam13");
-  denNamesLLAA3050.push_back("pp/fBkgLamLam12");
-  denNamesLLAA3050.push_back("pp/fBkgLamLam11");
-  denNamesLLAA3050.push_back("mm/fBkgALamALam14");
-  denNamesLLAA3050.push_back("mm/fBkgALamALam13");
-  denNamesLLAA3050.push_back("mm/fBkgALamALam12");
-  denNamesLLAA3050.push_back("mm/fBkgALamALam11");
-  denNamesLLAA3050.push_back("pp/fBkgALamALam14");
-  denNamesLLAA3050.push_back("pp/fBkgALamALam13");
-  denNamesLLAA3050.push_back("pp/fBkgALamALam12");
-  denNamesLLAA3050.push_back("pp/fBkgALamALam11");
+  denNamesLLAA3050.push_back("mm1/Den/DenLamLam3035");
+  denNamesLLAA3050.push_back("mm1/Den/DenLamLam3540");
+  denNamesLLAA3050.push_back("mm1/Den/DenLamLam4045");
+  denNamesLLAA3050.push_back("mm1/Den/DenLamLam4550");
+  denNamesLLAA3050.push_back("mm2/Den/DenLamLam3035");
+  denNamesLLAA3050.push_back("mm2/Den/DenLamLam3540");
+  denNamesLLAA3050.push_back("mm2/Den/DenLamLam4045");
+  denNamesLLAA3050.push_back("mm2/Den/DenLamLam4550");
+  denNamesLLAA3050.push_back("mm3/Den/DenLamLam3035");
+  denNamesLLAA3050.push_back("mm3/Den/DenLamLam3540");
+  denNamesLLAA3050.push_back("mm3/Den/DenLamLam4045");
+  denNamesLLAA3050.push_back("mm3/Den/DenLamLam4550");
+  denNamesLLAA3050.push_back("pp1/Den/DenLamLam3035");
+  denNamesLLAA3050.push_back("pp1/Den/DenLamLam3540");
+  denNamesLLAA3050.push_back("pp1/Den/DenLamLam4045");
+  denNamesLLAA3050.push_back("pp1/Den/DenLamLam4550");
+  denNamesLLAA3050.push_back("pp2/Den/DenLamLam3035");
+  denNamesLLAA3050.push_back("pp2/Den/DenLamLam3540");
+  denNamesLLAA3050.push_back("pp2/Den/DenLamLam4045");
+  denNamesLLAA3050.push_back("pp2/Den/DenLamLam4550");
+  
+  denNamesLLAA3050.push_back("mm1/Den/DenALamALam3035");
+  denNamesLLAA3050.push_back("mm1/Den/DenALamALam3540");
+  denNamesLLAA3050.push_back("mm1/Den/DenALamALam4045");
+  denNamesLLAA3050.push_back("mm1/Den/DenALamALam4550");
+  denNamesLLAA3050.push_back("mm2/Den/DenALamALam3035");
+  denNamesLLAA3050.push_back("mm2/Den/DenALamALam3540");
+  denNamesLLAA3050.push_back("mm2/Den/DenALamALam4045");
+  denNamesLLAA3050.push_back("mm2/Den/DenALamALam4550");
+  denNamesLLAA3050.push_back("mm3/Den/DenALamALam3035");
+  denNamesLLAA3050.push_back("mm3/Den/DenALamALam3540");
+  denNamesLLAA3050.push_back("mm3/Den/DenALamALam4045");
+  denNamesLLAA3050.push_back("mm3/Den/DenALamALam4550");
+  denNamesLLAA3050.push_back("pp1/Den/DenALamALam3035");
+  denNamesLLAA3050.push_back("pp1/Den/DenALamALam3540");
+  denNamesLLAA3050.push_back("pp1/Den/DenALamALam4045");
+  denNamesLLAA3050.push_back("pp1/Den/DenALamALam4550");
+  denNamesLLAA3050.push_back("pp2/Den/DenALamALam3035");
+  denNamesLLAA3050.push_back("pp2/Den/DenALamALam3540");
+  denNamesLLAA3050.push_back("pp2/Den/DenALamALam4045");
+  denNamesLLAA3050.push_back("pp2/Den/DenALamALam4550");
+  
+
+
+
+  
   initParams[0] = radiiParams[2];
   // fitter->AddPairAnalysisLogFit("LLAA3050", fileNumDen, numNamesLLAA3050, denNamesLLAA3050, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
@@ -471,8 +635,8 @@ void UserSetConstraints(Fitter *myFitter)
   Int_t systemsArrLLandAA[6] = {kLL010, kLL1030,kLL3050,
 				kAA010, kAA1030,kAA3050};
   vector<Int_t> systemsLLandAA(systemsArrLLandAA, systemsArrLLandAA + 6);
-  // myFitter->SetupConstraint(kF0Real, systemsLLandAA);
-  // myFitter->SetupConstraint(kD0, systemsLLandAA);
+  myFitter->SetupConstraint(kF0Real, systemsLLandAA);
+  myFitter->SetupConstraint(kD0, systemsLLandAA);
 
   // Constrain Averaged LLAA with LA
   Int_t systemsArrLLAALA[6] = {kLLAA010, kLLAA1030, kLLAA3050,
@@ -484,25 +648,25 @@ void UserSetConstraints(Fitter *myFitter)
 
   // share radii among like centralities
   vector<Int_t> systems010;
-  systems010.push_back(kLLAA010);
+  // systems010.push_back(kLLAA010);
   systems010.push_back(kLA010);
-  // systems010.push_back(kLL010);
-  // systems010.push_back(kAA010);
-  // myFitter->SetupConstraint(kRad, systems010);
+  systems010.push_back(kLL010);
+  systems010.push_back(kAA010);
+  myFitter->SetupConstraint(kRad, systems010);
 
   vector<Int_t> systems1030;
-  systems1030.push_back(kLLAA1030);
+  // systems1030.push_back(kLLAA1030);
   systems1030.push_back(kLA1030);
-  // systems1030.push_back(kLL1030);
-  // systems1030.push_back(kAA1030);
-  // myFitter->SetupConstraint(kRad, systems1030);
+  systems1030.push_back(kLL1030);
+  systems1030.push_back(kAA1030);
+  myFitter->SetupConstraint(kRad, systems1030);
 
   vector<Int_t> systems3050;
-  systems3050.push_back(kLLAA3050);
+  // systems3050.push_back(kLLAA3050);
   systems3050.push_back(kLA3050);
-  // systems3050.push_back(kLL3050);
-  // systems3050.push_back(kAA3050);
-  // myFitter->SetupConstraint(kRad, systems3050);
+  systems3050.push_back(kLL3050);
+  systems3050.push_back(kAA3050);
+  myFitter->SetupConstraint(kRad, systems3050);
 }
 
 void UserSetFitOptions(Fitter *myFitter)
