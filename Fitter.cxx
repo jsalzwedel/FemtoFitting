@@ -169,8 +169,6 @@ void Fitter::DoFitting()
     fMinuit->mnexcm("SHOw CORrelations", arglist, 1, errFlag);
   }
 
-
-  
   cout<<"Finalchi2:\t"<<fChisquare<<endl
       <<"Fit bins:\t"<<fFitBins<<endl
       <<"Actual Minuit Pars:\t"<<fMinuitParNames.size()<<endl
