@@ -80,10 +80,13 @@ void UserSetupSystems(Fitter *fitter)
 {
   // Add systems to the analysis. The user should modify this 
   // function to suit their fitting needs
+
+  // Default to not using any of the chi2 fits
   Bool_t useLLAA010Chi2 = kFALSE, useLLAA1030Chi2 = kFALSE, useLLAA3050Chi2 = kFALSE,
          useLL010Chi2 = kFALSE, useLL1030Chi2 = kFALSE, useLL3050Chi2 = kFALSE,
          useAA010Chi2 = kFALSE, useAA1030Chi2 = kFALSE, useAA3050Chi2 = kFALSE,
          useLA010Chi2 = kFALSE, useLA1030Chi2 = kFALSE, useLA3050Chi2 = kFALSE;
+  // Uncomment these as needed
   // useLLAA010Chi2  = kTRUE;
   // useLLAA1030Chi2 = kTRUE;
   // useLLAA3050Chi2 = kTRUE;
@@ -96,6 +99,27 @@ void UserSetupSystems(Fitter *fitter)
   useLA010Chi2    = kTRUE;
   useLA1030Chi2   = kTRUE;
   useLA3050Chi2   = kTRUE;
+
+  // Default to not using any of the log fits. Do not use in conjunction with
+  // chisquare fitting!
+  Bool_t useLLAA010Log = kFALSE, useLLAA1030Log = kFALSE, useLLAA3050Log = kFALSE,
+         // useLL010Log = kFALSE, useLL1030Log = kFALSE, useLL3050Log = kFALSE, //Not implemented
+         // useAA010Log = kFALSE, useAA1030Log = kFALSE, useAA3050Log = kFALSE, //Not implemented
+         useLA010Log = kFALSE, useLA1030Log = kFALSE, useLA3050Log = kFALSE;
+  // Uncomment these as needed
+  // useLLAA010Log  = kTRUE;
+  // useLLAA1030Log = kTRUE;
+  // useLLAA3050Log = kTRUE;
+  //  // useLL010Log    = kTRUE; //Not implemented
+  //  // useLL1030Log   = kTRUE; //Not implemented
+  //  // useLL3050Log   = kTRUE; //Not implemented
+  //  // useAA010Log    = kTRUE; //Not implemented 
+  //  // useAA1030Log   = kTRUE; //Not implemented
+  //  // useAA3050Log   = kTRUE; //Not implemented
+  useLA010Log    = kTRUE;
+  useLA1030Log   = kTRUE;
+  useLA3050Log   = kTRUE;
+  
   Bool_t useRootSScalingLL = kFALSE;
   Bool_t useRootSScalingLA = kFALSE;
   
@@ -237,7 +261,7 @@ void UserSetupSystems(Fitter *fitter)
   
   initParamsLA[4] = 10.; // Normalization factor accounts for ~1/10 ratio of num vs den pairs
   initParamsLA[0] = radiiParams[0];
-  // fitter->AddPairAnalysisLogFit("LA010", fileNumDen, numNamesLA010, denNamesLA010, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  if(useLA010Log) fitter->AddPairAnalysisLogFit("LA010", fileNumDen, numNamesLA010, denNamesLA010, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   
   vector<TString> numNamesLA1030;
@@ -284,7 +308,7 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLA1030.push_back("pp2/Den/DenLamALam2025");
   denNamesLA1030.push_back("pp2/Den/DenLamALam2530");
   initParamsLA[0] = radiiParams[1];
-  // fitter->AddPairAnalysisLogFit("LA1030", fileNumDen, numNamesLA1030, denNamesLA1030, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
+  if(useLA1030Log) fitter->AddPairAnalysisLogFit("LA1030", fileNumDen, numNamesLA1030, denNamesLA1030, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   
   vector<TString> numNamesLA3050;
   numNamesLA3050.push_back("mm1/Num/NumLamALam3035");
@@ -330,21 +354,7 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLA3050.push_back("pp2/Den/DenLamALam4045");
   denNamesLA3050.push_back("pp2/Den/DenLamALam4550");
   initParamsLA[0] = radiiParams[2];
-  // fitter->AddPairAnalysisLogFit("LA3050", fileNumDen, numNamesLA3050, denNamesLA3050, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  if(useLA3050Log) fitter->AddPairAnalysisLogFit("LA3050", fileNumDen, numNamesLA3050, denNamesLA3050, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
 
   vector<TString> numNamesLLAA010;
@@ -393,19 +403,11 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLLAA010.push_back("pp2/Den/DenALamALam05");
   denNamesLLAA010.push_back("pp2/Den/DenALamALam510");
 
-
-
-
-
-  
   initParams[4] = 10.; // Normalization factor accounts for ~1/10 ratio of num vs den pairs
   initParams[0] = radiiParams[0];
-  // fitter->AddPairAnalysisLogFit("LLAA010", fileNumDen, numNamesLLAA010, denNamesLLAA010, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  if(useLLAA010Log) fitter->AddPairAnalysisLogFit("LLAA010", fileNumDen, numNamesLLAA010, denNamesLLAA010, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
-
-
-  
   vector<TString> numNamesLLAA1030;
   numNamesLLAA1030.push_back("mm1/Num/NumLamLam1015");
   numNamesLLAA1030.push_back("mm1/Num/NumLamLam1520");
@@ -492,12 +494,8 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLLAA1030.push_back("pp2/Den/DenALamALam2025");
   denNamesLLAA1030.push_back("pp2/Den/DenALamALam2530");
 
-
-  
   initParams[0] = radiiParams[1];
-  // fitter->AddPairAnalysisLogFit("LLAA1030", fileNumDen, numNamesLLAA1030, denNamesLLAA1030, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
-
-
+  if(useLLAA1030Log) fitter->AddPairAnalysisLogFit("LLAA1030", fileNumDen, numNamesLLAA1030, denNamesLLAA1030, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
   vector<TString> numNamesLLAA3050;
@@ -586,12 +584,8 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLLAA3050.push_back("pp2/Den/DenALamALam4045");
   denNamesLLAA3050.push_back("pp2/Den/DenALamALam4550");
   
-
-
-
-  
   initParams[0] = radiiParams[2];
-  // fitter->AddPairAnalysisLogFit("LLAA3050", fileNumDen, numNamesLLAA3050, denNamesLLAA3050, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
+  if(useLLAA3050Log) fitter->AddPairAnalysisLogFit("LLAA3050", fileNumDen, numNamesLLAA3050, denNamesLLAA3050, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   
 
