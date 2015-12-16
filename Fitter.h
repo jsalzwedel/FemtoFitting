@@ -74,6 +74,7 @@ class Fitter{
   Int_t fLowFitBin;
   vector<TString> fParamNames;
   Double_t fNSystems;
+  Double_t fNLogLikelihoodDataSets;
   Int_t fMaxMinuitCalls;
   Double_t fStepSize;
   Bool_t fUseEstimatedLambdaParams;

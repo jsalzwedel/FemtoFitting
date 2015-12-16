@@ -25,6 +25,7 @@ Fitter::Fitter():
   fHighFitBin(40),
   fLowFitBin(0),
   fNSystems(0),
+  fNLogLikelihoodDataSets(0),
   fMaxMinuitCalls(20000),
   fStepSize(0.1),
   fUseEstimatedLambdaParams(kTRUE),
@@ -93,6 +94,7 @@ void Fitter::AddPairAnalysisLogFit(TString simpleName, TString fileName, vector<
   fUseLogLikelihoodFitting = kTRUE;
   CreatePairSystemLog(simpleName, fileName, numNames, denNames, sysType, ledInfo);
   UInt_t numberOfNormParams = numNames.size();
+  fNLogLikelihoodDataSets += numberOfNormParams;
   PushBackParams(simpleName, initParams, minParams, maxParams, fixParams, numberOfNormParams);
 }
 
@@ -232,7 +234,11 @@ Int_t Fitter::GetConstrainedParamIndex(const Int_t currentSys, const Int_t curre
 
 Double_t Fitter::GetChisquarePerNDF()
 {
-  Double_t ndf = 1.*fFitBins - (1.*fMinuitParNames.size() - 1.*fFixedParams);
+  Double_t fitBins = fFitBins;
+  if(fUseLogLikelihoodFitting) {
+    fitBins *= fNLogLikelihoodDataSets;
+  }
+  Double_t ndf = 1.*fitBins - (1.*fMinuitParNames.size() - 1.*fFixedParams);
   return fChisquare/ndf;
 }
 
