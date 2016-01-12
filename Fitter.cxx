@@ -8,6 +8,7 @@
 #include "TStopwatch.h"
 #include "TMath.h"
 #include "TCanvas.h"
+#include "TStyle.h"
 
 #include <iostream>
 #include <assert.h>
@@ -321,6 +322,8 @@ void Fitter::SaveOutputPlots()
       dirLedHists = outFile.GetDirectory("LednickyHists");
     }
   }
+  // TStyle myStyle;
+  gStyle->SetOptStat(0);
   for(Int_t iSys = 0; iSys < fNSystems; iSys++)
   {
     outFile.cd();
@@ -328,6 +331,18 @@ void Fitter::SaveOutputPlots()
     if(cf) {
       cf->SetAxisRange(0.7,1.05,"Y");
       cf->SetAxisRange(0.,1.,"X");
+      cf->SetMarkerStyle(20);
+      cf->SetMarkerColor(1);
+      cf->SetLineColor(1);
+      cf->GetXaxis()->SetLabelSize(0.06);
+      cf->GetYaxis()->SetLabelSize(0.06);
+      cf->GetXaxis()->SetTitleSize(0.06);
+      cf->GetYaxis()->SetTitleSize(0.06);
+      cf->GetXaxis()->SetNdivisions(505);
+      cf->GetYaxis()->SetNdivisions(505);
+      cf->GetXaxis()->SetTitleOffset(0.8);
+      cf->GetXaxis()->CenterTitle();
+
       TString cfName = cf->GetName();
       // cfName += fOutputString;
       cf->Write(cfName, TObject::kOverwrite);
