@@ -64,6 +64,7 @@ Double_t PairSystem::CalculateFitChisquare()
       cfVal /= fNorms[0];
       Double_t diff = cfVal - fCF->GetBinContent(iBin+1);
       Double_t err = fCF->GetBinError(iBin+1);
+      if(err < 0.0000001) continue;
       chi2 += pow(diff,2)/pow(err,2);
     }
   }
