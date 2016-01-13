@@ -27,6 +27,8 @@ Fitter::Fitter():
   fFitBins(40),
   fHighFitBin(40),
   fLowFitBin(0),
+  fHighBkgFitBin(1000),
+  fLowBkgFitBin(1000),
   fNSystems(0),
   fNLogLikelihoodDataSets(0),
   fMaxMinuitCalls(20000),
@@ -412,7 +414,7 @@ void Fitter::SetHighFitBin(Int_t bin)
     fPairSystems[iSys]->SetHighFitBin(bin);
   }
   fHighFitBin = bin;
-  fFitBins = (fHighFitBin - fLowFitBin) * fNSystems;
+  fFitBins = (fHighFitBin - fLowFitBin + fHighBkgFitBin - fLowBkgFitBin) * fNSystems;
 }
 
 void Fitter::SetLowFitBin(Int_t bin)
@@ -422,7 +424,27 @@ void Fitter::SetLowFitBin(Int_t bin)
     fPairSystems[iSys]->SetLowFitBin(bin);
   }
   fLowFitBin = bin;
-  fFitBins = (fHighFitBin - fLowFitBin) * fNSystems;
+  fFitBins = (fHighFitBin - fLowFitBin + fHighBkgFitBin - fLowBkgFitBin) * fNSystems;
+}
+
+void Fitter::SetHighBkgFitBin(Int_t bin)
+{
+  for(UInt_t iSys = 0; iSys < fNSystems; iSys++)
+  {
+    fPairSystems[iSys]->SetHighBkgFitBin(bin);
+  }
+  fHighBkgFitBin = bin;
+  fFitBins = (fHighFitBin - fLowFitBin + fHighBkgFitBin - fLowBkgFitBin) * fNSystems;
+}
+
+void Fitter::SetLowBkgFitBin(Int_t bin)
+{
+  for(UInt_t iSys = 0; iSys < fNSystems; iSys++)
+  {
+    fPairSystems[iSys]->SetLowBkgFitBin(bin);
+  }
+  fLowBkgFitBin = bin;
+  fFitBins = (fHighFitBin - fLowFitBin + fHighBkgFitBin - fLowBkgFitBin) * fNSystems;
 }
 
 void Fitter::SetMinuitVerbosity(Int_t verbosity)

@@ -38,6 +38,8 @@ class Fitter{
   void SetDisplayResidualComponents(Bool_t shouldDraw) {fDisplayResidualComponents = shouldDraw;};
   void SetHighFitBin(Int_t bin);
   void SetLowFitBin(Int_t bin);
+  void SetHighBkgFitBin(Int_t bin);
+  void SetLowBkgFitBin(Int_t bin);
   void SetMinuitVerbosity(Int_t verbosity);
   void SetOutputString(TString outStr) {fOutputString = outStr;};
   void SetParametersAndFit(Int_t& i, Double_t &totalChisquare, Double_t *par);
@@ -74,6 +76,8 @@ class Fitter{
   Int_t fFitBins;
   Int_t fHighFitBin;
   Int_t fLowFitBin;
+  Int_t fHighBkgFitBin;
+  Int_t fLowBkgFitBin;
   vector<TString> fParamNames;
   Double_t fNSystems;
   Double_t fNLogLikelihoodDataSets;
