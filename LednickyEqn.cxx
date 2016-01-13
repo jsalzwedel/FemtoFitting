@@ -124,7 +124,7 @@ TGraph *LednickyEqn::GetLednickyGraph()
   return lednickyGraph;
 }
 
-void LednickyEqn::SetParameters(const vector<Double_t> pars)
+void LednickyEqn::SetParameters(const vector<Double_t> &pars)
 {
   // Set all the fit parameters
   // Normalization is taken care of by PairSystem class

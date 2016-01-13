@@ -23,7 +23,7 @@ class LednickyEqn{
   LednickyEqn(const LednickyInfo &info, Int_t nBins, Double_t binWidth);
   virtual ~LednickyEqn();
   TGraph *GetLednickyGraph();
-  void SetParameters(const vector<Double_t> pars);
+  void SetParameters(const vector<Double_t> &pars);
   //Other setters/getters?
 
  private:
