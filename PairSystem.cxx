@@ -58,9 +58,29 @@ Double_t PairSystem::CalculateFitChisquare()
       }
 
       // Now add in chisquare from the background fit range.
+      for(Int_t iBin = fLowBkgFitBin; iBin < fHighBkgFitBin; iBin++) {
+ 	if(iBin > combinedGraph->GetN()) {
+	  cout<<"Background fit range exceeds bins of graph"<<endl;
+	  break;
+	}
+	  
+	Double_t numCount = fNumHists[iHist]->GetBinContent(iBin+1);
+	if(numCount == 0) continue;
+	Double_t denCount = fDenHists[iHist]->GetBinContent(iBin+1);
+	if(denCount == 0) continue;
+	Double_t cfVal = 1.;
+	Double_t kStar = fBinWidth * (1.*iBin + 0.5);
+	cfVal += pow(kStar, 2) * fQuadraticBkg;
+	cfVal /= fNorms[iHist];
 
+	Double_t log1st = log(cfVal * (numCount + denCount) /
+			      (numCount * (cfVal + 1)));
+	Double_t log2nd = log((numCount + denCount) /
+			      (denCount * (cfVal + 1)));
+	chi2 -= 2. * (numCount * log1st + denCount * log2nd);
+      }
 
-    
+      //
     }
   } else {
     // Do regular chisquare minimization on the correlation function
@@ -75,8 +95,25 @@ Double_t PairSystem::CalculateFitChisquare()
     }
 
     // Now add in chisquare from the background fit range.
+    if(fUseQuadraticBkg) {
+      for(Int_t iBin = fLowBkgFitBin; iBin < fHighBkgFitBin; iBin++) {
+ 	if(iBin > combinedGraph->GetN()) {
+	  cout<<"Background fit range exceeds bins of graph"<<endl;
+	  break;
+	}
+	Double_t cfVal = 1.; // By definition, lednicky eqn should be unity
+	// in background region
+	Double_t kStar = fBinWidth * (1.*iBin + 0.5);
+	cfVal += pow(kStar, 2) * fQuadraticBkg;
+	cfVal /= fNorms[0];
 
-    
+	Double_t diff = cfVal - fCF->GetBinContent(iBin+1);
+	Double_t err = fCF->GetBinError(iBin+1);
+	if(err < 0.0000001) continue;
+	chi2 += pow(diff,2)/pow(err,2);
+      }
+      
+    }
   }
   delete combinedGraph;
   return chi2;
@@ -121,10 +158,6 @@ TGraph* PairSystem::GetCombinedTGraph()
 
     delete ledEqn;
   }
-  if(!fUseLogLikelihood) {
-    ScaleGraph(combinedLednicky, 1./fNorms[0]);
-  }
-
   if(fUseQuadraticBkg) {
     // Add a quadratic parameter to account for the background.
     for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++)
@@ -132,6 +165,9 @@ TGraph* PairSystem::GetCombinedTGraph()
       Double_t kStar = fBinWidth * (1.*iBin + 0.5);
       combinedLednicky->GetY()[iBin] += pow(kStar, 2) * fQuadraticBkg;
     }
+  }
+  if(!fUseLogLikelihood) {
+    ScaleGraph(combinedLednicky, 1./fNorms[0]);
   }
   return combinedLednicky;
 }
@@ -249,7 +285,9 @@ fQuadraticBkg(0.),
 fUseQuadraticBkg(kFALSE),
 fUseLogLikelihood(kFALSE),
 fLowFitBin(0),
-fHighFitBin(50)
+fHighFitBin(50),
+fLowBkgFitBin(1000),
+fHighBkgFitBin(1000)
 {
   // Constructor for use with chisquare fitting
   assert(cfData);
@@ -275,7 +313,9 @@ fQuadraticBkg(0.),
 fUseQuadraticBkg(kFALSE),
 fUseLogLikelihood(kTRUE),
 fLowFitBin(0),
-fHighFitBin(50)
+fHighFitBin(50),
+fLowBkgFitBin(1000),
+fHighBkgFitBin(1000)
 {
   // Constructor for log-likelihood fitting using numerator and
   // denominator distributions
