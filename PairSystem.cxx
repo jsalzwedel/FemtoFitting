@@ -1,6 +1,7 @@
 #include "LednickyInfo.h"
 #include "LednickyEqn.h"
 #include "PairSystem.h"
+#include "ParamType.h"
 
 #include "TStopwatch.h"
 #include "TStyle.h"
@@ -106,8 +107,18 @@ TGraph* PairSystem::GetCombinedTGraph()
       Double_t graphValue = ledEqn->GetY()[iBin];
       Double_t partialBinContent = (graphValue - 1.) * lambdaParam;
       combinedLednicky->GetY()[iBin] += partialBinContent;
+
     }
+
     delete ledEqn;
+  }
+  if(fUseQuadraticBkg) {
+    // Add a quadratic parameter to account for the background.
+    for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++)
+    {
+      Double_t kStar = fBinWidth * (1.*iBin + 0.5);
+      combinedLednicky->GetY()[iBin] += pow(kStar, 2) * fQuadraticBkg;
+    }
   }
   return combinedLednicky;
 }
@@ -207,10 +218,10 @@ void PairSystem::SetLednickyParameters(vector<Double_t> pars)
   }
   // Normalization parameter should be stored in PairSystem, not
   // passed on to Lednicky Eqn
-  if(!fUseLogLikelihood) fNorms[0] = pars[4];
+  if(!fUseLogLikelihood) fNorms[0] = pars[kNorm];
   else {
     for(UInt_t iHists = 0; iHists < fNHists; iHists++) {
-      fNorms[iHists] = pars[iHists + 4];
+      fNorms[iHists] = pars[iHists + kNorm];
     }
   }
 }
@@ -220,7 +231,8 @@ fPairTypeName(pairTypeName),
 fSystemType(sysType),
 fCF(cfData),
 fNHists(0),
-// fNorm(1.),
+fQuadraticBkg(0.),
+fUseQuadraticBkg(kFALSE),
 fUseLogLikelihood(kFALSE),
 fLowFitBin(0),
 fHighFitBin(50)
@@ -245,7 +257,8 @@ fSystemType(sysType),
 fCF(NULL),
 fNumHists(numHists),
 fDenHists(denHists),
-// fNorm(1.),
+fQuadraticBkg(0.),
+fUseQuadraticBkg(kFALSE),
 fUseLogLikelihood(kTRUE),
 fLowFitBin(0),
 fHighFitBin(50)
