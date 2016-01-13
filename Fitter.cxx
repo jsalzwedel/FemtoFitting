@@ -3,6 +3,8 @@
 //**********************************************************
 
 #include "Fitter.h"
+#include "ParamType.h"
+
 #include "TH1D.h"
 #include "TFile.h"
 #include "TStopwatch.h"
@@ -34,6 +36,7 @@ Fitter::Fitter():
   fDisplayResidualComponents(kFALSE),
   fUseChisquareFitting(kFALSE),
   fUseLogLikelihoodFitting(kFALSE),
+  fUseQuadraticBackground(kFALSE),
   fOutputString(""),
   fFitCalls(0),
   fChisquare(0.),
@@ -44,8 +47,8 @@ Fitter::Fitter():
   fParamNames.push_back("ReF0");
   fParamNames.push_back("ImF0");
   fParamNames.push_back("D0");
+  fParamNames.push_back("QuadBkg");
   fParamNames.push_back("Norm");
-  
 }
 
 Fitter::~Fitter()
@@ -109,6 +112,7 @@ void Fitter::CreatePairSystemChisquare(TString simpleName, TString fileName, TSt
   assert(cf);
   cf->SetDirectory(0);
   PairSystem *system = new PairSystem(cf, ledInfo, simpleName, sysType);
+  system->SetUseQuadraticBkg(fUseQuadraticBackground);
   fPairSystems.push_back(system);
 }
 
@@ -131,6 +135,7 @@ void Fitter::CreatePairSystemLog(TString simpleName, TString fileName, vector<TS
     denHists.push_back(den);
   }
   PairSystem *system = new PairSystem(numHists, denHists, ledInfo, simpleName, sysType);
+  system->SetUseQuadraticBkg(fUseQuadraticBackground);
   fPairSystems.push_back(system);
   cout<<"Added pair system with "<<numNames.size()<<" num and den pairs"<<endl;
 }
@@ -290,10 +295,10 @@ void Fitter::PushBackParams(TString simpleName, vector<Double_t> initParams, vec
   // If we need extra normalization parameters (for log fitting),
   // add them here. Add extra copies of the supplied norm param.
   for(UInt_t i = 1; i < nNormParams; i++) {
-    initParams.push_back(initParams[4]);
-    minParams.push_back(minParams[4]);
-    maxParams.push_back(maxParams[4]);
-    fixParams.push_back(fixParams[4]);
+    initParams.push_back(initParams[kNorm]);
+    minParams.push_back(minParams[kNorm]);
+    maxParams.push_back(maxParams[kNorm]);
+    fixParams.push_back(fixParams[kNorm]);
   }
   // Add these parameters to the fitter's list
   fSystemNames.push_back(simpleName);
@@ -512,9 +517,9 @@ void Fitter::SetupInitialParameterVectors()
       }
       // New parameter.  Now set it up.
       TString parName = "";
-      if(iPar > 3) {
+      if(iPar >= kNorm) {
 	parName += "Norm";
-	Int_t normIndex = iPar - 3;
+	Int_t normIndex = iPar - kNorm;
 	parName += normIndex;
 	parName += fSystemNames[iSys];
       }
@@ -541,4 +546,10 @@ void Fitter::Timer()
   if(!fTimer) return;
   fTimer->Print();
   fTimer->Continue();
+}
+
+void Fitter::UpdatePairSystemQuadBkgUsage(Bool_t shouldUse) {
+  for(UInt_t iSys = 0; iSys < fPairSystems.size(); iSys++) {
+    fPairSystems[iSys]->SetUseQuadraticBkg(shouldUse);
+  }
 }
