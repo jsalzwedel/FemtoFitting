@@ -1,5 +1,6 @@
 
 #include "LednickyInfo.h"
+#include "ParamType.h"
 #include "Fitter.h"
 #include <iostream>
 #include "TMinuit.h"
@@ -13,11 +14,12 @@ using namespace std;
 Fitter *myFitter = NULL;
 
 
-enum ParamType  {kRad    = 0,
-		 kF0Real = 1,
-		 kF0Imag = 2,
-		 kD0     = 3,
-		 kNorm   = 4};
+// enum ParamType  {kRad     = 0,
+// 		 kF0Real  = 1,
+// 		 kF0Imag  = 2,
+// 		 kD0      = 3,
+// 		 kQuadBkg = 4,
+// 		 kNorm    = 5};
 
 enum SystemType {kLL010, kLL1030, kLL3050,
 		 kAA010, kAA1030, kAA3050,
@@ -96,7 +98,7 @@ void UserSetupSystems(Fitter *fitter)
   // useAA010Chi2    = kTRUE;
   // useAA1030Chi2   = kTRUE;
   // useAA3050Chi2   = kTRUE;
-  // useLA010Chi2    = kTRUE;
+  useLA010Chi2    = kTRUE;
   // useLA1030Chi2   = kTRUE;
   // useLA3050Chi2   = kTRUE;
 
@@ -116,29 +118,32 @@ void UserSetupSystems(Fitter *fitter)
   //  // useAA010Log    = kTRUE; //Not implemented 
   //  // useAA1030Log   = kTRUE; //Not implemented
   //  // useAA3050Log   = kTRUE; //Not implemented
-  useLA010Log    = kTRUE;
+  // useLA010Log    = kTRUE;
   // useLA1030Log   = kTRUE;
   // useLA3050Log   = kTRUE;
-  
+
+  Bool_t useQuadraticBackground = kFALSE;
   Bool_t useRootSScalingLL = kFALSE;
   Bool_t useRootSScalingLA = kFALSE;
+
+  fitter->SetUseQuadraticBackground(useQuadraticBackground);
   
   /////////// Setting up Lambda-Lambda + Antilambda-Antilambda //////////////////
   // 0-10%
   TString fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
   TString histName = "Merged/CFLLAA010";
   TString simpleName = "LLAA010";
-  // Make initial parameters: Radius, ReF0, ImF0, D0, Normalization 
+  // Make initial parameters: Radius, ReF0, ImF0, D0, QuadBkg, Norm 
   Double_t radiiParams[3] = {4., 2.67, 2.02};
-  Double_t initParamsArr[5] = {radiiParams[0], -.63, 0., 1.36, 1.}; 
-  vector<Double_t> initParams(initParamsArr, initParamsArr+5);
-  Double_t minParamsArr[5] = {0., 0., 0., 0., 0.};
-  vector<Double_t> minParams(minParamsArr, minParamsArr+5);
-  Double_t maxParamsArr[5] = {0., 0., 0., 0., 0.};
-  vector<Double_t> maxParams(maxParamsArr, maxParamsArr+5);  
+  Double_t initParamsArr[6] = {radiiParams[0], -.63, 0., 1.36, 0., 1.}; 
+  vector<Double_t> initParams(initParamsArr, initParamsArr+6);
+  Double_t minParamsArr[6] = {0., 0., 0., 0., 0., 0.};
+  vector<Double_t> minParams(minParamsArr, minParamsArr+6);
+  Double_t maxParamsArr[6] = {0., 0., 0., 0., 0., 0.};
+  vector<Double_t> maxParams(maxParamsArr, maxParamsArr+6);  
   // Determine which parameters should be fixed in the fitter.
-  Bool_t fixParamsArr[5] = {kFALSE, kFALSE, kTRUE, kFALSE, kFALSE};
-  vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+5);
+  Bool_t fixParamsArr[6] = {kFALSE, kFALSE, kTRUE, kFALSE, !useQuadraticBackground, kFALSE};
+  vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+6);
   // Prepare the lednicky eqn info (lambda parameters, transform matrix locations, whether or not particles are identical)
   vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE, useRootSScalingLL);
   if(useLLAA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
@@ -208,10 +213,10 @@ void UserSetupSystems(Fitter *fitter)
   // histName = "mm12CF20";
 
   simpleName = "LA010";
-  Double_t initParamsArrLA[5] = {radiiParams[0], -1., 1., 3., 1.}; 
-  vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + 5);
-  Bool_t fixParamsArrLA[5] = {kFALSE, kFALSE, kFALSE, kFALSE, kFALSE};
-  vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 5);
+  Double_t initParamsArrLA[6] = {radiiParams[0], -1., 1., 3., 0., 1.}; 
+  vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + 6);
+  Bool_t fixParamsArrLA[6] = {kFALSE, kFALSE, kFALSE, kFALSE, !useQuadraticBackground, kFALSE};
+  vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 6);
 
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE, useRootSScalingLA);
   if(useLA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
@@ -643,23 +648,23 @@ void UserSetConstraints(Fitter *myFitter)
   // share radii among like centralities
   vector<Int_t> systems010;
   // systems010.push_back(kLLAA010);
-  systems010.push_back(kLA010);
-  systems010.push_back(kLL010);
-  systems010.push_back(kAA010);
+  // systems010.push_back(kLA010);
+  // systems010.push_back(kLL010);
+  // systems010.push_back(kAA010);
   // myFitter->SetupConstraint(kRad, systems010);
 
   vector<Int_t> systems1030;
-  // systems1030.push_back(kLLAA1030);
+  systems1030.push_back(kLLAA1030);
   systems1030.push_back(kLA1030);
-  systems1030.push_back(kLL1030);
-  systems1030.push_back(kAA1030);
+  // systems1030.push_back(kLL1030);
+  // systems1030.push_back(kAA1030);
   // myFitter->SetupConstraint(kRad, systems1030);
 
   vector<Int_t> systems3050;
-  // systems3050.push_back(kLLAA3050);
+  systems3050.push_back(kLLAA3050);
   systems3050.push_back(kLA3050);
-  systems3050.push_back(kLL3050);
-  systems3050.push_back(kAA3050);
+  // systems3050.push_back(kLL3050);
+  // systems3050.push_back(kAA3050);
   // myFitter->SetupConstraint(kRad, systems3050);
 }
 
