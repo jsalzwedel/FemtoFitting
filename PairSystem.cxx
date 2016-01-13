@@ -56,18 +56,27 @@ Double_t PairSystem::CalculateFitChisquare()
 	//     <<"\tNum:\t"<<numCount
 	//     <<"\tDen:\t"<<denCount<<endl;
       }
+
+      // Now add in chisquare from the background fit range.
+
+
+    
     }
   } else {
     // Do regular chisquare minimization on the correlation function
     for(Int_t iBin = fLowFitBin; iBin < fHighFitBin; iBin++)
     {
       Double_t cfVal = combinedGraph->GetY()[iBin];
-      cfVal /= fNorms[0];
+      // cfVal /= fNorms[0];
       Double_t diff = cfVal - fCF->GetBinContent(iBin+1);
       Double_t err = fCF->GetBinError(iBin+1);
       if(err < 0.0000001) continue;
       chi2 += pow(diff,2)/pow(err,2);
     }
+
+    // Now add in chisquare from the background fit range.
+
+    
   }
   delete combinedGraph;
   return chi2;
@@ -112,6 +121,10 @@ TGraph* PairSystem::GetCombinedTGraph()
 
     delete ledEqn;
   }
+  if(!fUseLogLikelihood) {
+    ScaleGraph(combinedLednicky, 1./fNorms[0]);
+  }
+
   if(fUseQuadraticBkg) {
     // Add a quadratic parameter to account for the background.
     for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++)
@@ -218,6 +231,7 @@ void PairSystem::SetLednickyParameters(vector<Double_t> pars)
   }
   // Normalization parameter should be stored in PairSystem, not
   // passed on to Lednicky Eqn
+  fQuadraticBkg = pars[kQuadBkg];
   if(!fUseLogLikelihood) fNorms[0] = pars[kNorm];
   else {
     for(UInt_t iHists = 0; iHists < fNHists; iHists++) {
