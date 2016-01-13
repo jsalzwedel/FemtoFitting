@@ -122,7 +122,7 @@ void UserSetupSystems(Fitter *fitter)
   // useLA1030Log   = kTRUE;
   // useLA3050Log   = kTRUE;
 
-  Bool_t useQuadraticBackground = kFALSE;
+  Bool_t useQuadraticBackground = kTRUE;
   Bool_t useRootSScalingLL = kFALSE;
   Bool_t useRootSScalingLA = kFALSE;
 
@@ -671,15 +671,21 @@ void UserSetConstraints(Fitter *myFitter)
 void UserSetFitOptions(Fitter *myFitter)
 {
   // Set the upper bin of the fit range
-   myFitter->SetHighFitBin(40);
+  myFitter->SetHighFitBin(40);
+
+  // Set low bin for fitting background with quadratic
+  myFitter->SetLowBkgFitBin(60);
+
+  myFitter->SetHighBkgFitBin(90);
+   
    
   // How big should the initial starting value fit uncertainty be?
   // This is a catchall for *all* parameter step sizes.
-   myFitter->SetStartingStepSize(.1);
+  myFitter->SetStartingStepSize(.1);
 
 
-   // Use MINOS to find error bars?
-   myFitter->SetUseMINOS(kFALSE);
+  // Use MINOS to find error bars?
+  myFitter->SetUseMINOS(kFALSE);
    
   // optional suffix for saved plots and objects
   TString outString = "";
