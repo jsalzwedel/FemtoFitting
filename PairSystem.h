@@ -35,8 +35,8 @@ class PairSystem{
   void SetLednickyParameters(vector<Double_t> pars);
   void SetLowFitBin(Int_t bin) {fLowFitBin = bin;};
   void SetHighFitBin(Int_t bin) {fHighFitBin = bin;};
-  void SetLowBkgFitBin(Int_t bin) {fLowFitBin = bin;};
-  void SetHighBkgFitBin(Int_t bin) {fHighFitBin = bin;};
+  void SetLowBkgFitBin(Int_t bin) {fLowBkgFitBin = bin;};
+  void SetHighBkgFitBin(Int_t bin) {fHighBkgFitBin = bin;};
   void SetSystemType(Int_t sysType) {fSystemType = sysType;};
   void SetUseQuadraticBkg(Bool_t shouldUse) {fUseQuadraticBkg = shouldUse;};
 
