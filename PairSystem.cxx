@@ -57,30 +57,30 @@ Double_t PairSystem::CalculateFitChisquare()
 	//     <<"\tDen:\t"<<denCount<<endl;
       }
 
-      // Now add in chisquare from the background fit range.
-      for(Int_t iBin = fLowBkgFitBin; iBin < fHighBkgFitBin; iBin++) {
- 	if(iBin > combinedGraph->GetN()) {
-	  cout<<"Background fit range exceeds bins of graph"<<endl;
-	  break;
-	}
+      if(fUseQuadraticBkg) {
+	// Now add in chisquare from the background fit range.
+	for(Int_t iBin = fLowBkgFitBin; iBin < fHighBkgFitBin; iBin++) {
+	  if(iBin > combinedGraph->GetN()) {
+	    cout<<"Background fit range exceeds bins of graph"<<endl;
+	    break;
+	  }
 	  
-	Double_t numCount = fNumHists[iHist]->GetBinContent(iBin+1);
-	if(numCount == 0) continue;
-	Double_t denCount = fDenHists[iHist]->GetBinContent(iBin+1);
-	if(denCount == 0) continue;
-	Double_t cfVal = 1.;
-	Double_t kStar = fBinWidth * (1.*iBin + 0.5);
-	cfVal += pow(kStar, 2) * fQuadraticBkg;
-	cfVal /= fNorms[iHist];
+	  Double_t numCount = fNumHists[iHist]->GetBinContent(iBin+1);
+	  if(numCount == 0) continue;
+	  Double_t denCount = fDenHists[iHist]->GetBinContent(iBin+1);
+	  if(denCount == 0) continue;
+	  Double_t kStar = fBinWidth * (1.*iBin + 0.5);
+	  Double_t cfVal = 1. + pow(kStar, 2) * fQuadraticBkg;
+      
+	  cfVal /= fNorms[iHist];
 
-	Double_t log1st = log(cfVal * (numCount + denCount) /
-			      (numCount * (cfVal + 1)));
-	Double_t log2nd = log((numCount + denCount) /
-			      (denCount * (cfVal + 1)));
-	chi2 -= 2. * (numCount * log1st + denCount * log2nd);
+	  Double_t log1st = log(cfVal * (numCount + denCount) /
+				(numCount * (cfVal + 1)));
+	  Double_t log2nd = log((numCount + denCount) /
+				(denCount * (cfVal + 1)));
+	  chi2 -= 2. * (numCount * log1st + denCount * log2nd);
+	}
       }
-
-      //
     }
   } else {
     // Do regular chisquare minimization on the correlation function
@@ -163,7 +163,7 @@ TGraph* PairSystem::GetCombinedTGraph()
     for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++)
     {
       Double_t kStar = fBinWidth * (1.*iBin + 0.5);
-      combinedLednicky->GetY()[iBin] += pow(kStar, 2) * fQuadraticBkg;
+      combinedLednicky->GetY()[iBin] *= (1 + pow(kStar, 2) * fQuadraticBkg);
     }
   }
   if(!fUseLogLikelihood) {
