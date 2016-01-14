@@ -216,7 +216,7 @@ void UserSetupSystems(Fitter *fitter)
   simpleName = "LA010";
   Double_t initParamsArrLA[6] = {radiiParams[0], -1., 1., 3., 0., 1.}; 
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + 6);
-  Bool_t fixParamsArrLA[6] = {kTRUE, kTRUE, kTRUE, kTRUE, !useQuadraticBackground, kTRUE};
+  Bool_t fixParamsArrLA[6] = {kFALSE, kTRUE, kTRUE, kTRUE, !useQuadraticBackground, kTRUE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 6);
 
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE, useRootSScalingLA);
@@ -689,7 +689,7 @@ void UserSetFitOptions(Fitter *myFitter)
   myFitter->SetUseMINOS(kFALSE);
    
   // optional suffix for saved plots and objects
-  TString outString = "";
+  TString outString = "TestingNew";
   myFitter->SetOutputString(outString);
 
   // Output extra plots showing all residual correlation components?
