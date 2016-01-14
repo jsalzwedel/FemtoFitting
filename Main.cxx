@@ -102,7 +102,7 @@ void UserSetupSystems(Fitter *fitter)
   // useLA1030Chi2   = kTRUE;
   // useLA3050Chi2   = kTRUE;
 
-  // Default to not using any of the log fits. Do not use in conjunction with
+  // Default to not using any of the log fits. Do not us in conjunction with
   // chisquare fitting!
   Bool_t useLLAA010Log = kFALSE, useLLAA1030Log = kFALSE, useLLAA3050Log = kFALSE,
          // useLL010Log = kFALSE, useLL1030Log = kFALSE, useLL3050Log = kFALSE, //Not implemented
@@ -122,7 +122,8 @@ void UserSetupSystems(Fitter *fitter)
   // useLA1030Log   = kTRUE;
   // useLA3050Log   = kTRUE;
 
-  Bool_t useQuadraticBackground = kTRUE;
+  Bool_t useQuadraticBackground = kFALSE;
+  // useQuadraticBackground = kTRUE;
   Bool_t useRootSScalingLL = kFALSE;
   Bool_t useRootSScalingLA = kFALSE;
 
