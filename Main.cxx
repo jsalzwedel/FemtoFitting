@@ -216,7 +216,7 @@ void UserSetupSystems(Fitter *fitter)
   simpleName = "LA010";
   Double_t initParamsArrLA[6] = {radiiParams[0], -1., 1., 3., 0., 1.}; 
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + 6);
-  Bool_t fixParamsArrLA[6] = {kFALSE, kFALSE, kFALSE, kFALSE, !useQuadraticBackground, kFALSE};
+  Bool_t fixParamsArrLA[6] = {kTRUE, kTRUE, kTRUE, kTRUE, !useQuadraticBackground, kTRUE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 6);
 
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE, useRootSScalingLA);
