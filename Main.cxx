@@ -89,9 +89,9 @@ void UserSetupSystems(Fitter *fitter)
          useAA010Chi2 = kFALSE, useAA1030Chi2 = kFALSE, useAA3050Chi2 = kFALSE,
          useLA010Chi2 = kFALSE, useLA1030Chi2 = kFALSE, useLA3050Chi2 = kFALSE;
   // Uncomment these as needed
-  // useLLAA010Chi2  = kTRUE;
-  // useLLAA1030Chi2 = kTRUE;
-  // useLLAA3050Chi2 = kTRUE;
+  useLLAA010Chi2  = kTRUE;
+  useLLAA1030Chi2 = kTRUE;
+  useLLAA3050Chi2 = kTRUE;
   // useLL010Chi2    = kTRUE;
   // useLL1030Chi2   = kTRUE;
   // useLL3050Chi2   = kTRUE;
@@ -99,8 +99,8 @@ void UserSetupSystems(Fitter *fitter)
   // useAA1030Chi2   = kTRUE;
   // useAA3050Chi2   = kTRUE;
   useLA010Chi2    = kTRUE;
-  // useLA1030Chi2   = kTRUE;
-  // useLA3050Chi2   = kTRUE;
+  useLA1030Chi2   = kTRUE;
+  useLA3050Chi2   = kTRUE;
 
   // Default to not using any of the log fits. Do not us in conjunction with
   // chisquare fitting!
@@ -123,7 +123,7 @@ void UserSetupSystems(Fitter *fitter)
   // useLA3050Log   = kTRUE;
 
   Bool_t useQuadraticBackground = kFALSE;
-  // useQuadraticBackground = kTRUE;
+  useQuadraticBackground = kTRUE;
   Bool_t useRootSScalingLL = kFALSE;
   Bool_t useRootSScalingLA = kFALSE;
 
@@ -216,7 +216,7 @@ void UserSetupSystems(Fitter *fitter)
   simpleName = "LA010";
   Double_t initParamsArrLA[6] = {radiiParams[0], -1., 1., 3., 0., 1.}; 
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + 6);
-  Bool_t fixParamsArrLA[6] = {kFALSE, kTRUE, kTRUE, kTRUE, !useQuadraticBackground, kTRUE};
+  Bool_t fixParamsArrLA[6] = {kFALSE, kFALSE, kFALSE, kFALSE, !useQuadraticBackground, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 6);
 
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE, useRootSScalingLA);
@@ -608,15 +608,15 @@ void UserSetConstraints(Fitter *myFitter)
   // Share real f0, imaginary f0, and d0 among partical-antiparticle
   Int_t systemsArrLA[3] = {kLA010, kLA1030, kLA3050};
   vector<Int_t> systemsLA(systemsArrLA, systemsArrLA + 3);
-  // myFitter->SetupConstraint(kF0Real, systemsLA);
-  // myFitter->SetupConstraint(kF0Imag, systemsLA);
-  // myFitter->SetupConstraint(kD0, systemsLA);
+  myFitter->SetupConstraint(kF0Real, systemsLA);
+  myFitter->SetupConstraint(kF0Imag, systemsLA);
+  myFitter->SetupConstraint(kD0, systemsLA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030, kLLAA3050};
   vector<Int_t> systemsLLAA(systemsArrLLAA, systemsArrLLAA + 3);
-  // myFitter->SetupConstraint(kF0Real, systemsLLAA);
-  // myFitter->SetupConstraint(kD0, systemsLLAA);
+  myFitter->SetupConstraint(kF0Real, systemsLLAA);
+  myFitter->SetupConstraint(kD0, systemsLLAA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda
   Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
@@ -648,25 +648,25 @@ void UserSetConstraints(Fitter *myFitter)
 
   // share radii among like centralities
   vector<Int_t> systems010;
-  // systems010.push_back(kLLAA010);
-  // systems010.push_back(kLA010);
+  systems010.push_back(kLLAA010);
+  systems010.push_back(kLA010);
   // systems010.push_back(kLL010);
   // systems010.push_back(kAA010);
-  // myFitter->SetupConstraint(kRad, systems010);
+  myFitter->SetupConstraint(kRad, systems010);
 
   vector<Int_t> systems1030;
   systems1030.push_back(kLLAA1030);
   systems1030.push_back(kLA1030);
   // systems1030.push_back(kLL1030);
   // systems1030.push_back(kAA1030);
-  // myFitter->SetupConstraint(kRad, systems1030);
+  myFitter->SetupConstraint(kRad, systems1030);
 
   vector<Int_t> systems3050;
   systems3050.push_back(kLLAA3050);
   systems3050.push_back(kLA3050);
   // systems3050.push_back(kLL3050);
   // systems3050.push_back(kAA3050);
-  // myFitter->SetupConstraint(kRad, systems3050);
+  myFitter->SetupConstraint(kRad, systems3050);
 }
 
 void UserSetFitOptions(Fitter *myFitter)
@@ -689,7 +689,7 @@ void UserSetFitOptions(Fitter *myFitter)
   myFitter->SetUseMINOS(kFALSE);
    
   // optional suffix for saved plots and objects
-  TString outString = "TestingNew";
+  TString outString = "";
   myFitter->SetOutputString(outString);
 
   // Output extra plots showing all residual correlation components?
