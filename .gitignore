@@ -11,3 +11,10 @@
 *.root
 *.o
 AutoDict_*
+*.ods*
+*.xlsx
+*.C
+*.old
+*/
+*#
+runMe
