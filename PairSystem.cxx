@@ -161,7 +161,7 @@ TGraph* PairSystem::GetCombinedTGraph()
     delete ledEqn;
   }
   if(fBkgPolyOrder) {
-    // Add a quadratic parameter to account for the background.
+    // Add a background parameter to account for the background.
     for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++)
     {
       Double_t kStar = fBinWidth * (1.*iBin + 0.5);
@@ -269,7 +269,7 @@ void PairSystem::SetLednickyParameters(vector<Double_t> pars)
   }
   // Normalization parameter should be stored in PairSystem, not
   // passed on to Lednicky Eqn
-  fBkgParam = pars[kQuadBkg];
+  fBkgParam = pars[kBkgCoeff];
   if(!fUseLogLikelihood) fNorms[0] = pars[kNorm];
   else {
     for(UInt_t iHists = 0; iHists < fNHists; iHists++) {

@@ -56,7 +56,7 @@ class PairSystem{
   vector<TH1D*> fDenHists; // Collection of denominator histograms for likelihood fitting
   UInt_t fNHists; // Number of num-den hist pairs that are being fit
   vector<Double_t> fNorms; // Normalization parameters for combined Lednicky graph.  Each CF or Num/Den pair has a norm parameter.
-  Double_t fBkgParam; // Quadratic background parameter
+  Double_t fBkgParam; // Bckground coefficient parameter
   Int_t fBkgPolyOrder; // order of bkg param (linear, quad, ...)
   Bool_t fUseEstimatedLambdaParams;
   Bool_t fUseLogLikelihood;
