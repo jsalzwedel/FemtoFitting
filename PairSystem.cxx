@@ -57,7 +57,9 @@ Double_t PairSystem::CalculateFitChisquare()
 	//     <<"\tDen:\t"<<denCount<<endl;
       }
 
-      if(fUseQuadraticBkg) {
+      
+      
+      if(fBkgPolyOrder) {
 	// Now add in chisquare from the background fit range.
 	for(Int_t iBin = fLowBkgFitBin; iBin < fHighBkgFitBin; iBin++) {
 	  if(iBin > combinedGraph->GetN()) {
@@ -70,7 +72,7 @@ Double_t PairSystem::CalculateFitChisquare()
 	  Double_t denCount = fDenHists[iHist]->GetBinContent(iBin+1);
 	  if(denCount == 0) continue;
 	  Double_t kStar = fBinWidth * (1.*iBin + 0.5);
-	  Double_t cfVal = 1. + pow(kStar, 2) * fQuadraticBkg;
+	  Double_t cfVal = 1. + pow(kStar, fBkgPolyOrder) * fBkgParam;
       
 	  cfVal /= fNorms[iHist];
 
@@ -95,7 +97,7 @@ Double_t PairSystem::CalculateFitChisquare()
     }
 
     // Now add in chisquare from the background fit range.
-    if(fUseQuadraticBkg) {
+    if(fBkgPolyOrder) {
       for(Int_t iBin = fLowBkgFitBin; iBin < fHighBkgFitBin; iBin++) {
  	if(iBin > combinedGraph->GetN()) {
 	  cout<<"Background fit range exceeds bins of graph"<<endl;
@@ -104,7 +106,7 @@ Double_t PairSystem::CalculateFitChisquare()
 	Double_t cfVal = 1.; // By definition, lednicky eqn should be unity
 	// in background region
 	Double_t kStar = fBinWidth * (1.*iBin + 0.5);
-	cfVal += pow(kStar, 2) * fQuadraticBkg;
+	cfVal += pow(kStar, fBkgPolyOrder) * fBkgParam;
 	cfVal /= fNorms[0];
 
 	Double_t diff = cfVal - fCF->GetBinContent(iBin+1);
@@ -158,12 +160,12 @@ TGraph* PairSystem::GetCombinedTGraph()
 
     delete ledEqn;
   }
-  if(fUseQuadraticBkg) {
+  if(fBkgPolyOrder) {
     // Add a quadratic parameter to account for the background.
     for(Int_t iBin = 0; iBin < combinedLednicky->GetN(); iBin++)
     {
       Double_t kStar = fBinWidth * (1.*iBin + 0.5);
-      combinedLednicky->GetY()[iBin] *= (1 + pow(kStar, 2) * fQuadraticBkg);
+      combinedLednicky->GetY()[iBin] *= (1 + pow(kStar, fBkgPolyOrder) * fBkgParam);
     }
   }
   if(!fUseLogLikelihood) {
@@ -267,7 +269,7 @@ void PairSystem::SetLednickyParameters(vector<Double_t> pars)
   }
   // Normalization parameter should be stored in PairSystem, not
   // passed on to Lednicky Eqn
-  fQuadraticBkg = pars[kQuadBkg];
+  fBkgParam = pars[kQuadBkg];
   if(!fUseLogLikelihood) fNorms[0] = pars[kNorm];
   else {
     for(UInt_t iHists = 0; iHists < fNHists; iHists++) {
@@ -281,8 +283,8 @@ fPairTypeName(pairTypeName),
 fSystemType(sysType),
 fCF(cfData),
 fNHists(0),
-fQuadraticBkg(0.),
-fUseQuadraticBkg(kFALSE),
+fBkgParam(0.),
+fBkgPolyOrder(0),
 fUseLogLikelihood(kFALSE),
 fLowFitBin(0),
 fHighFitBin(50),
@@ -309,8 +311,8 @@ fSystemType(sysType),
 fCF(NULL),
 fNumHists(numHists),
 fDenHists(denHists),
-fQuadraticBkg(0.),
-fUseQuadraticBkg(kFALSE),
+fBkgParam(0.),
+fBkgPolyOrder(0),
 fUseLogLikelihood(kTRUE),
 fLowFitBin(0),
 fHighFitBin(50),

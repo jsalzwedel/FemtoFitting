@@ -38,7 +38,7 @@ class PairSystem{
   void SetLowBkgFitBin(Int_t bin) {fLowBkgFitBin = bin;};
   void SetHighBkgFitBin(Int_t bin) {fHighBkgFitBin = bin;};
   void SetSystemType(Int_t sysType) {fSystemType = sysType;};
-  void SetUseQuadraticBkg(Bool_t shouldUse) {fUseQuadraticBkg = shouldUse;};
+  void SetBkgPolyOrder(Int_t order) {fBkgPolyOrder = order;};
 
  private:
   void AddToGraph(TGraph *graph, Double_t d);
@@ -56,9 +56,9 @@ class PairSystem{
   vector<TH1D*> fDenHists; // Collection of denominator histograms for likelihood fitting
   UInt_t fNHists; // Number of num-den hist pairs that are being fit
   vector<Double_t> fNorms; // Normalization parameters for combined Lednicky graph.  Each CF or Num/Den pair has a norm parameter.
-  Double_t fQuadraticBkg; // Quadratic background parameter
+  Double_t fBkgParam; // Quadratic background parameter
+  Int_t fBkgPolyOrder; // order of bkg param (linear, quad, ...)
   Bool_t fUseEstimatedLambdaParams;
-  Bool_t fUseQuadraticBkg;
   Bool_t fUseLogLikelihood;
   Int_t fNBins; // Number of kstar bins in correlation function
   Double_t fBinWidth; // Width of each kstar bin
