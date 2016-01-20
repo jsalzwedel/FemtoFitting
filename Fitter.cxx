@@ -38,7 +38,7 @@ Fitter::Fitter():
   fDisplayResidualComponents(kFALSE),
   fUseChisquareFitting(kFALSE),
   fUseLogLikelihoodFitting(kFALSE),
-  fUseQuadraticBackground(kFALSE),
+  fBkgPolyOrder(0),
   fOutputString(""),
   fFitCalls(0),
   fChisquare(0.),
@@ -49,7 +49,7 @@ Fitter::Fitter():
   fParamNames.push_back("ReF0");
   fParamNames.push_back("ImF0");
   fParamNames.push_back("D0");
-  fParamNames.push_back("QuadBkg");
+  fParamNames.push_back("BkgCoeff");
   fParamNames.push_back("Norm");
 }
 
@@ -114,7 +114,7 @@ void Fitter::CreatePairSystemChisquare(TString simpleName, TString fileName, TSt
   assert(cf);
   cf->SetDirectory(0);
   PairSystem *system = new PairSystem(cf, ledInfo, simpleName, sysType);
-  system->SetUseQuadraticBkg(fUseQuadraticBackground);
+  system->SetBkgPolyOrderBkg(fBkgPolyOrder);
   fPairSystems.push_back(system);
 }
 
@@ -137,7 +137,7 @@ void Fitter::CreatePairSystemLog(TString simpleName, TString fileName, vector<TS
     denHists.push_back(den);
   }
   PairSystem *system = new PairSystem(numHists, denHists, ledInfo, simpleName, sysType);
-  system->SetUseQuadraticBkg(fUseQuadraticBackground);
+  system->SetBkgPolyOrder(fBkgPolyOrder);
   fPairSystems.push_back(system);
   cout<<"Added pair system with "<<numNames.size()<<" num and den pairs"<<endl;
 }
@@ -570,8 +570,8 @@ void Fitter::Timer()
   fTimer->Continue();
 }
 
-void Fitter::UpdatePairSystemQuadBkgUsage(Bool_t shouldUse) {
+void Fitter::UpdatePairSystemBkgPolyOrder(Int_t order) {
   for(UInt_t iSys = 0; iSys < fPairSystems.size(); iSys++) {
-    fPairSystems[iSys]->SetUseQuadraticBkg(shouldUse);
+    fPairSystems[iSys]->SetBkgPolyOrder(order);
   }
 }

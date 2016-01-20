@@ -48,7 +48,7 @@ class Fitter{
   void SetupConstraint(Int_t param, vector<Int_t> systems);
   void SetupInitialParameterVectors();
   void SetUseMINOS(Bool_t shouldUse) {fUseMINOS = shouldUse;};
-  void SetUseQuadraticBackground(Bool_t shouldUse) {fUseQuadraticBackground = shouldUse;};
+  void SetBkgPolyOrder(Int_t order) {fBkgPolyOrder = order;};
     
  private:
   void CreatePairSystemChisquare(TString simpleName, TString fileName, TString cfName, Int_t sysType, const vector<LednickyInfo> &ledInfo);
@@ -60,7 +60,7 @@ class Fitter{
   void PushBackParams(TString simpleName, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams, UInt_t nNormParams);
   void SaveResidualComponentPlot(Int_t sysIndex);
   void Timer();
-  void UpdatePairSystemQuadBkgUsage(Bool_t shouldUse);
+  void UpdatePairSystemBkgPolyOrder(Int_t order);
 
   TMinuit *fMinuit;
   vector<TString>  fMinuitParNames;
@@ -88,7 +88,7 @@ class Fitter{
   Bool_t fDisplayResidualComponents;
   Bool_t fUseChisquareFitting;
   Bool_t fUseLogLikelihoodFitting;
-  Bool_t fUseQuadraticBackground;
+  Int_t fBkgPolyOrder;
   Bool_t fOutputLednickyHist;
   TString fOutputString; // Optional suffix for saved object names
 
