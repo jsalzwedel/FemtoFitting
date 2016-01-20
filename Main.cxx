@@ -122,12 +122,12 @@ void UserSetupSystems(Fitter *fitter)
   // useLA1030Log   = kTRUE;
   // useLA3050Log   = kTRUE;
 
-  Bool_t useQuadraticBackground = kFALSE;
-  useQuadraticBackground = kTRUE;
+  Int_t backgroundPolynomailOrder = 0;
+  // backgroundPolynomialOrder = 2;
   Bool_t useRootSScalingLL = kFALSE;
   Bool_t useRootSScalingLA = kFALSE;
 
-  fitter->SetUseQuadraticBackground(useQuadraticBackground);
+  fitter->SetBkgPolyOrder(backgroundPolynomialOrder);
   
   /////////// Setting up Lambda-Lambda + Antilambda-Antilambda //////////////////
   // 0-10%
@@ -143,7 +143,7 @@ void UserSetupSystems(Fitter *fitter)
   Double_t maxParamsArr[6] = {0., 0., 0., 0., 0., 0.};
   vector<Double_t> maxParams(maxParamsArr, maxParamsArr+6);  
   // Determine which parameters should be fixed in the fitter.
-  Bool_t fixParamsArr[6] = {kFALSE, kFALSE, kTRUE, kFALSE, !useQuadraticBackground, kFALSE};
+  Bool_t fixParamsArr[6] = {kFALSE, kFALSE, kTRUE, kFALSE, !backgroundPolynomialOrder, kFALSE};
   vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+6);
   // Prepare the lednicky eqn info (lambda parameters, transform matrix locations, whether or not particles are identical)
   vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE, useRootSScalingLL);
@@ -216,7 +216,7 @@ void UserSetupSystems(Fitter *fitter)
   simpleName = "LA010";
   Double_t initParamsArrLA[6] = {radiiParams[0], -1., 1., 3., 0., 1.}; 
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + 6);
-  Bool_t fixParamsArrLA[6] = {kFALSE, kFALSE, kFALSE, kFALSE, !useQuadraticBackground, kFALSE};
+  Bool_t fixParamsArrLA[6] = {kFALSE, kFALSE, kFALSE, kFALSE, !backgroundPolynomialOrder, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 6);
 
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE, useRootSScalingLA);
