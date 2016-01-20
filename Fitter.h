@@ -60,6 +60,7 @@ class Fitter{
   void PushBackParams(TString simpleName, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams, UInt_t nNormParams);
   void SaveResidualComponentPlot(Int_t sysIndex);
   void Timer();
+  void UpdateFitBins();
   void UpdatePairSystemBkgPolyOrder(Int_t order);
 
   TMinuit *fMinuit;

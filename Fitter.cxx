@@ -114,7 +114,7 @@ void Fitter::CreatePairSystemChisquare(TString simpleName, TString fileName, TSt
   assert(cf);
   cf->SetDirectory(0);
   PairSystem *system = new PairSystem(cf, ledInfo, simpleName, sysType);
-  system->SetBkgPolyOrderBkg(fBkgPolyOrder);
+  system->SetBkgPolyOrder(fBkgPolyOrder);
   fPairSystems.push_back(system);
 }
 
@@ -414,7 +414,7 @@ void Fitter::SetHighFitBin(Int_t bin)
     fPairSystems[iSys]->SetHighFitBin(bin);
   }
   fHighFitBin = bin;
-  fFitBins = (fHighFitBin - fLowFitBin + fHighBkgFitBin - fLowBkgFitBin) * fNSystems;
+  UpdateFitBins();
 }
 
 void Fitter::SetLowFitBin(Int_t bin)
@@ -424,7 +424,7 @@ void Fitter::SetLowFitBin(Int_t bin)
     fPairSystems[iSys]->SetLowFitBin(bin);
   }
   fLowFitBin = bin;
-  fFitBins = (fHighFitBin - fLowFitBin + fHighBkgFitBin - fLowBkgFitBin) * fNSystems;
+  UpdateFitBins();
 }
 
 void Fitter::SetHighBkgFitBin(Int_t bin)
@@ -434,7 +434,7 @@ void Fitter::SetHighBkgFitBin(Int_t bin)
     fPairSystems[iSys]->SetHighBkgFitBin(bin);
   }
   fHighBkgFitBin = bin;
-  fFitBins = (fHighFitBin - fLowFitBin + fHighBkgFitBin - fLowBkgFitBin) * fNSystems;
+  UpdateFitBins();
 }
 
 void Fitter::SetLowBkgFitBin(Int_t bin)
@@ -444,7 +444,7 @@ void Fitter::SetLowBkgFitBin(Int_t bin)
     fPairSystems[iSys]->SetLowBkgFitBin(bin);
   }
   fLowBkgFitBin = bin;
-  fFitBins = (fHighFitBin - fLowFitBin + fHighBkgFitBin - fLowBkgFitBin) * fNSystems;
+  UpdateFitBins();
 }
 
 void Fitter::SetMinuitVerbosity(Int_t verbosity)
@@ -570,7 +570,15 @@ void Fitter::Timer()
   fTimer->Continue();
 }
 
+void Fitter::UpdateFitBins() {
+  fFitBins = (fHighFitBin - fLowFitBin) * fNSystems;
+  if(fBkgPolyOrder) {
+    fFitBins += (fHighBkgFitBin - fLowBkgFitBin) * fNSystems;
+  }
+}
+
 void Fitter::UpdatePairSystemBkgPolyOrder(Int_t order) {
+  if(order) cout<<"Fitting using background polynomial of order "<<order<<endl;
   for(UInt_t iSys = 0; iSys < fPairSystems.size(); iSys++) {
     fPairSystems[iSys]->SetBkgPolyOrder(order);
   }
