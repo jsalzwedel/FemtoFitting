@@ -178,14 +178,14 @@ void Fitter::DoFitting()
     fMinuit->mnexcm("MINOS", arglist, 1, errFlag);
     fMinuit->mnexcm("SHOw CORrelations", arglist, 1, errFlag);
   }
-
-  cout<<"Finalchi2:\t"<<fChisquare<<endl
-      <<"Fit bins:\t"<<fFitBins<<endl
-      <<"Actual Minuit Pars:\t"<<fMinuitParNames.size()<<endl
-      <<"Fixed params\t"<<fFixedParams<<endl
-      <<"Free Params:\t"<<fMinuitParNames.size() - fFixedParams<<endl
-      <<"Chi2/ndf:\t"<<GetChisquarePerNDF()<<endl
-      <<"Pvalue:\t"<<GetPvalue()<<endl;
+  Timer();
+  cout<<fChisquare<<"\t\tFinalchi2"<<endl
+      <<fFitBins<<"\t\tFit bins"<<endl
+      // <<fMinuitParNames.size()<<"\tActual Minuit Pars"<<endl
+      // <<fFixedParams<<"\tFixed params"<<endl
+      <<fMinuitParNames.size() - fFixedParams<<"\t\tFree Params"<<endl
+      <<GetChisquarePerNDF()<<"\t\tChi2/ndf"<<endl
+      <<GetPvalue()<<"\tPvalue"<<endl;
 
 }
 
