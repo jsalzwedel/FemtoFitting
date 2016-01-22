@@ -73,8 +73,8 @@ Double_t PairSystem::CalculateFitChisquare()
 	  if(denCount == 0) continue;
 	  Double_t kStar = fBinWidth * (1.*iBin + 0.5);
 	  Double_t cfVal = 1.
-	    + fUseLinearBkgPoly * fLinearBkgParam * kstar
-	    + fUseQuadBkgPoly * fQuadBkgParam * pow(kstar, 2);
+	    + fUseLinearBkgPoly * fLinearBkgParam * kStar
+	    + fUseQuadBkgPoly * fQuadBkgParam * pow(kStar, 2);
 	  cfVal /= fNorms[iHist];
 
 	  Double_t log1st = log(cfVal * (numCount + denCount) /
@@ -105,11 +105,10 @@ Double_t PairSystem::CalculateFitChisquare()
 	  break;
 	}
 	Double_t kStar = fBinWidth * (1.*iBin + 0.5);
-	Double_t cfVal = 1.; // By definition, lednicky eqn should be unity
 	// in background region
 	Double_t cfVal = 1.
-	    + fUseLinearBkgPoly * fLinearBkgParam * kstar
-	    + fUseQuadBkgPoly * fQuadBkgParam * pow(kstar, 2);
+	    + fUseLinearBkgPoly * fLinearBkgParam * kStar
+	    + fUseQuadBkgPoly * fQuadBkgParam * pow(kStar, 2);
 	cfVal /= fNorms[0];
 
 	Double_t diff = cfVal - fCF->GetBinContent(iBin+1);
@@ -169,8 +168,8 @@ TGraph* PairSystem::GetCombinedTGraph()
     {
       Double_t kStar = fBinWidth * (1.*iBin + 0.5);
       combinedLednicky->GetY()[iBin] *= (1
-	  + fUseLinearBkgPoly * fLinearBkgParam * kstar
-          + fUseQuadBkgPoly * fQuadBkgParam * pow(kstar, 2));
+	  + fUseLinearBkgPoly * fLinearBkgParam * kStar
+          + fUseQuadBkgPoly * fQuadBkgParam * pow(kStar, 2));
     }
   }
   if(!fUseLogLikelihood) {

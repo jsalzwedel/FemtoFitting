@@ -39,8 +39,8 @@ class PairSystem{
   void SetHighBkgFitBin(Int_t bin) {fHighBkgFitBin = bin;};
   void SetSystemType(Int_t sysType) {fSystemType = sysType;};
   /* void SetBkgPolyOrder(Int_t order) {fBkgPolyOrder = order;}; */
-  void SetUseLinearBkgPoly(Bool_t shouldUse) {fUseLinearBkgPoly = shouldUse};
-  void SetUseQuadBkgPoly(Bool_t shouldUse) {fUseQuadBkgPoly = shouldUse};
+  void SetUseLinearBkgPoly(Bool_t shouldUse) {fUseLinearBkgPoly = shouldUse;};
+  void SetUseQuadBkgPoly(Bool_t shouldUse) {fUseQuadBkgPoly = shouldUse;};
 
  private:
   void AddToGraph(TGraph *graph, Double_t d);
