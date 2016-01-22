@@ -89,9 +89,9 @@ void UserSetupSystems(Fitter *fitter)
          useAA010Chi2 = kFALSE, useAA1030Chi2 = kFALSE, useAA3050Chi2 = kFALSE,
          useLA010Chi2 = kFALSE, useLA1030Chi2 = kFALSE, useLA3050Chi2 = kFALSE;
   // Uncomment these as needed
-  // useLLAA010Chi2  = kTRUE;
-  // useLLAA1030Chi2 = kTRUE;
-  // useLLAA3050Chi2 = kTRUE;
+  useLLAA010Chi2  = kTRUE;
+  useLLAA1030Chi2 = kTRUE;
+  useLLAA3050Chi2 = kTRUE;
   // useLL010Chi2    = kTRUE;
   // useLL1030Chi2   = kTRUE;
   // useLL3050Chi2   = kTRUE;
@@ -100,7 +100,7 @@ void UserSetupSystems(Fitter *fitter)
   // useAA3050Chi2   = kTRUE;
   // useLA010Chi2    = kTRUE;
   // useLA1030Chi2   = kTRUE;
-  useLA3050Chi2   = kTRUE;
+  // useLA3050Chi2   = kTRUE;
 
   // Default to not using any of the log fits. Do not us in conjunction with
   // chisquare fitting!
@@ -123,8 +123,8 @@ void UserSetupSystems(Fitter *fitter)
   // useLA3050Log   = kTRUE;
 
   // Include a fit to the background?
-  Bool_t useLinearBkgPoly;
-  Bool_t useQuadBkgPoly;
+  Bool_t useLinearBkgPoly = 1;
+  Bool_t useQuadBkgPoly = 1;
   fitter->SetUseLinearBkgPoly(useLinearBkgPoly);
   fitter->SetUseQuadBkgPoly(useQuadBkgPoly);
   
@@ -141,14 +141,14 @@ void UserSetupSystems(Fitter *fitter)
   TString simpleName = "LLAA010";
   // Make initial parameters: Radius, ReF0, ImF0, D0, QuadBkg, Norm 
   Double_t radiiParams[3] = {4., 2.67, 2.02};
-  Double_t initParamsArr[6] = {radiiParams[0], -.63, 0., 1.36, 0., 0., 1.}; 
+  Double_t initParamsArr[kNorm + 1] = {radiiParams[0], -.63, 0., 1.36, 0., 0., 1.}; 
   vector<Double_t> initParams(initParamsArr, initParamsArr + kNorm + 1);
-  Double_t minParamsArr[6] = {0., 0., 0., 0., 0., 0., 0.};
+  Double_t minParamsArr[kNorm + 1] = {0., 0., 0., 0., 0., 0., 0.};
   vector<Double_t> minParams(minParamsArr, minParamsArr + kNorm + 1);
-  Double_t maxParamsArr[6] = {0., 0., 0., 0., 0., 0., 0.};
+  Double_t maxParamsArr[kNorm + 1] = {0., 0., 0., 0., 0., 0., 0.};
   vector<Double_t> maxParams(maxParamsArr, maxParamsArr + kNorm + 1);  
   // Determine which parameters should be fixed in the fitter.
-  Bool_t fixParamsArr[6] = {kFALSE, kFALSE, kTRUE, kFALSE, !useLinearBkgPoly, !useQuadBkgPoly, kFALSE};
+  Bool_t fixParamsArr[kNorm + 1] = {kFALSE, kFALSE, kTRUE, kFALSE, !useLinearBkgPoly, !useQuadBkgPoly, kFALSE};
   vector<Bool_t> fixParams(fixParamsArr, fixParamsArr + kNorm + 1);
   // Prepare the lednicky eqn info (lambda parameters, transform matrix locations, whether or not particles are identical)
   vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE, useRootSScalingLL);
@@ -219,9 +219,9 @@ void UserSetupSystems(Fitter *fitter)
   // histName = "mm12CF20";
 
   simpleName = "LA010";
-  Double_t initParamsArrLA[6] = {radiiParams[0], -1., 1., 3., 0., 0., 1.}; 
+  Double_t initParamsArrLA[kNorm + 1] = {radiiParams[0], -1., 1., 3., 0., 0., 1.}; 
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + kNorm + 1);
-  Bool_t fixParamsArrLA[6] = {kFALSE, kFALSE, kFALSE, kFALSE, !useLinearBkgPoly, !useQuadBkgPoly, kFALSE};
+  Bool_t fixParamsArrLA[kNorm + 1] = {kFALSE, kFALSE, kFALSE, kFALSE, !useLinearBkgPoly, !useQuadBkgPoly, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + kNorm + 1);
 
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE, useRootSScalingLA);
@@ -620,8 +620,8 @@ void UserSetConstraints(Fitter *myFitter)
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030, kLLAA3050};
   vector<Int_t> systemsLLAA(systemsArrLLAA, systemsArrLLAA + 3);
-  // myFitter->SetupConstraint(kF0Real, systemsLLAA);
-  // myFitter->SetupConstraint(kD0, systemsLLAA);
+  myFitter->SetupConstraint(kF0Real, systemsLLAA);
+  myFitter->SetupConstraint(kD0, systemsLLAA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda
   Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
