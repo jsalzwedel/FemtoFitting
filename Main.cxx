@@ -89,17 +89,17 @@ void UserSetupSystems(Fitter *fitter)
          useAA010Chi2 = kFALSE, useAA1030Chi2 = kFALSE, useAA3050Chi2 = kFALSE,
          useLA010Chi2 = kFALSE, useLA1030Chi2 = kFALSE, useLA3050Chi2 = kFALSE;
   // Uncomment these as needed
-  useLLAA010Chi2  = kTRUE;
-  useLLAA1030Chi2 = kTRUE;
-  useLLAA3050Chi2 = kTRUE;
+  // useLLAA010Chi2  = kTRUE;
+  // useLLAA1030Chi2 = kTRUE;
+  // useLLAA3050Chi2 = kTRUE;
   // useLL010Chi2    = kTRUE;
   // useLL1030Chi2   = kTRUE;
   // useLL3050Chi2   = kTRUE;
   // useAA010Chi2    = kTRUE;
   // useAA1030Chi2   = kTRUE;
   // useAA3050Chi2   = kTRUE;
-  useLA010Chi2    = kTRUE;
-  useLA1030Chi2   = kTRUE;
+  // useLA010Chi2    = kTRUE;
+  // useLA1030Chi2   = kTRUE;
   useLA3050Chi2   = kTRUE;
 
   // Default to not using any of the log fits. Do not us in conjunction with
@@ -122,12 +122,17 @@ void UserSetupSystems(Fitter *fitter)
   // useLA1030Log   = kTRUE;
   // useLA3050Log   = kTRUE;
 
-  Int_t backgroundPolynomailOrder = 0;
-  // backgroundPolynomialOrder = 2;
+  // Include a fit to the background?
+  Bool_t useLinearBkgPoly;
+  Bool_t useQuadBkgPoly;
+  fitter->SetUseLinearBkgPoly(useLinearBkgPoly);
+  fitter->SetUseQuadBkgPoly(useQuadBkgPoly);
+  
   Bool_t useRootSScalingLL = kFALSE;
   Bool_t useRootSScalingLA = kFALSE;
 
-  fitter->SetBkgPolyOrder(backgroundPolynomialOrder);
+
+  
   
   /////////// Setting up Lambda-Lambda + Antilambda-Antilambda //////////////////
   // 0-10%
@@ -136,15 +141,15 @@ void UserSetupSystems(Fitter *fitter)
   TString simpleName = "LLAA010";
   // Make initial parameters: Radius, ReF0, ImF0, D0, QuadBkg, Norm 
   Double_t radiiParams[3] = {4., 2.67, 2.02};
-  Double_t initParamsArr[6] = {radiiParams[0], -.63, 0., 1.36, 0., 1.}; 
-  vector<Double_t> initParams(initParamsArr, initParamsArr+6);
-  Double_t minParamsArr[6] = {0., 0., 0., 0., 0., 0.};
-  vector<Double_t> minParams(minParamsArr, minParamsArr+6);
-  Double_t maxParamsArr[6] = {0., 0., 0., 0., 0., 0.};
-  vector<Double_t> maxParams(maxParamsArr, maxParamsArr+6);  
+  Double_t initParamsArr[6] = {radiiParams[0], -.63, 0., 1.36, 0., 0., 1.}; 
+  vector<Double_t> initParams(initParamsArr, initParamsArr + kNorm + 1);
+  Double_t minParamsArr[6] = {0., 0., 0., 0., 0., 0., 0.};
+  vector<Double_t> minParams(minParamsArr, minParamsArr + kNorm + 1);
+  Double_t maxParamsArr[6] = {0., 0., 0., 0., 0., 0., 0.};
+  vector<Double_t> maxParams(maxParamsArr, maxParamsArr + kNorm + 1);  
   // Determine which parameters should be fixed in the fitter.
-  Bool_t fixParamsArr[6] = {kFALSE, kFALSE, kTRUE, kFALSE, !backgroundPolynomialOrder, kFALSE};
-  vector<Bool_t> fixParams(fixParamsArr, fixParamsArr+6);
+  Bool_t fixParamsArr[6] = {kFALSE, kFALSE, kTRUE, kFALSE, !useLinearBkgPoly, !useQuadBkgPoly, kFALSE};
+  vector<Bool_t> fixParams(fixParamsArr, fixParamsArr + kNorm + 1);
   // Prepare the lednicky eqn info (lambda parameters, transform matrix locations, whether or not particles are identical)
   vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE, useRootSScalingLL);
   if(useLLAA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
@@ -214,10 +219,10 @@ void UserSetupSystems(Fitter *fitter)
   // histName = "mm12CF20";
 
   simpleName = "LA010";
-  Double_t initParamsArrLA[6] = {radiiParams[0], -1., 1., 3., 0., 1.}; 
-  vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + 6);
-  Bool_t fixParamsArrLA[6] = {kFALSE, kFALSE, kFALSE, kFALSE, !backgroundPolynomialOrder, kFALSE};
-  vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + 6);
+  Double_t initParamsArrLA[6] = {radiiParams[0], -1., 1., 3., 0., 0., 1.}; 
+  vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + kNorm + 1);
+  Bool_t fixParamsArrLA[6] = {kFALSE, kFALSE, kFALSE, kFALSE, !useLinearBkgPoly, !useQuadBkgPoly, kFALSE};
+  vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + kNorm + 1);
 
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE, useRootSScalingLA);
   if(useLA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
@@ -608,15 +613,15 @@ void UserSetConstraints(Fitter *myFitter)
   // Share real f0, imaginary f0, and d0 among partical-antiparticle
   Int_t systemsArrLA[3] = {kLA010, kLA1030, kLA3050};
   vector<Int_t> systemsLA(systemsArrLA, systemsArrLA + 3);
-  myFitter->SetupConstraint(kF0Real, systemsLA);
-  myFitter->SetupConstraint(kF0Imag, systemsLA);
-  myFitter->SetupConstraint(kD0, systemsLA);
+  // myFitter->SetupConstraint(kF0Real, systemsLA);
+  // myFitter->SetupConstraint(kF0Imag, systemsLA);
+  // myFitter->SetupConstraint(kD0, systemsLA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030, kLLAA3050};
   vector<Int_t> systemsLLAA(systemsArrLLAA, systemsArrLLAA + 3);
-  myFitter->SetupConstraint(kF0Real, systemsLLAA);
-  myFitter->SetupConstraint(kD0, systemsLLAA);
+  // myFitter->SetupConstraint(kF0Real, systemsLLAA);
+  // myFitter->SetupConstraint(kD0, systemsLLAA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda
   Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
@@ -652,21 +657,21 @@ void UserSetConstraints(Fitter *myFitter)
   systems010.push_back(kLA010);
   // systems010.push_back(kLL010);
   // systems010.push_back(kAA010);
-  myFitter->SetupConstraint(kRad, systems010);
+  // myFitter->SetupConstraint(kRad, systems010);
 
   vector<Int_t> systems1030;
   systems1030.push_back(kLLAA1030);
   systems1030.push_back(kLA1030);
   // systems1030.push_back(kLL1030);
   // systems1030.push_back(kAA1030);
-  myFitter->SetupConstraint(kRad, systems1030);
+  // myFitter->SetupConstraint(kRad, systems1030);
 
   vector<Int_t> systems3050;
   systems3050.push_back(kLLAA3050);
   systems3050.push_back(kLA3050);
   // systems3050.push_back(kLL3050);
   // systems3050.push_back(kAA3050);
-  myFitter->SetupConstraint(kRad, systems3050);
+  // myFitter->SetupConstraint(kRad, systems3050);
 }
 
 void UserSetFitOptions(Fitter *myFitter)
