@@ -38,7 +38,8 @@ Fitter::Fitter():
   fDisplayResidualComponents(kFALSE),
   fUseChisquareFitting(kFALSE),
   fUseLogLikelihoodFitting(kFALSE),
-  fBkgPolyOrder(0),
+  fUseLinearBkg(kFALSE),
+  fUseQuadBkg(kFALSE),
   fOutputString(""),
   fFitCalls(0),
   fChisquare(0.),
@@ -49,7 +50,8 @@ Fitter::Fitter():
   fParamNames.push_back("ReF0");
   fParamNames.push_back("ImF0");
   fParamNames.push_back("D0");
-  fParamNames.push_back("BkgCoeff");
+  fParamNames.push_back("LinearBkg");
+  fParamNames.push_back("QuadBkg");
   fParamNames.push_back("Norm");
 }
 
@@ -114,7 +116,8 @@ void Fitter::CreatePairSystemChisquare(TString simpleName, TString fileName, TSt
   assert(cf);
   cf->SetDirectory(0);
   PairSystem *system = new PairSystem(cf, ledInfo, simpleName, sysType);
-  system->SetBkgPolyOrder(fBkgPolyOrder);
+  system->SetUseLinearBkgPoly(fUseLinearBkg);
+  system->SetUseQuadBkgPoly(fUseQuadBkg);
   fPairSystems.push_back(system);
 }
 
@@ -137,7 +140,8 @@ void Fitter::CreatePairSystemLog(TString simpleName, TString fileName, vector<TS
     denHists.push_back(den);
   }
   PairSystem *system = new PairSystem(numHists, denHists, ledInfo, simpleName, sysType);
-  system->SetBkgPolyOrder(fBkgPolyOrder);
+  system->SetUseLinearBkgPoly(fUseLinearBkg);
+  system->SetUseQuadBkgPoly(fUseQuadBkg);
   fPairSystems.push_back(system);
   cout<<"Added pair system with "<<numNames.size()<<" num and den pairs"<<endl;
 }
@@ -572,14 +576,14 @@ void Fitter::Timer()
 
 void Fitter::UpdateFitBins() {
   fFitBins = (fHighFitBin - fLowFitBin) * fNSystems;
-  if(fBkgPolyOrder) {
+  if(fUseLinearBkg || fUseQuadBkg) {
     fFitBins += (fHighBkgFitBin - fLowBkgFitBin) * fNSystems;
   }
 }
 
-void Fitter::UpdatePairSystemBkgPolyOrder(Int_t order) {
-  if(order) cout<<"Fitting using background polynomial of order "<<order<<endl;
-  for(UInt_t iSys = 0; iSys < fPairSystems.size(); iSys++) {
-    fPairSystems[iSys]->SetBkgPolyOrder(order);
-  }
-}
+// void Fitter::UpdatePairSystemBkgPolyOrder(Int_t order) {
+//   if(order) cout<<"Fitting using background polynomial of order "<<order<<endl;
+//   for(UInt_t iSys = 0; iSys < fPairSystems.size(); iSys++) {
+//     fPairSystems[iSys]->SetBkgPolyOrder(order);
+//   }
+// }
