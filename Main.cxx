@@ -89,9 +89,9 @@ void UserSetupSystems(Fitter *fitter)
          useAA010Chi2 = kFALSE, useAA1030Chi2 = kFALSE, useAA3050Chi2 = kFALSE,
          useLA010Chi2 = kFALSE, useLA1030Chi2 = kFALSE, useLA3050Chi2 = kFALSE;
   // Uncomment these as needed
-  useLLAA010Chi2  = kTRUE;
-  useLLAA1030Chi2 = kTRUE;
-  useLLAA3050Chi2 = kTRUE;
+  // useLLAA010Chi2  = kTRUE;
+  // useLLAA1030Chi2 = kTRUE;
+  // useLLAA3050Chi2 = kTRUE;
   // useLL010Chi2    = kTRUE;
   // useLL1030Chi2   = kTRUE;
   // useLL3050Chi2   = kTRUE;
@@ -118,7 +118,7 @@ void UserSetupSystems(Fitter *fitter)
   //  // useAA010Log    = kTRUE; //Not implemented 
   //  // useAA1030Log   = kTRUE; //Not implemented
   //  // useAA3050Log   = kTRUE; //Not implemented
-  // useLA010Log    = kTRUE;
+  useLA010Log    = kTRUE;
   // useLA1030Log   = kTRUE;
   // useLA3050Log   = kTRUE;
 
@@ -157,13 +157,13 @@ void UserSetupSystems(Fitter *fitter)
   // 10-30
   histName = "Merged/CFLLAA1030";
   simpleName = "LLAA1030";
-  initParams[0] = radiiParams[1];
+  initParams[kRad] = radiiParams[1];
   if(useLLAA1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "Merged/CFLLAA3050";
   simpleName = "LLAA3050";
-  initParams[0] = radiiParams[2];
+  initParams[kRad] = radiiParams[2];
   if(useLLAA3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
@@ -172,19 +172,19 @@ void UserSetupSystems(Fitter *fitter)
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
   histName = "Merged/CFLamLam010";
   simpleName = "LL010";
-  initParams[0] = radiiParams[0];
+  initParams[kRad] = radiiParams[0];
   if(useLL010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "Merged/CFLamLam1030";
   simpleName = "LL1030";
-  initParams[0] = radiiParams[1];
+  initParams[kRad] = radiiParams[1];
   if(useLL1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "Merged/CFLamLam3050";
   simpleName = "LL3050";
-  initParams[0] = radiiParams[2];
+  initParams[kRad] = radiiParams[2];
   if(useLL3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
@@ -193,24 +193,25 @@ void UserSetupSystems(Fitter *fitter)
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
   histName = "Merged/CFALamALam010";
   simpleName = "AA010";
-  initParams[0] = radiiParams[0];
+  initParams[kRad] = radiiParams[0];
   if(useAA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   histName = "Merged/CFALamALam1030";
   simpleName = "AA1030";
-  initParams[0] = radiiParams[1];
+  initParams[kRad] = radiiParams[1];
   if(useAA1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   histName = "Merged/CFALamALam3050";
   simpleName = "AA3050";
-  initParams[0] = radiiParams[2];
+  initParams[kRad] = radiiParams[2];
   if(useAA3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
 
 
+  
   ////////////////// Setting up Lambda-Antilambda ////////////////////
   // 0-10%
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
@@ -230,13 +231,13 @@ void UserSetupSystems(Fitter *fitter)
   // 10-30
   histName = "Merged/CFLamALam1030";
   simpleName = "LA1030";
-  initParamsLA[0] = radiiParams[1];
+  initParamsLA[kRad] = radiiParams[1];
   if(useLA1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 30-50
   histName = "Merged/CFLamALam3050";
   simpleName = "LA3050";
-  initParamsLA[0] = radiiParams[2];
+  initParamsLA[kRad] = radiiParams[2];
   if(useLA3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   //************* Add more systems as needed ******************
 
@@ -270,8 +271,8 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLA010.push_back("pp2/DenRebin/DenLamALam05");
   denNamesLA010.push_back("pp2/DenRebin/DenLamALam510");
   
-  initParamsLA[4] = 10.; // Normalization factor accounts for ~1/10 ratio of num vs den pairs
-  initParamsLA[0] = radiiParams[0];
+  initParamsLA[kNorm] = 10.; // Normalization factor accounts for ~1/10 ratio of num vs den pairs
+  initParamsLA[kRad] = radiiParams[0];
   if(useLA010Log) fitter->AddPairAnalysisLogFit("LA010", fileNumDen, numNamesLA010, denNamesLA010, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   
@@ -318,7 +319,7 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLA1030.push_back("pp2/DenRebin/DenLamALam1520");
   denNamesLA1030.push_back("pp2/DenRebin/DenLamALam2025");
   denNamesLA1030.push_back("pp2/DenRebin/DenLamALam2530");
-  initParamsLA[0] = radiiParams[1];
+  initParamsLA[kRad] = radiiParams[1];
   if(useLA1030Log) fitter->AddPairAnalysisLogFit("LA1030", fileNumDen, numNamesLA1030, denNamesLA1030, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   
   vector<TString> numNamesLA3050;
@@ -364,7 +365,7 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLA3050.push_back("pp2/DenRebin/DenLamALam3540");
   denNamesLA3050.push_back("pp2/DenRebin/DenLamALam4045");
   denNamesLA3050.push_back("pp2/DenRebin/DenLamALam4550");
-  initParamsLA[0] = radiiParams[2];
+  initParamsLA[kRad] = radiiParams[2];
   if(useLA3050Log) fitter->AddPairAnalysisLogFit("LA3050", fileNumDen, numNamesLA3050, denNamesLA3050, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
 
@@ -414,8 +415,8 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLLAA010.push_back("pp2/DenRebin/DenALamALam05");
   denNamesLLAA010.push_back("pp2/DenRebin/DenALamALam510");
 
-  initParams[4] = 10.; // Normalization factor accounts for ~1/10 ratio of num vs den pairs
-  initParams[0] = radiiParams[0];
+  initParams[kNorm] = 10.; // Normalization factor accounts for ~1/10 ratio of num vs den pairs
+  initParams[kRad] = radiiParams[0];
   if(useLLAA010Log) fitter->AddPairAnalysisLogFit("LLAA010", fileNumDen, numNamesLLAA010, denNamesLLAA010, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
@@ -505,7 +506,7 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLLAA1030.push_back("pp2/DenRebin/DenALamALam2025");
   denNamesLLAA1030.push_back("pp2/DenRebin/DenALamALam2530");
 
-  initParams[0] = radiiParams[1];
+  initParams[kRad] = radiiParams[1];
   if(useLLAA1030Log) fitter->AddPairAnalysisLogFit("LLAA1030", fileNumDen, numNamesLLAA1030, denNamesLLAA1030, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
 
@@ -595,7 +596,7 @@ void UserSetupSystems(Fitter *fitter)
   denNamesLLAA3050.push_back("pp2/DenRebin/DenALamALam4045");
   denNamesLLAA3050.push_back("pp2/DenRebin/DenALamALam4550");
   
-  initParams[0] = radiiParams[2];
+  initParams[kRad] = radiiParams[2];
   if(useLLAA3050Log) fitter->AddPairAnalysisLogFit("LLAA3050", fileNumDen, numNamesLLAA3050, denNamesLLAA3050, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   
@@ -620,8 +621,8 @@ void UserSetConstraints(Fitter *myFitter)
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030, kLLAA3050};
   vector<Int_t> systemsLLAA(systemsArrLLAA, systemsArrLLAA + 3);
-  myFitter->SetupConstraint(kF0Real, systemsLLAA);
-  myFitter->SetupConstraint(kD0, systemsLLAA);
+  // myFitter->SetupConstraint(kF0Real, systemsLLAA);
+  // myFitter->SetupConstraint(kD0, systemsLLAA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda
   Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
