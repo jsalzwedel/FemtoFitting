@@ -151,18 +151,19 @@ TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
   // primary correlations
   for(Int_t daughterBin = 0; daughterBin < nBins; daughterBin++)
   {
-    Double_t weightSum = 0.;
+    // Double_t weightSum = 0.;
     Double_t valueSum = 0.;
     // ParentBins are in the relative momentum space of the
     // residual correlation
     for(Int_t parentBin = 0; parentBin < nBins; parentBin++)
     {
       Double_t weight = fTransformMatrix->GetBinContent(daughterBin+1, parentBin+1);
-      weightSum += weight;
+      // weightSum += weight;
       valueSum += weight * base->GetY()[parentBin];
     }
-    if(weightSum < 0.99) transformedGraph->GetY()[daughterBin] = 0;
-    else transformedGraph->GetY()[daughterBin] = valueSum/weightSum;
+    // if(weightSum < 0.99) transformedGraph->GetY()[daughterBin] = 0;
+    // else transformedGraph->GetY()[daughterBin] = valueSum/*/weightSum*/;
+    transformedGraph->GetY()[daughterBin] = valueSum;
   }
   
   delete base;
