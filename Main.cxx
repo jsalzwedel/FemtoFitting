@@ -50,29 +50,32 @@ vector<LednickyInfo> PrepareLednickyInfo(Bool_t isIdentical, Bool_t useRootSScal
   Double_t mXiC = 1.3217;
 
   // Args: TString name, Double_t lambdaParamter, TH2D *transformMatrix, Bool_t isIdenticalPair, Bool_t useRootSScaling, Double_t baseMass1, Double_t baseMass2, Double_t actualMass1, Double_t actualMass2
-  LednickyInfo infoLL("LambdaLambda", 0.25, NULL, isIdentical, useRootSScaling, mLambda, mLambda, mLambda, mLambda); 
+  TString fileNameMatrix = "~/Analysis/lambda/AliAnalysisLambda/Fitting/FemtoFitting/SmearHistograms.root";
+  TString histSuffix = "";
+  if(isIdentical) histSuffix = "LLAA";
+  else histSuffix = "LA";
+  LednickyInfo infoLL("LambdaLambda", 0.25, GetTransformMatrix(fileNameMatrix, "SmearMatrixLambdaLambdaNorm" + histSuffix), isIdentical, useRootSScaling, mLambda, mLambda, mLambda, mLambda); 
   ledInfo.push_back(infoLL);
   
-  TString fileNameMatrix = "~/Analysis/lambda/AliAnalysisLambda/Fitting/FemtoFitting/PreparedTransformMatrices.root";
-  LednickyInfo infoLS("LambdaSigma", 0.194, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaLambda"), kFALSE, useRootSScaling, mLambda, mLambda, mLambda, mSigma);
+  LednickyInfo infoLS("LambdaSigma", 0.194, GetTransformMatrix(fileNameMatrix, "SmearMatrixSigmaLambdaNorm" + histSuffix), kFALSE, useRootSScaling, mLambda, mLambda, mLambda, mSigma);
   ledInfo.push_back(infoLS);
 
-  LednickyInfo infoLX0("LambdaXi0", 0.130, GetTransformMatrix(fileNameMatrix, "TransformMatrixXi0Lambda"), kFALSE, useRootSScaling, mLambda, mLambda, mLambda, mXi0);
+  LednickyInfo infoLX0("LambdaXi0", 0.130, GetTransformMatrix(fileNameMatrix, "SmearMatrixXi0LambdaNorm" + histSuffix), kFALSE, useRootSScaling, mLambda, mLambda, mLambda, mXi0);
   ledInfo.push_back(infoLX0);
 
-  LednickyInfo infoLXC("LambdaXiC", 0.117, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCLambda"), kFALSE, useRootSScaling, mLambda, mLambda, mLambda, mXiC);
+  LednickyInfo infoLXC("LambdaXiC", 0.117, GetTransformMatrix(fileNameMatrix, "SmearMatrixXiCLambdaNorm" + histSuffix), kFALSE, useRootSScaling, mLambda, mLambda, mLambda, mXiC);
   ledInfo.push_back(infoLXC);
 
-  LednickyInfo infoSS("SigmaSigma", 0.034, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaSigma"), isIdentical, useRootSScaling, mLambda, mLambda, mSigma, mSigma);
+  LednickyInfo infoSS("SigmaSigma", 0.034, GetTransformMatrix(fileNameMatrix, "SmearMatrixSigmaSigmaNorm" + histSuffix), isIdentical, useRootSScaling, mLambda, mLambda, mSigma, mSigma);
   ledInfo.push_back(infoSS);
 
-  LednickyInfo infoSX0("SigmaXi0", 0.049, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXi0"), kFALSE, useRootSScaling, mLambda, mLambda, mSigma, mXi0);
+  LednickyInfo infoSX0("SigmaXi0", 0.049, GetTransformMatrix(fileNameMatrix, "SmearMatrixSigmaXi0Norm" + histSuffix), kFALSE, useRootSScaling, mLambda, mLambda, mSigma, mXi0);
   ledInfo.push_back(infoSX0);
 
-  LednickyInfo infoSXC("SigmaXiC", 0.043, GetTransformMatrix(fileNameMatrix, "TransformMatrixSigmaXiC"), kFALSE, useRootSScaling, mLambda, mLambda, mSigma, mXiC);
+  LednickyInfo infoSXC("SigmaXiC", 0.043, GetTransformMatrix(fileNameMatrix, "SmearMatrixSigmaXiCNorm" + histSuffix), kFALSE, useRootSScaling, mLambda, mLambda, mSigma, mXiC);
   ledInfo.push_back(infoSXC);
 
-  LednickyInfo infoX0XC("Xi0XiC", 0.029, GetTransformMatrix(fileNameMatrix, "TransformMatrixXiCXi0"), kFALSE, useRootSScaling, mLambda, mLambda, mXi0, mXiC);
+  LednickyInfo infoX0XC("Xi0XiC", 0.029, GetTransformMatrix(fileNameMatrix, "SmearMatrixXiCXi0Norm" + histSuffix), kFALSE, useRootSScaling, mLambda, mLambda, mXi0, mXiC);
   ledInfo.push_back(infoX0XC);
 
   return ledInfo;
@@ -89,16 +92,16 @@ void UserSetupSystems(Fitter *fitter)
          useAA010Chi2 = kFALSE, useAA1030Chi2 = kFALSE, useAA3050Chi2 = kFALSE,
          useLA010Chi2 = kFALSE, useLA1030Chi2 = kFALSE, useLA3050Chi2 = kFALSE;
   // Uncomment these as needed
-  useLLAA010Chi2  = kTRUE;
-  useLLAA1030Chi2 = kTRUE;
-  useLLAA3050Chi2 = kTRUE;
+  // useLLAA010Chi2  = kTRUE;
+  // useLLAA1030Chi2 = kTRUE;
+  // useLLAA3050Chi2 = kTRUE;
   // useLL010Chi2    = kTRUE;
   // useLL1030Chi2   = kTRUE;
   // useLL3050Chi2   = kTRUE;
   // useAA010Chi2    = kTRUE;
   // useAA1030Chi2   = kTRUE;
   // useAA3050Chi2   = kTRUE;
-  // useLA010Chi2    = kTRUE;
+  useLA010Chi2    = kTRUE;
   // useLA1030Chi2   = kTRUE;
   // useLA3050Chi2   = kTRUE;
 
@@ -220,7 +223,8 @@ void UserSetupSystems(Fitter *fitter)
   // histName = "mm12CF20";
 
   simpleName = "LA010";
-  Double_t initParamsArrLA[kNorm + 1] = {radiiParams[0], -1., 1., 0., 0., 0., 1.}; 
+  // Make initial parameters: Radius, ReF0, ImF0, D0, LinearBkg, QuadBkg, Norm 
+  Double_t initParamsArrLA[kNorm + 1] = {radiiParams[0], -1., 1., 3., 0., 0., 1.}; 
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + kNorm + 1);
   Bool_t fixParamsArrLA[kNorm + 1] = {kFALSE, kFALSE, kFALSE, kTRUE, !useLinearBkgPoly, !useQuadBkgPoly, kFALSE};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + kNorm + 1);
@@ -695,7 +699,7 @@ void UserSetFitOptions(Fitter *myFitter)
   myFitter->SetUseMINOS(kFALSE);
    
   // optional suffix for saved plots and objects
-  TString outString = "";
+  TString outString = "Smear";
   myFitter->SetOutputString(outString);
 
   // Output extra plots showing all residual correlation components?
