@@ -140,6 +140,8 @@ TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
   // return a graph that has been transformed into the 
   // relative momentum space of the primary correlations.
 
+  // 
+
   if(!fTransformMatrix) return base;
   TGraph *transformedGraph = (TGraph*) base->Clone("transformedGraph");
   assert(transformedGraph);
@@ -147,23 +149,24 @@ TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
   const Int_t nBins = transformedGraph->GetN();
   const Int_t nBinsTransform = fTransformMatrix->GetNbinsX();
   assert(nBins == nBinsTransform);
-  // DaughterBins are in the relative momentum space of the 
-  // primary correlations
-  for(Int_t daughterBin = 0; daughterBin < nBins; daughterBin++)
+  // A smeared bin is the k* bin of a pair after momentum smearing
+  // (e.g. Residual Correlation and/or Momentum Resulution)
+  // has occured
+  for(Int_t iSmearedBin = 0; iSmearedBin < nBins; iSmearedBin++)
   {
     // Double_t weightSum = 0.;
     Double_t valueSum = 0.;
-    // ParentBins are in the relative momentum space of the
-    // residual correlation
-    for(Int_t parentBin = 0; parentBin < nBins; parentBin++)
+    // A PreSmearedBin is the k* bin of the pair as given by the
+    // unsmeared Lednicky Eqn
+    for(Int_t iPreSmearedBin = 0; iPreSmearedBin < nBins; iPreSmearedBin++)
     {
-      Double_t weight = fTransformMatrix->GetBinContent(daughterBin+1, parentBin+1);
+      Double_t weight = fTransformMatrix->GetBinContent(iPreSmearedBin+1, iSmearedBin+1);
       // weightSum += weight;
-      valueSum += weight * base->GetY()[parentBin];
+      valueSum += weight * base->GetY()[iPreSmearedBin];
     }
-    // if(weightSum < 0.99) transformedGraph->GetY()[daughterBin] = 0;
-    // else transformedGraph->GetY()[daughterBin] = valueSum/*/weightSum*/;
-    transformedGraph->GetY()[daughterBin] = valueSum;
+    // if(weightSum < 0.99) transformedGraph->GetY()[iSmearedBin] = 0;
+    // else transformedGraph->GetY()[iSmearedBin] = valueSum/*/weightSum*/;
+    transformedGraph->GetY()[iSmearedBin] = valueSum;
   }
   
   delete base;
