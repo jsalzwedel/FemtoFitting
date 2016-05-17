@@ -54,7 +54,8 @@ vector<LednickyInfo> PrepareLednickyInfo(Bool_t isIdentical, Bool_t useRootSScal
   TString histSuffix = "";
   if(isIdentical) histSuffix = "LLAA";
   else histSuffix = "LA";
-  LednickyInfo infoLL("LambdaLambda", 0.25, GetTransformMatrix(fileNameMatrix, "SmearMatrixLambdaLambdaNorm" + histSuffix), isIdentical, useRootSScaling, mLambda, mLambda, mLambda, mLambda); 
+  LednickyInfo infoLL("LambdaLambda", 0.25, GetTransformMatrix(fileNameMatrix, "SmearMatrixLambdaLambdaNorm" + histSuffix), isIdentical, useRootSScaling, mLambda, mLambda, mLambda, mLambda);
+  // LednickyInfo infoLL("LambdaLambda", 0.25, NULL, isIdentical, useRootSScaling, mLambda, mLambda, mLambda, mLambda); 
   ledInfo.push_back(infoLL);
   
   LednickyInfo infoLS("LambdaSigma", 0.194, GetTransformMatrix(fileNameMatrix, "SmearMatrixSigmaLambdaNorm" + histSuffix), kFALSE, useRootSScaling, mLambda, mLambda, mLambda, mSigma);
@@ -126,13 +127,19 @@ void UserSetupSystems(Fitter *fitter)
   // useLA3050Log   = kTRUE;
 
   // Include a fit to the background?
-  Bool_t useLinearBkgPoly = 1;
-  Bool_t useQuadBkgPoly = 1;
+  Bool_t useLinearBkgPoly = kFALSE;
+  Bool_t useQuadBkgPoly = kFALSE;
   fitter->SetUseLinearBkgPoly(useLinearBkgPoly);
   fitter->SetUseQuadBkgPoly(useQuadBkgPoly);
   
   Bool_t useRootSScalingLL = kFALSE;
   Bool_t useRootSScalingLA = kFALSE;
+
+  Bool_t fixRadius = kTRUE;
+  Bool_t fixReF0 = kTRUE;
+  Bool_t fixImF0 = kTRUE;
+  Bool_t fixD0 = kTRUE;
+  Bool_t fixNorm = kTRUE;
 
 
   
@@ -151,7 +158,7 @@ void UserSetupSystems(Fitter *fitter)
   Double_t maxParamsArr[kNorm + 1] = {0., 0., 0., 0., 0., 0., 0.};
   vector<Double_t> maxParams(maxParamsArr, maxParamsArr + kNorm + 1);  
   // Determine which parameters should be fixed in the fitter.
-  Bool_t fixParamsArr[kNorm + 1] = {kFALSE, kFALSE, kTRUE, kTRUE, !useLinearBkgPoly, !useQuadBkgPoly, kFALSE};
+  Bool_t fixParamsArr[kNorm + 1] = {fixRadius, fixReF0, fixImF0, fixD0, !useLinearBkgPoly, !useQuadBkgPoly, fixNorm};
   vector<Bool_t> fixParams(fixParamsArr, fixParamsArr + kNorm + 1);
   // Prepare the lednicky eqn info (lambda parameters, transform matrix locations, whether or not particles are identical)
   vector<LednickyInfo> ledInfoLL = PrepareLednickyInfo(kTRUE, useRootSScalingLL);
@@ -226,7 +233,7 @@ void UserSetupSystems(Fitter *fitter)
   // Make initial parameters: Radius, ReF0, ImF0, D0, LinearBkg, QuadBkg, Norm 
   Double_t initParamsArrLA[kNorm + 1] = {radiiParams[0], -1., 1., 3., 0., 0., 1.}; 
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + kNorm + 1);
-  Bool_t fixParamsArrLA[kNorm + 1] = {kFALSE, kFALSE, kFALSE, kTRUE, !useLinearBkgPoly, !useQuadBkgPoly, kFALSE};
+  Bool_t fixParamsArrLA[kNorm + 1] = {fixRadius, fixReF0, fixImF0, fixD0, !useLinearBkgPoly, !useQuadBkgPoly, fixNorm};
   vector<Bool_t> fixParamsLA(fixParamsArrLA, fixParamsArrLA + kNorm + 1);
 
   vector<LednickyInfo> ledInfoLA = PrepareLednickyInfo(kFALSE, useRootSScalingLA);
