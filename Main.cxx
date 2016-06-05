@@ -93,8 +93,8 @@ void UserSetupSystems(Fitter *fitter)
          useAA010Chi2 = kFALSE, useAA1030Chi2 = kFALSE, useAA3050Chi2 = kFALSE,
          useLA010Chi2 = kFALSE, useLA1030Chi2 = kFALSE, useLA3050Chi2 = kFALSE;
   // Uncomment these as needed
-  // useLLAA010Chi2  = kTRUE;
-  // useLLAA1030Chi2 = kTRUE;
+  useLLAA010Chi2  = kTRUE;
+  useLLAA1030Chi2 = kTRUE;
   // useLLAA3050Chi2 = kTRUE;
   // useLL010Chi2    = kTRUE;
   // useLL1030Chi2   = kTRUE;
@@ -102,7 +102,7 @@ void UserSetupSystems(Fitter *fitter)
   // useAA010Chi2    = kTRUE;
   // useAA1030Chi2   = kTRUE;
   // useAA3050Chi2   = kTRUE;
-  useLA010Chi2    = kTRUE;
+  // useLA010Chi2    = kTRUE;
   // useLA1030Chi2   = kTRUE;
   // useLA3050Chi2   = kTRUE;
 
@@ -129,18 +129,24 @@ void UserSetupSystems(Fitter *fitter)
   // Include a fit to the background?
   Bool_t useLinearBkgPoly = kFALSE;
   Bool_t useQuadBkgPoly = kFALSE;
+  // useLinearBkgPoly = kTRUE;
+  useQuadBkgPoly = kTRUE;
   fitter->SetUseLinearBkgPoly(useLinearBkgPoly);
   fitter->SetUseQuadBkgPoly(useQuadBkgPoly);
   
   Bool_t useRootSScalingLL = kFALSE;
   Bool_t useRootSScalingLA = kFALSE;
 
-  Bool_t fixRadius = kTRUE;
-  Bool_t fixReF0 = kTRUE;
-  Bool_t fixImF0 = kTRUE;
-  Bool_t fixD0 = kTRUE;
-  Bool_t fixNorm = kTRUE;
-
+  Bool_t fixRadius = kFALSE;
+  Bool_t fixReF0 = kFALSE;
+  Bool_t fixImF0 = kFALSE;
+  Bool_t fixD0 = kFALSE;
+  Bool_t fixNorm = kFALSE;
+  // fixRadius = kTRUE;
+  // fixReF0 = kTRUE;
+  // fixImF0 = kTRUE;
+  // fixD0 = kTRUE;
+  // fixNorm = kTRUE;
 
   
   
@@ -625,15 +631,15 @@ void UserSetConstraints(Fitter *myFitter)
   // Share real f0, imaginary f0, and d0 among partical-antiparticle
   Int_t systemsArrLA[3] = {kLA010, kLA1030, kLA3050};
   vector<Int_t> systemsLA(systemsArrLA, systemsArrLA + 3);
-  myFitter->SetupConstraint(kF0Real, systemsLA);
-  myFitter->SetupConstraint(kF0Imag, systemsLA);
+  // myFitter->SetupConstraint(kF0Real, systemsLA);
+  // myFitter->SetupConstraint(kF0Imag, systemsLA);
   // myFitter->SetupConstraint(kD0, systemsLA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030, kLLAA3050};
   vector<Int_t> systemsLLAA(systemsArrLLAA, systemsArrLLAA + 3);
   myFitter->SetupConstraint(kF0Real, systemsLLAA);
-  // myFitter->SetupConstraint(kD0, systemsLLAA);
+  myFitter->SetupConstraint(kD0, systemsLLAA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda
   Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
