@@ -156,8 +156,8 @@ void UserSetupSystems(Fitter *fitter)
   TString histName = "Merged/CFLLAA010";
   TString simpleName = "LLAA010";
   // Make initial parameters: Radius, ReF0, ImF0, D0, LinearBkg, QuadBkg, Norm 
-  Double_t radiiParams[3] = {4., 2.67, 2.02};
-  Double_t initParamsArr[kNorm + 1] = {radiiParams[0], -.63, 0., 1., 0., 0., 1.}; 
+  Double_t radiiParams[3] = {4., 3., 2.};
+  Double_t initParamsArr[kNorm + 1] = {radiiParams[0], -.6, 0., 3., 0., 0., 1.}; 
   vector<Double_t> initParams(initParamsArr, initParamsArr + kNorm + 1);
   Double_t minParamsArr[kNorm + 1] = {0., 0., 0., 0., 0., 0., 0.};
   vector<Double_t> minParams(minParamsArr, minParamsArr + kNorm + 1);
