@@ -359,6 +359,8 @@ void Fitter::SaveOutputPlots()
       cf->Write(cfName, TObject::kOverwrite);
     }
     TGraph *g = fPairSystems[iSys]->GetCombinedTGraph();
+    g->SetLineColor(kRed);
+    g->SetLineWidth(2);
     TString gName = g->GetName();
     gName += fOutputString;
     g->Write(gName, TObject::kOverwrite);
