@@ -358,6 +358,18 @@ void Fitter::SaveOutputPlots()
       // cfName += fOutputString;
       cf->Write(cfName, TObject::kOverwrite);
     }
+    TF1 *bkg = fPairSystems[iSys]->GetBkgFunction();
+    if(bkg) {
+      bkg->SetLineColor(kBlue);
+      bkg->SetLineWidth(1.5);
+      TString bkgName = bkg->GetName();
+      bkgName += fOutputString;
+      bkg->Write(bkgName, TObject::kOverwrite);
+    } else {
+      cout << "Could not get PairSystem's bkg param for " << iSys
+	   << endl;
+    }
+    
     TGraph *g = fPairSystems[iSys]->GetCombinedTGraph();
     g->SetLineColor(kRed);
     g->SetLineWidth(2);
@@ -367,6 +379,7 @@ void Fitter::SaveOutputPlots()
     TCanvas c1("c1","c1");
     if(cf) {
       cf->DrawCopy();
+      bkg->Draw("same");
       g->Draw("same");
     }
     else g->Draw();

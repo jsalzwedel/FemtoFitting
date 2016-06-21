@@ -123,6 +123,23 @@ Double_t PairSystem::CalculateFitChisquare()
   return chi2;
 }
 
+TF1* PairSystem::GetBkgFunction()
+{
+  TString funcName = fPairTypeName + "Bkg";
+  TF1 *bkg = new TF1(funcName, "(1 + [0]*x + [1]*x^2) / [2]",
+		     0., 2.);
+  bkg->SetParameter(0, fLinearBkgParam);
+  bkg->SetParameter(1, fQuadBkgParam);
+
+  if(fUseLinearBkgPoly || fUseQuadBkgPoly) {
+    bkg->SetParameter(2, fNorms[0]);
+  } else {
+    bkg->SetParameter(2, 1.);
+  }
+
+  
+  return bkg;
+}
 
 TGraph* PairSystem::GetCombinedTGraph()
 {

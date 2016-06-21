@@ -9,6 +9,7 @@
 #define PairSystem_H
 
 #include "LednickyInfo.h"
+#include "TF1.h"
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TGraph.h"
@@ -26,6 +27,7 @@ class PairSystem{
   PairSystem(vector<TH1D*> numHists, vector<TH1D*> denHists, const vector<LednickyInfo> &ledInfo, TString pairTypeName, Int_t sysType);
   ~PairSystem();
   Double_t CalculateFitChisquare();
+  TF1*     GetBkgFunction();
   TH1D*    GetCF() {return fCF;};
   TGraph*  GetCombinedTGraph();
   TH1D*    GetLednickyHist();
