@@ -16,6 +16,7 @@
 
 
 #include <vector>
+#include <fstream>
 
 using std::vector;
 
@@ -34,6 +35,7 @@ class Fitter{
   /* Int_t GetNParams() const {return fNParams;}; */
   Int_t GetTotalParams() const {return fNParamsTotal;};
   void InitializeMinuitParameters(TMinuit *minuit);
+  void OutputParsToCSV(TString studyType = "", Int_t varIndex = -1, Int_t cutIndex = -1);
   void SaveOutputPlots();
   void SetDisplayResidualComponents(Bool_t shouldDraw) {fDisplayResidualComponents = shouldDraw;};
   void SetHighFitBin(Int_t bin);

@@ -294,6 +294,38 @@ Bool_t Fitter::IsParameterConstrained(const Int_t currentSys, const Int_t curren
   return kFALSE;
 }
 
+void Fitter::OutputParsToCSV(TString studyType/* = ""*/,
+			     Int_t varIndex/* = -1*/,
+			     Int_t cutIndex/* = -1*/)
+{
+  // Write all the the parameters, par errors,
+  // fit info (study type, variable #, cut #),
+  // chi^2, and chi^2/ndf (, and P-value?) to a line of a csv
+
+  // Open file to print to
+  ofstream outputFile;
+
+  outputFile.open ("FitResults/FitData.csv", std::ofstream::app);
+  cout << "Opened output file" << endl;
+
+  Int_t nPars = fMinuit->GetNumPars();
+  for (Int_t iPar = 0; iPar < nPars; iPar++) {
+    Double_t val, err;
+    fMinuit->GetParameter(iPar, val, err);
+    outputFile << val << "," << err << ",";
+  }
+  outputFile << studyType << ","
+	     << varIndex << ","
+	     << cutIndex << ","
+	     << fChisquare << ","
+	     << GetChisquarePerNDF() << ","
+	     << GetPvalue() << ","
+	     << TMath::Min(fMinuit->fDcovar, 1.)*100 << "\n";
+
+  outputFile.close();
+  
+}
+
 void Fitter::PushBackParams(TString simpleName, vector<Double_t> initParams, vector<Double_t> minParams, vector<Double_t> maxParams, vector<Bool_t> fixParams, UInt_t nNormParams)
 {
   // Add all the parameters to the fitter
