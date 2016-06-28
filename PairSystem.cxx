@@ -130,13 +130,7 @@ TF1* PairSystem::GetBkgFunction()
 		     0., 2.);
   bkg->SetParameter(0, fLinearBkgParam);
   bkg->SetParameter(1, fQuadBkgParam);
-
-  if(fUseLinearBkgPoly || fUseQuadBkgPoly) {
-    bkg->SetParameter(2, fNorms[0]);
-  } else {
-    bkg->SetParameter(2, 1.);
-  }
-
+  bkg->SetParameter(2, fNorms[0]);
   
   return bkg;
 }
