@@ -130,8 +130,8 @@ void UserSetupSystems(Fitter *fitter)
   // Include a fit to the background?
   Bool_t useLinearBkgPoly = kFALSE;
   Bool_t useQuadBkgPoly = kFALSE;
-  useLinearBkgPoly = kTRUE;
-  useQuadBkgPoly = kTRUE;
+  // useLinearBkgPoly = kTRUE;
+  // useQuadBkgPoly = kTRUE;
   fitter->SetUseLinearBkgPoly(useLinearBkgPoly);
   fitter->SetUseQuadBkgPoly(useQuadBkgPoly);
   
@@ -145,7 +145,7 @@ void UserSetupSystems(Fitter *fitter)
   Bool_t fixNorm = kFALSE;
   // fixRadius = kTRUE;
   // fixReF0 = kTRUE;
-  fixImF0 = kTRUE;
+  // fixImF0 = kTRUE;
   // fixD0 = kTRUE;
   // fixNorm = kTRUE;
 
@@ -639,8 +639,8 @@ void UserSetConstraints(Fitter *myFitter)
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030, kLLAA3050};
   vector<Int_t> systemsLLAA(systemsArrLLAA, systemsArrLLAA + 3);
-  // myFitter->SetupConstraint(kF0Real, systemsLLAA);
-  // myFitter->SetupConstraint(kD0, systemsLLAA);
+  myFitter->SetupConstraint(kF0Real, systemsLLAA);
+  myFitter->SetupConstraint(kD0, systemsLLAA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda
   Int_t systemsArrLL[3] = {kLL010, kLL1030, kLL3050};
@@ -734,6 +734,25 @@ void MinuitFit(Int_t& i, Double_t *x, Double_t &totalChisquare, Double_t *par, I
 // main for full program
 int main(int argc, char **argv)
 {
+
+  // Read in parameters (if any) that tell us which correlation
+  // functions to fit.
+  TString studyType = "";
+  Int_t varIndex = -1;
+  Int_t cutIndex = -1;
+  Bool_t shouldWriteCSV = kFALSE;
+  if (argc == 4) {
+    shouldWriteCSV = kTRUE;
+    studyType = argv[1];
+    varIndex = atoi(argv[2]);
+    cutIndex = atoi(argv[3]);
+  } else if (argc != 1) {
+    cout << "Invalid number of arguments supplied to runMe: "
+	 << argc << endl;
+    assert(0);
+  }
+
+   
   // Setup
   myFitter = new Fitter();
   UserSetupSystems(myFitter);
@@ -759,7 +778,9 @@ int main(int argc, char **argv)
   // myFitter->CreateMinuit();
   myFitter->DoFitting();
   myFitter->SaveOutputPlots();
-
+  if(shouldWriteCSV) {
+    myFitter->OutputParsToCSV(studyType, varIndex, cutIndex);
+  }
   delete myMinuit;
   return 0;
 }
