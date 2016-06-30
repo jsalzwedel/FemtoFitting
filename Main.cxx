@@ -82,7 +82,7 @@ vector<LednickyInfo> PrepareLednickyInfo(Bool_t isIdentical, Bool_t useRootSScal
   return ledInfo;
 }
 
-void UserSetupSystems(Fitter *fitter)
+void UserSetupSystems(Fitter *fitter, Int_t studyIndex, Int_t varIndex, Int_t cutIndex)
 {
   // Add systems to the analysis. The user should modify this 
   // function to suit their fitting needs
@@ -149,13 +149,14 @@ void UserSetupSystems(Fitter *fitter)
   // fixD0 = kTRUE;
   // fixNorm = kTRUE;
 
-  
-  
+
+  TString baseHistName = TString::Format("Study%iVar%i/Cut%i/Merged/CF", studyIndex, varIndex, cutIndex);
   /////////// Setting up Lambda-Lambda + Antilambda-Antilambda //////////////////
   // 0-10%
   TString fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
-  TString histName = "Study0Var0/Cut1/Merged/CFLLAA010";
+  // TString histName = "Study0Var0/Cut1/Merged/CFLLAA010";
   TString simpleName = "LLAA010";
+  TString histName = baseHistName + simpleName;
   // Make initial parameters: Radius, ReF0, ImF0, D0, LinearBkg, QuadBkg, Norm 
   Double_t radiiParams[3] = {4., 3., 2.};
   Double_t initParamsArr[kNorm + 1] = {radiiParams[0], -.6, 0., 3., 0., 0., 1.}; 
@@ -172,14 +173,16 @@ void UserSetupSystems(Fitter *fitter)
   if(useLLAA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
-  histName = "Study0Var0/Cut1/Merged/CFLLAA1030";
+  // histName = "Study0Var0/Cut1/Merged/CFLLAA1030";
   simpleName = "LLAA1030";
+  histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[1];
   if(useLLAA1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
-  histName = "Study0Var0/Cut1/Merged/CFLLAA3050";
+  // histName = "Study0Var0/Cut1/Merged/CFLLAA3050";
   simpleName = "LLAA3050";
+  histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[2];
   if(useLLAA3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
@@ -187,20 +190,23 @@ void UserSetupSystems(Fitter *fitter)
   ////////////////// Setting up Lambda-Lambda ////////////////////
   // 0-10%
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
-  histName = "Study0Var0/Cut1/Merged/CFLamLam010";
+  // histName = "Study0Var0/Cut1/Merged/CFLamLam010";
   simpleName = "LL010";
+  histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[0];
   if(useLL010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
-  histName = "Study0Var0/Cut1/Merged/CFLamLam1030";
+  // histName = "Study0Var0/Cut1/Merged/CFLamLam1030";
   simpleName = "LL1030";
+  histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[1];
   if(useLL1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
-  histName = "Study0Var0/Cut1/Merged/CFLamLam3050";
+  // histName = "Study0Var0/Cut1/Merged/CFLamLam3050";
   simpleName = "LL3050";
+  histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[2];
   if(useLL3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
@@ -208,20 +214,23 @@ void UserSetupSystems(Fitter *fitter)
   ////////////////// Setting up Antilambda-Antilambda ////////////////////
   // 0-10%
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
-  histName = "Study0Var0/Cut1/Merged/CFALamALam010";
+  // histName = "Study0Var0/Cut1/Merged/CFALamALam010";
   simpleName = "AA010";
+  histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[0];
   if(useAA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
-  histName = "Study0Var0/Cut1/Merged/CFALamALam1030";
+  // histName = "Study0Var0/Cut1/Merged/CFALamALam1030";
   simpleName = "AA1030";
+  histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[1];
   if(useAA1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
-  histName = "Study0Var0/Cut1/Merged/CFALamALam3050";
+  // histName = "Study0Var0/Cut1/Merged/CFALamALam3050";
   simpleName = "AA3050";
+  histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[2];
   if(useAA3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
@@ -232,11 +241,12 @@ void UserSetupSystems(Fitter *fitter)
   ////////////////// Setting up Lambda-Antilambda ////////////////////
   // 0-10%
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
-  histName = "Study0Var0/Cut1/Merged/CFLamALam010";
+  // histName = "Study0Var0/Cut1/Merged/CFLamALam010";
   // fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/OneTimeUseTestCF.root";
   // histName = "mm12CF20";
 
-  simpleName = "LA010";
+  simpleName = "LamALam010";
+  histName = baseHistName + simpleName;
   // Make initial parameters: Radius, ReF0, ImF0, D0, LinearBkg, QuadBkg, Norm 
   Double_t initParamsArrLA[kNorm + 1] = {radiiParams[0], -1., 1., 3., 0., 0., 1.}; 
   vector<Double_t> initParamsLA(initParamsArrLA, initParamsArrLA + kNorm + 1);
@@ -247,14 +257,16 @@ void UserSetupSystems(Fitter *fitter)
   if(useLA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA010, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 10-30
-  histName = "Study0Var0/Cut1/Merged/CFLamALam1030";
-  simpleName = "LA1030";
+  // histName = "Study0Var0/Cut1/Merged/CFLamALam1030";
+  simpleName = "LamALam1030";
+  histName = baseHistName + simpleName;
   initParamsLA[kRad] = radiiParams[1];
   if(useLA1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA1030, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
 
   // 30-50
-  histName = "Study0Var0/Cut1/Merged/CFLamALam3050";
-  simpleName = "LA3050";
+  // histName = "Study0Var0/Cut1/Merged/CFLamALam3050";
+  simpleName = "LamALam3050";
+  histName = baseHistName + simpleName;
   initParamsLA[kRad] = radiiParams[2];
   if(useLA3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLA3050, ledInfoLA, initParamsLA, minParams, maxParams, fixParamsLA);
   //************* Add more systems as needed ******************
@@ -738,24 +750,33 @@ int main(int argc, char **argv)
   // Read in parameters (if any) that tell us which correlation
   // functions to fit.
   TString studyType = "";
-  Int_t varIndex = -1;
-  Int_t cutIndex = -1;
+  Int_t studyIndex = 0;
+  Int_t varIndex = 0;
+  Int_t cutIndex = 1;
   Bool_t shouldWriteCSV = kFALSE;
   if (argc == 4) {
     shouldWriteCSV = kTRUE;
     studyType = argv[1];
     varIndex = atoi(argv[2]);
     cutIndex = atoi(argv[3]);
+    if ("AvgSep" == studyType) studyIndex = 2;
+    else if ("Topol" == studyType) studyIndex = 1;
+    else if ("NoStudy" == studyType) studyIndex = 0;
+    else {
+      cout << "Not a valid study type: " << studyType << endl;
+      return 1;
+    }
+    
   } else if (argc != 1) {
     cout << "Invalid number of arguments supplied to runMe: "
 	 << argc << endl;
-    assert(0);
+    return 1;
   }
 
    
   // Setup
   myFitter = new Fitter();
-  UserSetupSystems(myFitter);
+  UserSetupSystems(myFitter, studyIndex, varIndex, cutIndex);
   // Add more systems as needed, either here or in UserSetupSystems
   if(myFitter->GetNSystems() < 1) {
     cout<<"No systems to fit."<<endl;
