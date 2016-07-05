@@ -303,16 +303,29 @@ void Fitter::OutputParsToCSV(TString studyType/* = ""*/,
   // chi^2, and chi^2/ndf (, and P-value?) to a line of a csv
 
   // Open file to print to
-  ofstream outputFile;
+  ofstream outputFile, columnNamesFile;
 
-  outputFile.open ("FitResults/FitData.csv", std::ofstream::app);
-  cout << "Opened output file" << endl;
+  TString outputFileName = "FitResults/SystematicFitData.csv";
+  outputFile.open (outputFileName, std::ofstream::app);
+  cout << "Opened output file: " << outputFileName << endl;
+
+  TString columnNamesFileName = "FitResults/SystematicColumnNames.csv";
+  columnNamesFile.open (columnNamesFileName, std::ofstream::app);
+  cout << "Opened column names file: "
+       << columnNamesFileName << endl;
 
   Int_t nPars = fMinuit->GetNumPars();
   for (Int_t iPar = 0; iPar < nPars; iPar++) {
     Double_t val, err;
     fMinuit->GetParameter(iPar, val, err);
     outputFile << val << "," << err << ",";
+
+    // Output the parameter name to a file
+    TString parName;
+    Double_t var1, var2, var3, var4; // unnecessary function paramteres
+    Int_t var5; // unncessary parameter
+    fMinuit->mnpout(iPar, parName, var1, var2, var3, var4, var5);
+    columnNamesFile << parName << ",";
   }
   outputFile << studyType << ","
 	     << varIndex << ","
@@ -322,7 +335,16 @@ void Fitter::OutputParsToCSV(TString studyType/* = ""*/,
 	     << GetPvalue() << ","
 	     << TMath::Min(fMinuit->fDcovar, 1.)*100 << "\n";
 
+  columnNamesFile << "StudyType,"
+		  << "VarIndex,"
+		  << "CutIndex,"
+		  << "Chisquare,"
+		  << "ChiPerNDF,"
+		  << "PValue,"
+		  << "ErrMatrixUncertainty";
+
   outputFile.close();
+  columnNamesFile.close();
   
 }
 
