@@ -102,8 +102,8 @@ void UserSetupSystems(Fitter *fitter, Int_t studyIndex, Int_t varIndex, Int_t cu
   useLA010Chi2    = kTRUE;
   useLA1030Chi2   = kTRUE;
   useLA3050Chi2   = kTRUE;
-  // useLLAA010Chi2  = kTRUE;
-  // useLLAA1030Chi2 = kTRUE;
+  useLLAA010Chi2  = kTRUE;
+  useLLAA1030Chi2 = kTRUE;
   // useLLAA3050Chi2 = kTRUE;
 
 
