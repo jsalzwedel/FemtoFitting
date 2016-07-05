@@ -325,7 +325,7 @@ void Fitter::OutputParsToCSV(TString studyType/* = ""*/,
     Double_t var1, var2, var3, var4; // unnecessary function paramteres
     Int_t var5; // unncessary parameter
     fMinuit->mnpout(iPar, parName, var1, var2, var3, var4, var5);
-    columnNamesFile << parName << ",";
+    columnNamesFile << parName << "," << parName + "Err,";
   }
   outputFile << studyType << ","
 	     << varIndex << ","
@@ -341,7 +341,8 @@ void Fitter::OutputParsToCSV(TString studyType/* = ""*/,
 		  << "Chisquare,"
 		  << "ChiPerNDF,"
 		  << "PValue,"
-		  << "ErrMatrixUncertainty";
+		  << "ErrMatrixUncertainty"
+		  << endl;
 
   outputFile.close();
   columnNamesFile.close();
