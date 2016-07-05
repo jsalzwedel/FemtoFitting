@@ -130,8 +130,8 @@ void UserSetupSystems(Fitter *fitter, Int_t studyIndex, Int_t varIndex, Int_t cu
   // Include a fit to the background?
   Bool_t useLinearBkgPoly = kFALSE;
   Bool_t useQuadBkgPoly = kFALSE;
-  // useLinearBkgPoly = kTRUE;
-  // useQuadBkgPoly = kTRUE;
+  useLinearBkgPoly = kTRUE;
+  useQuadBkgPoly = kTRUE;
   fitter->SetUseLinearBkgPoly(useLinearBkgPoly);
   fitter->SetUseQuadBkgPoly(useQuadBkgPoly);
   
