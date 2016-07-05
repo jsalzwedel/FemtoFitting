@@ -310,7 +310,7 @@ void Fitter::OutputParsToCSV(TString studyType/* = ""*/,
   cout << "Opened output file: " << outputFileName << endl;
 
   TString columnNamesFileName = "FitResults/SystematicColumnNames.csv";
-  columnNamesFile.open (columnNamesFileName, std::ofstream::app);
+  columnNamesFile.open (columnNamesFileName, std::ofstream::trunc);
   cout << "Opened column names file: "
        << columnNamesFileName << endl;
 
