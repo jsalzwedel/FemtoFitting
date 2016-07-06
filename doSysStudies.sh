@@ -1,3 +1,7 @@
+# backup, then clear previous results (old backups are lost)
+
+mv FitResults/SystematicFitData{,.bak}.csv
+
 # run topological cut analysis
 
 for var in `seq 1 10`; do
