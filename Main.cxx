@@ -14,12 +14,13 @@ using namespace std;
 Fitter *myFitter = NULL;
 
 
-// enum ParamType  {kRad     = 0,
-// 		 kF0Real  = 1,
-// 		 kF0Imag  = 2,
-// 		 kD0      = 3,
-// 		 kQuadBkg = 4,
-// 		 kNorm    = 5};
+// enum ParamType  {kRad       = 0,
+// 		 kF0Real    = 1,
+// 		 kF0Imag    = 2,
+// 		 kD0        = 3,
+// 		 kLinearBkg = 4,
+// 		 kQuadBkg   = 5,
+// 		 kNorm      = 6};
 
 enum SystemType {kLL010, kLL1030, kLL3050,
 		 kAA010, kAA1030, kAA3050,
@@ -29,6 +30,7 @@ enum SystemType {kLL010, kLL1030, kLL3050,
 
 TH2D *GetTransformMatrix(TString rootFileName, TString histName)
 {
+  // Read in transform matrices
   TFile f(rootFileName,"read");
   TH2D *h = (TH2D*) f.Get(histName);
   assert(h);
@@ -43,7 +45,7 @@ vector<LednickyInfo> PrepareLednickyInfo(Bool_t isIdentical, Bool_t useRootSScal
   vector<LednickyInfo> ledInfo;
 
   // Masses for use with sqrt(s) scaling of scattering amplitude.
-  // If not using sqrt(s) scaling of interactions, can optionally set these to 0
+  // If not using sqrt(s) scaling of interactions, these don't matter
   Double_t mLambda = 1.1157;
   Double_t mSigma = 1.1193;
   Double_t mXi0 = 1.3149;
@@ -92,7 +94,8 @@ void UserSetupSystems(Fitter *fitter, Int_t studyIndex, Int_t varIndex, Int_t cu
          useLL010Chi2 = kFALSE, useLL1030Chi2 = kFALSE, useLL3050Chi2 = kFALSE,
          useAA010Chi2 = kFALSE, useAA1030Chi2 = kFALSE, useAA3050Chi2 = kFALSE,
          useLA010Chi2 = kFALSE, useLA1030Chi2 = kFALSE, useLA3050Chi2 = kFALSE;
-  // Uncomment these as needed
+  
+  // *******  Uncomment these as needed ******
   // useLL010Chi2    = kTRUE;
   // useLL1030Chi2   = kTRUE;
   // useLL3050Chi2   = kTRUE;
@@ -710,16 +713,14 @@ void UserSetFitOptions(Fitter *myFitter)
   // Set the upper bin of the fit range
   myFitter->SetHighFitBin(40);
 
-  // Set low bin for fitting background with quadratic
+  // Set the upper and lower bins for fitting the background
   myFitter->SetLowBkgFitBin(60);
-
   myFitter->SetHighBkgFitBin(90);
-   
    
   // How big should the initial starting value fit uncertainty be?
   // This is a catchall for *all* parameter step sizes.
+  // Choice shouldn't really matter.
   myFitter->SetStartingStepSize(.1);
-
 
   // Use MINOS to find error bars?
   myFitter->SetUseMINOS(kFALSE);
@@ -729,7 +730,7 @@ void UserSetFitOptions(Fitter *myFitter)
   myFitter->SetOutputString(outString);
 
   // Output extra plots showing all residual correlation components?
-  myFitter->SetDisplayResidualComponents(kTRUE);
+  myFitter->SetDisplayResidualComponents(kFALSE);
   
   // Output extra histograms of lednicky Eqns?
   myFitter->SetOutputLednickyHists(kTRUE);
@@ -784,7 +785,6 @@ int main(int argc, char **argv)
   }
   UserSetConstraints(myFitter);
   UserSetFitOptions(myFitter);
-  // myFitter->SetFitOptions();
 
   // Get the parameters set up in Fitter
   myFitter->SetupInitialParameterVectors();
@@ -796,7 +796,6 @@ int main(int argc, char **argv)
   TMinuit *myMinuit = new TMinuit(nParams);
   myMinuit->SetFCN(MinuitFit);
   myFitter->InitializeMinuitParameters(myMinuit);
-  // myFitter->CreateMinuit();
   myFitter->DoFitting();
   myFitter->SaveOutputPlots();
   if(shouldWriteCSV) {

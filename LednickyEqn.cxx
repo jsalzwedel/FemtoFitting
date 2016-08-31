@@ -139,8 +139,8 @@ TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
   // If the LednickyEqn object is a residual correlation,
   // return a graph that has been transformed into the 
   // relative momentum space of the primary correlations.
-
-  // 
+  // Otherwise, just pass back the unsmeared correlation
+  // function.
 
   if(!fTransformMatrix) return base;
   TGraph *transformedGraph = (TGraph*) base->Clone("transformedGraph");
