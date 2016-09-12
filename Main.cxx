@@ -102,9 +102,9 @@ void UserSetupSystems(Fitter *fitter, Int_t studyIndex, Int_t varIndex, Int_t cu
   // useAA010Chi2    = kTRUE;
   // useAA1030Chi2   = kTRUE;
   // useAA3050Chi2   = kTRUE;
-  useLA010Chi2    = kTRUE;
-  useLA1030Chi2   = kTRUE;
-  useLA3050Chi2   = kTRUE;
+  // useLA010Chi2    = kTRUE;
+  // useLA1030Chi2   = kTRUE;
+  // useLA3050Chi2   = kTRUE;
   useLLAA010Chi2  = kTRUE;
   useLLAA1030Chi2 = kTRUE;
   // useLLAA3050Chi2 = kTRUE;
@@ -194,21 +194,21 @@ void UserSetupSystems(Fitter *fitter, Int_t studyIndex, Int_t varIndex, Int_t cu
   // 0-10%
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
   // histName = "Study0Var0/Cut1/Merged/CFLamLam010";
-  simpleName = "LL010";
+  simpleName = "LamLam010";
   histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[0];
   if(useLL010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   // histName = "Study0Var0/Cut1/Merged/CFLamLam1030";
-  simpleName = "LL1030";
+  simpleName = "LamLam1030";
   histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[1];
   if(useLL1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   // histName = "Study0Var0/Cut1/Merged/CFLamLam3050";
-  simpleName = "LL3050";
+  simpleName = "LamLam3050";
   histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[2];
   if(useLL3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kLL3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
@@ -218,21 +218,21 @@ void UserSetupSystems(Fitter *fitter, Int_t studyIndex, Int_t varIndex, Int_t cu
   // 0-10%
   fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/CFs.root";
   // histName = "Study0Var0/Cut1/Merged/CFALamALam010";
-  simpleName = "AA010";
+  simpleName = "ALamALam010";
   histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[0];
   if(useAA010Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA010, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 10-30
   // histName = "Study0Var0/Cut1/Merged/CFALamALam1030";
-  simpleName = "AA1030";
+  simpleName = "ALamALam1030";
   histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[1];
   if(useAA1030Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA1030, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
   // 30-50
   // histName = "Study0Var0/Cut1/Merged/CFALamALam3050";
-  simpleName = "AA3050";
+  simpleName = "ALamALam3050";
   histName = baseHistName + simpleName;
   initParams[kRad] = radiiParams[2];
   if(useAA3050Chi2) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
@@ -647,9 +647,9 @@ void UserSetConstraints(Fitter *myFitter)
   // Share real f0, imaginary f0, and d0 among partical-antiparticle
   Int_t systemsArrLA[3] = {kLA010, kLA1030, kLA3050};
   vector<Int_t> systemsLA(systemsArrLA, systemsArrLA + 3);
-  myFitter->SetupConstraint(kF0Real, systemsLA);
-  myFitter->SetupConstraint(kF0Imag, systemsLA);
-  myFitter->SetupConstraint(kD0, systemsLA);
+  // myFitter->SetupConstraint(kF0Real, systemsLA);
+  // myFitter->SetupConstraint(kF0Imag, systemsLA);
+  // myFitter->SetupConstraint(kD0, systemsLA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030, kLLAA3050};
@@ -726,7 +726,7 @@ void UserSetFitOptions(Fitter *myFitter)
   myFitter->SetUseMINOS(kFALSE);
    
   // optional suffix for saved plots and objects
-  TString outString = "Smear";
+  TString outString = "NoResiduals";
   myFitter->SetOutputString(outString);
 
   // Output extra plots showing all residual correlation components?
