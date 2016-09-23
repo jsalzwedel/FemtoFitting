@@ -81,6 +81,27 @@ vector<LednickyInfo> PrepareLednickyInfo(Bool_t isIdentical, Bool_t useRootSScal
   LednickyInfo infoX0XC("Xi0XiC", 0.029, GetTransformMatrix(fileNameMatrix, "SmearMatrixXiCXi0Norm" + histSuffix), kFALSE, useRootSScaling, mLambda, mLambda, mXi0, mXiC);
   ledInfo.push_back(infoX0XC);
 
+  // Need to normalize matrix.
+  // Need to split up into singlet and triplet components
+  // TString fileNamePLamMatrix = "~/Analysis/lambda/AliAnalysisLambda/Fitting/FemtoFitting/PLamToLamLam.root";
+  TString matrixNamePLam = "hNorm" + histSuffix;
+  Bool_t fixScatterParams = kTRUE;
+  Bool_t fixRadius = kFALSE;
+  Double_t pLamRadius = 0.;
+
+  Double_t singletReF0 = -2.88;
+  Double_t singletImF0 = 0.;
+  Double_t singletD0 = 2.92;
+  LednickyInfo infoPLSinglet("ProtonLambdaSinglet", 0.04, GetTransformMatrix(fileNameMatrix, matrixNamePLam), kFALSE, useRootSScaling, 0., 0., 0., 0., fixScatterParams, singletReF0, singletImF0, singletD0, fixRadius, pLamRadius);
+  ledInfo.push_back(infoPLSinglet);
+
+  Double_t tripletReF0 = -1.66;
+  Double_t tripletImF0 = 0.;
+  Double_t tripletD0 = 3.78;
+  LednickyInfo infoPLTriplet("ProtonLambdaTriplet", 0.013, GetTransformMatrix(fileNameMatrix, matrixNamePLam), kFALSE, useRootSScaling, 0., 0., 0., 0., fixScatterParams, tripletReF0, tripletImF0, tripletD0, fixRadius, pLamRadius);
+  ledInfo.push_back(infoPLTriplet);
+
+
   return ledInfo;
 }
 
@@ -106,7 +127,7 @@ void UserSetupSystems(Fitter *fitter, Int_t studyIndex, Int_t varIndex, Int_t cu
   // useLA1030Chi2   = kTRUE;
   // useLA3050Chi2   = kTRUE;
   useLLAA010Chi2  = kTRUE;
-  useLLAA1030Chi2 = kTRUE;
+  // useLLAA1030Chi2 = kTRUE;
   // useLLAA3050Chi2 = kTRUE;
 
 
@@ -647,9 +668,9 @@ void UserSetConstraints(Fitter *myFitter)
   // Share real f0, imaginary f0, and d0 among partical-antiparticle
   Int_t systemsArrLA[3] = {kLA010, kLA1030, kLA3050};
   vector<Int_t> systemsLA(systemsArrLA, systemsArrLA + 3);
-  // myFitter->SetupConstraint(kF0Real, systemsLA);
-  // myFitter->SetupConstraint(kF0Imag, systemsLA);
-  // myFitter->SetupConstraint(kD0, systemsLA);
+  myFitter->SetupConstraint(kF0Real, systemsLA);
+  myFitter->SetupConstraint(kF0Imag, systemsLA);
+  myFitter->SetupConstraint(kD0, systemsLA);
 
   // Share real f0, imaginary f0, and d0 among LambdaLambda + AntilambdaAntilambda
   Int_t systemsArrLLAA[3] = {kLLAA010, kLLAA1030, kLLAA3050};
@@ -726,11 +747,11 @@ void UserSetFitOptions(Fitter *myFitter)
   myFitter->SetUseMINOS(kFALSE);
    
   // optional suffix for saved plots and objects
-  TString outString = "NoResiduals";
+  TString outString = "StockFit";
   myFitter->SetOutputString(outString);
 
   // Output extra plots showing all residual correlation components?
-  myFitter->SetDisplayResidualComponents(kFALSE);
+  myFitter->SetDisplayResidualComponents(kTRUE);
   
   // Output extra histograms of lednicky Eqns?
   myFitter->SetOutputLednickyHists(kTRUE);

@@ -26,10 +26,12 @@ LednickyEqn::LednickyEqn(const LednickyInfo &info, Int_t nBins, Double_t binWidt
   fUseRootSScaling = info.GetUseRootSScaling();
   //If transform matrix is null, this is a primary correlation
   fTransformMatrix = info.GetTransformMatrix();
-  fF0Real = 0.;
-  fF0Imag = 0.;
-  fD0 = 0.;
-  fRadius = 0.;
+  fFixScatterParams = info.GetFixScatterParams();
+  fF0Real = info.GetReF0();
+  fF0Imag = info.GetImF0();
+  fD0 = info.GetD0();
+  fFixRadius = info.GetFixRadius();
+  fRadius = info.GetRadius();
   fNBins = nBins;
   fBinWidth = binWidth;
   fBaseMass1 = info.GetBaseMass1();
@@ -128,11 +130,15 @@ void LednickyEqn::SetParameters(const vector<Double_t> &pars)
 {
   // Set all the fit parameters
   // Normalization is taken care of by PairSystem class
-  fRadius = pars[0]; 
-  fF0Real = pars[1];
-  fF0Imag = pars[2];
-  fD0     = pars[3];     
-}
+  if (!fFixRadius) {
+    fRadius = pars[0];
+  }
+  if (!fFixScatterParams) {
+    fF0Real = pars[1];
+    fF0Imag = pars[2];
+    fD0     = pars[3];     
+  }
+}  
 
 TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
 {

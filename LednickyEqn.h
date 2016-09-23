@@ -28,9 +28,11 @@ class LednickyEqn{
 
  private:
   TString  fName;   // Type of pair this interaction describes
+  Bool_t   fFixScatterParams; // If on, fitter can't change scatter param values
   Double_t fF0Real; // Real part of the scattering length
   Double_t fF0Imag; // Imaginary part of the scattering length
   Double_t fD0;     // Effective range of interaction
+  Bool_t   fFixRadius; // if true, fitter can't change radius
   Double_t fRadius; // Homogeneity radius
   Bool_t   fIsIdentical; // Are these pairs identical particles?
   Bool_t   fUseRootSScaling; // Should scatter amp scale by sqrt s
