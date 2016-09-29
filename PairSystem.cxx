@@ -260,6 +260,9 @@ TCanvas* PairSystem::GetResidualComponentCanvas()
     // change symbol/color
     residual->SetLineWidth(2);
     residual->SetLineColor((iLed+1) % 50);
+    if (((iLed+1) % 50) == 10) {
+      residual->SetLineColor(kTeal-1);
+    }
     residual->SetLineStyle((iLed+1) % 11);
     residual->Draw("same");
     leg->AddEntry(residual, "", "L");
