@@ -152,9 +152,12 @@ TGraph* LednickyEqn::TransformLednickyGraph(TGraph *base)
   TGraph *transformedGraph = (TGraph*) base->Clone("transformedGraph");
   assert(transformedGraph);
 
-  const Int_t nBins = transformedGraph->GetN();
-  const Int_t nBinsTransform = fTransformMatrix->GetNbinsX();
-  assert(nBins == nBinsTransform);
+  Int_t nBinsLednicky = transformedGraph->GetN();
+  Int_t nBinsTransform = fTransformMatrix->GetNbinsX();
+  // assert(nBins == nBinsTransform);
+  Int_t nBins = nBinsLednicky;
+  // Truncate smearing if transform matrix is shorter than lednicky graph
+  if (nBinsTransform < nBinsLednicky) nBins = nBinsTransform; 
   // A smeared bin is the k* bin of a pair after momentum smearing
   // (e.g. Residual Correlation and/or Momentum Resulution)
   // has occured
