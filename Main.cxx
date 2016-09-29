@@ -59,6 +59,7 @@ vector<LednickyInfo> PrepareLednickyInfo(Bool_t isIdentical, Bool_t useRootSScal
   LednickyInfo infoLL("LambdaLambda", 0.25, GetTransformMatrix(fileNameMatrix, "SmearMatrixLambdaLambdaNorm" + histSuffix), isIdentical, useRootSScaling, mLambda, mLambda, mLambda, mLambda);
   // LednickyInfo infoLL("LambdaLambda", 0.25, NULL, isIdentical, useRootSScaling, mLambda, mLambda, mLambda, mLambda); 
   ledInfo.push_back(infoLL);
+
   
   LednickyInfo infoLS("LambdaSigma", 0.194, GetTransformMatrix(fileNameMatrix, "SmearMatrixSigmaLambdaNorm" + histSuffix), kFALSE, useRootSScaling, mLambda, mLambda, mLambda, mSigma);
   ledInfo.push_back(infoLS);
@@ -80,27 +81,38 @@ vector<LednickyInfo> PrepareLednickyInfo(Bool_t isIdentical, Bool_t useRootSScal
 
   LednickyInfo infoX0XC("Xi0XiC", 0.029, GetTransformMatrix(fileNameMatrix, "SmearMatrixXiCXi0Norm" + histSuffix), kFALSE, useRootSScaling, mLambda, mLambda, mXi0, mXiC);
   ledInfo.push_back(infoX0XC);
+  
 
   // Need to normalize matrix.
   // Need to split up into singlet and triplet components
   // TString fileNamePLamMatrix = "~/Analysis/lambda/AliAnalysisLambda/Fitting/FemtoFitting/PLamToLamLam.root";
+
+  
+  // These scattering params only work for pLam, no pbarLam
+  if (isIdentical) {
   TString matrixNamePLam = "hNorm" + histSuffix;
   Bool_t fixScatterParams = kTRUE;
   Bool_t fixRadius = kFALSE;
-  Double_t pLamRadius = 0.;
+  // fixRadius = kTRUE;
+  Double_t pLamRadius = 3.;
 
-  Double_t singletReF0 = -2.88;
+  Double_t singletReF0 = 2.88;
   Double_t singletImF0 = 0.;
   Double_t singletD0 = 2.92;
-  LednickyInfo infoPLSinglet("ProtonLambdaSinglet", 0.04, GetTransformMatrix(fileNameMatrix, matrixNamePLam), kFALSE, useRootSScaling, 0., 0., 0., 0., fixScatterParams, singletReF0, singletImF0, singletD0, fixRadius, pLamRadius);
+  Double_t singletLambda = 0.013; // default 0.013
+  TH2D *pLamTransformMatrix = GetTransformMatrix(fileNameMatrix, matrixNamePLam);
+  // pLamTransformMatrix = NULL;
+  LednickyInfo infoPLSinglet("ProtonLambdaSinglet", singletLambda, pLamTransformMatrix, kFALSE, useRootSScaling, 0., 0., 0., 0., fixScatterParams, singletReF0, singletImF0, singletD0, fixRadius, pLamRadius);
   ledInfo.push_back(infoPLSinglet);
 
-  Double_t tripletReF0 = -1.66;
-  Double_t tripletImF0 = 0.;
-  Double_t tripletD0 = 3.78;
-  LednickyInfo infoPLTriplet("ProtonLambdaTriplet", 0.013, GetTransformMatrix(fileNameMatrix, matrixNamePLam), kFALSE, useRootSScaling, 0., 0., 0., 0., fixScatterParams, tripletReF0, tripletImF0, tripletD0, fixRadius, pLamRadius);
-  ledInfo.push_back(infoPLTriplet);
 
+    Double_t tripletReF0 = 1.66;
+    Double_t tripletImF0 = 0.;
+    Double_t tripletD0 = 3.78;
+    Double_t tripletLambda = 0.04; // default 0.04
+    LednickyInfo infoPLTriplet("ProtonLambdaTriplet", tripletLambda, pLamTransformMatrix, kFALSE, useRootSScaling, 0., 0., 0., 0., fixScatterParams, tripletReF0, tripletImF0, tripletD0, fixRadius, pLamRadius);
+    ledInfo.push_back(infoPLTriplet);
+  }
 
   return ledInfo;
 }
@@ -127,7 +139,7 @@ void UserSetupSystems(Fitter *fitter, Int_t studyIndex, Int_t varIndex, Int_t cu
   // useLA1030Chi2   = kTRUE;
   // useLA3050Chi2   = kTRUE;
   useLLAA010Chi2  = kTRUE;
-  // useLLAA1030Chi2 = kTRUE;
+  useLLAA1030Chi2 = kTRUE;
   // useLLAA3050Chi2 = kTRUE;
 
 
@@ -747,7 +759,7 @@ void UserSetFitOptions(Fitter *myFitter)
   myFitter->SetUseMINOS(kFALSE);
    
   // optional suffix for saved plots and objects
-  TString outString = "StockFit";
+  TString outString = "TestPLamTransform";
   myFitter->SetOutputString(outString);
 
   // Output extra plots showing all residual correlation components?
