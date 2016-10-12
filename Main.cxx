@@ -25,7 +25,7 @@ Fitter *myFitter = NULL;
 enum SystemType {kLL010, kLL1030, kLL3050,
 		 kAA010, kAA1030, kAA3050,
 		 kLA010, kLA1030, kLA3050,
-		 kLLAA010, kLLAA1030, kLLAA3050};
+		 kLLAA010, kLLAA1030, kLLAA3050, kSTARLL};
 
 
 TH2D *GetTransformMatrix(TString rootFileName, TString histName)
@@ -56,8 +56,8 @@ vector<LednickyInfo> PrepareLednickyInfo(Bool_t isIdentical, Bool_t useRootSScal
   TString histSuffix = "";
   if(isIdentical) histSuffix = "LLAA";
   else histSuffix = "LA";
-  LednickyInfo infoLL("LambdaLambda", 0.25, GetTransformMatrix(fileNameMatrix, "SmearMatrixLambdaLambdaNorm" + histSuffix), isIdentical, useRootSScaling, mLambda, mLambda, mLambda, mLambda);
-  // LednickyInfo infoLL("LambdaLambda", 0.25, NULL, isIdentical, useRootSScaling, mLambda, mLambda, mLambda, mLambda); 
+  LednickyInfo infoLL("LambdaLambda", .25, GetTransformMatrix(fileNameMatrix, "SmearMatrixLambdaLambdaNorm" + histSuffix), isIdentical, useRootSScaling, mLambda, mLambda, mLambda, mLambda); // default lambda = 0.25
+  // LednickyInfo infoLL("LambdaLambda", 0.18, NULL, isIdentical, useRootSScaling, mLambda, mLambda, mLambda, mLambda); 
   ledInfo.push_back(infoLL);
 
   
@@ -83,36 +83,41 @@ vector<LednickyInfo> PrepareLednickyInfo(Bool_t isIdentical, Bool_t useRootSScal
   ledInfo.push_back(infoX0XC);
   
 
-  // Need to normalize matrix.
-  // Need to split up into singlet and triplet components
-  // TString fileNamePLamMatrix = "~/Analysis/lambda/AliAnalysisLambda/Fitting/FemtoFitting/PLamToLamLam.root";
-
-  
-  // These scattering params only work for pLam, no pbarLam
-  if (isIdentical) {
   TString matrixNamePLam = "hNorm" + histSuffix;
-  Bool_t fixScatterParams = kTRUE;
+  Bool_t fixScatterParams = kFALSE;
   Bool_t fixRadius = kFALSE;
+  fixScatterParams = kTRUE;
   // fixRadius = kTRUE;
   Double_t pLamRadius = 3.;
 
+  // Known pL values (should these f0 be negative?)
   Double_t singletReF0 = 2.88;
   Double_t singletImF0 = 0.;
   Double_t singletD0 = 2.92;
-  Double_t singletLambda = 0.013; // default 0.013
+  Double_t singletLambda = 0.0; // default 0.013
+  // singletLambda = 0.026;
+  Double_t tripletReF0 = 1.66;
+  Double_t tripletImF0 = 0.;
+  Double_t tripletD0 = 3.78;
+  Double_t tripletLambda = 0.0; // default 0.04
+  // tripletLambda = 0.08;
+  if (!isIdentical) {
+    singletReF0 = -0.34;
+    tripletReF0 = -0.34;
+    singletImF0 = 0.82;
+    tripletImF0 = 0.82;
+    singletD0 = 0.;
+    tripletD0 = 0.;
+
+  }
   TH2D *pLamTransformMatrix = GetTransformMatrix(fileNameMatrix, matrixNamePLam);
   // pLamTransformMatrix = NULL;
   LednickyInfo infoPLSinglet("ProtonLambdaSinglet", singletLambda, pLamTransformMatrix, kFALSE, useRootSScaling, 0., 0., 0., 0., fixScatterParams, singletReF0, singletImF0, singletD0, fixRadius, pLamRadius);
   ledInfo.push_back(infoPLSinglet);
 
+  LednickyInfo infoPLTriplet("ProtonLambdaTriplet", tripletLambda, pLamTransformMatrix, kFALSE, useRootSScaling, 0., 0., 0., 0., fixScatterParams, tripletReF0, tripletImF0, tripletD0, fixRadius, pLamRadius);
+  ledInfo.push_back(infoPLTriplet);
 
-    Double_t tripletReF0 = 1.66;
-    Double_t tripletImF0 = 0.;
-    Double_t tripletD0 = 3.78;
-    Double_t tripletLambda = 0.04; // default 0.04
-    LednickyInfo infoPLTriplet("ProtonLambdaTriplet", tripletLambda, pLamTransformMatrix, kFALSE, useRootSScaling, 0., 0., 0., 0., fixScatterParams, tripletReF0, tripletImF0, tripletD0, fixRadius, pLamRadius);
-    ledInfo.push_back(infoPLTriplet);
-  }
 
   return ledInfo;
 }
@@ -124,9 +129,10 @@ void UserSetupSystems(Fitter *fitter, Int_t studyIndex, Int_t varIndex, Int_t cu
 
   // Default to not using any of the chi2 fits
   Bool_t useLLAA010Chi2 = kFALSE, useLLAA1030Chi2 = kFALSE, useLLAA3050Chi2 = kFALSE,
-         useLL010Chi2 = kFALSE, useLL1030Chi2 = kFALSE, useLL3050Chi2 = kFALSE,
-         useAA010Chi2 = kFALSE, useAA1030Chi2 = kFALSE, useAA3050Chi2 = kFALSE,
-         useLA010Chi2 = kFALSE, useLA1030Chi2 = kFALSE, useLA3050Chi2 = kFALSE;
+    useLL010Chi2 = kFALSE, useLL1030Chi2 = kFALSE, useLL3050Chi2 = kFALSE,
+    useAA010Chi2 = kFALSE, useAA1030Chi2 = kFALSE, useAA3050Chi2 = kFALSE,
+    useLA010Chi2 = kFALSE, useLA1030Chi2 = kFALSE, useLA3050Chi2 = kFALSE,
+    useSTARLL = kFALSE;
   
   // *******  Uncomment these as needed ******
   // useLL010Chi2    = kTRUE;
@@ -135,12 +141,13 @@ void UserSetupSystems(Fitter *fitter, Int_t studyIndex, Int_t varIndex, Int_t cu
   // useAA010Chi2    = kTRUE;
   // useAA1030Chi2   = kTRUE;
   // useAA3050Chi2   = kTRUE;
-  // useLA010Chi2    = kTRUE;
-  // useLA1030Chi2   = kTRUE;
-  // useLA3050Chi2   = kTRUE;
+  useLA010Chi2    = kTRUE; 
+  useLA1030Chi2   = kTRUE;
+  useLA3050Chi2   = kTRUE;
   useLLAA010Chi2  = kTRUE;
   useLLAA1030Chi2 = kTRUE;
   // useLLAA3050Chi2 = kTRUE;
+  // useSTARLL     = kTRUE;
 
 
   // Default to not using any of the log fits. Do not us in conjunction with
@@ -308,6 +315,15 @@ void UserSetupSystems(Fitter *fitter, Int_t studyIndex, Int_t varIndex, Int_t cu
   //************* Add more systems as needed ******************
 
 
+
+
+  // ******************** STAR's LL 0-80% correlation function *************
+  simpleName = "STARLL";
+  fileName = "/home/jai/Analysis/lambda/AliAnalysisLambda/Results/AnalysisResults/STARData.root";
+  histName = "STARLL";
+  if (useSTARLL) fitter->AddPairAnalysisChisquareFit(simpleName, fileName, histName, kSTARLL, ledInfoLL, initParams, minParams, maxParams, fixParams);
+
+  
 
 
   // Log-likelihood fitting.  Do not use in conjunction with
@@ -665,9 +681,9 @@ void UserSetupSystems(Fitter *fitter, Int_t studyIndex, Int_t varIndex, Int_t cu
   initParams[kRad] = radiiParams[2];
   if(useLLAA3050Log) fitter->AddPairAnalysisLogFit("LLAA3050", fileNumDen, numNamesLLAA3050, denNamesLLAA3050, kLLAA3050, ledInfoLL, initParams, minParams, maxParams, fixParams);
 
-  
 
-  
+
+
 }
 
 void UserSetConstraints(Fitter *myFitter)
@@ -759,7 +775,7 @@ void UserSetFitOptions(Fitter *myFitter)
   myFitter->SetUseMINOS(kFALSE);
    
   // optional suffix for saved plots and objects
-  TString outString = "TestPLamTransform";
+  TString outString = "NoPLFeedup";
   myFitter->SetOutputString(outString);
 
   // Output extra plots showing all residual correlation components?
